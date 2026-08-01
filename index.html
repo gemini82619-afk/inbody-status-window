@@ -23,13 +23,54 @@
 
     /* ===== 抬頭與屬性樣式 ===== */
     .layer-title { font-family: 'Orbitron', sans-serif; color: #00d2ff; font-size: 0.85rem; letter-spacing: 2px; border-bottom: 1px solid rgba(0, 210, 255, 0.3); padding-bottom: 4px; margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; }
-    .header { text-align: center; margin-bottom: 20px; position: relative; }
-    .title-box { display: inline-flex; align-items: center; border: 1px solid rgba(195, 240, 255, 0.6); padding: 6px 20px; background: rgba(0, 150, 255, 0.1); box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); }
-    .title-text { font-family: 'Orbitron', sans-serif; color: #ffffff; font-size: 1.1rem; letter-spacing: 3px; text-shadow: 0 0 10px #00d2ff; }
+    /* ===== 抬頭與標題列修復 ===== */
+.header { 
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center; 
+  margin-bottom: 20px; 
+  position: relative; 
+}
+.header-spacer { 
+  width: 75px; /* 🟢 左側隱形平衡區塊，確保標題完美居中 */
+  flex-shrink: 0;
+}
+    .title-box { 
+  display: inline-flex; 
+  align-items: center; 
+  border: 1px solid rgba(195, 240, 255, 0.6); 
+  padding: 5px 14px; 
+  background: rgba(0, 150, 255, 0.1); 
+  box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); 
+  white-space: nowrap;
+}
+.title-text { 
+  font-family: 'Orbitron', sans-serif; 
+  color: #ffffff; 
+  font-size: 0.95rem; /* 🟢 適度微調字體，留出兩側呼吸空間 */
+  letter-spacing: 2px; 
+  text-shadow: 0 0 10px #00d2ff; 
+}
     
-    /* 🟢 修正：獨立登出按鈕樣式 */
-    .logout-tag { position: absolute; right: 0; top: 5px; font-size: 0.72rem; color: #ff3366; font-family: 'Orbitron'; cursor: pointer; border: 1px dashed rgba(255, 51, 102, 0.6); padding: 3px 8px; transition: 0.3s; background: rgba(255, 51, 102, 0.05); }
-    .logout-tag:hover { background: rgba(255, 51, 102, 0.25); box-shadow: 0 0 10px rgba(255, 51, 102, 0.5); text-shadow: 0 0 5px #ff3366; }
+    .logout-tag { 
+  width: 75px;
+  font-size: 0.72rem; 
+  color: #ff3366; 
+  font-family: 'Orbitron'; 
+  cursor: pointer; 
+  border: 1px dashed rgba(255, 51, 102, 0.6); 
+  padding: 4px 6px; 
+  transition: 0.3s; 
+  background: rgba(255, 51, 102, 0.05); 
+  text-align: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.logout-tag:hover { 
+  background: rgba(255, 51, 102, 0.25); 
+  box-shadow: 0 0 10px rgba(255, 51, 102, 0.5); 
+  text-shadow: 0 0 5px #ff3366; 
+}
 
     @keyframes pulse-glow { 0%, 100% { text-shadow: 0 0 10px #00d2ff, 0 0 20px #0055ff; } 50% { text-shadow: 0 0 20px #00d2ff, 0 0 40px #0055ff; } }
     
@@ -229,10 +270,10 @@
       
       <div id="status-view">
         <div class="header">
-          <div class="title-box"><span class="title-text">! STATUS WINDOW</span></div>
-          <!-- 🟢 2. 右上角原位置改為獨立登出按鈕 -->
-          <div class="logout-tag" onclick="logout()">[ LOGOUT ]</div>
-        </div>
+  <div class="header-spacer"></div> <!-- 🟢 左側對齊平衡塊 -->
+  <div class="title-box"><span class="title-text">! STATUS WINDOW</span></div>
+  <div class="logout-tag" onclick="logout()">[ LOGOUT ]</div>
+</div>
         
         <div class="layer-1">
           <!-- 🟢 1. 帳號 (ID) 移至職業 (一轉) 的左側 -->
@@ -317,11 +358,11 @@
       </div>
 
       <div id="quest-view">
-        <div class="header">
-          <div class="title-box" style="border-color: #facc15; background: rgba(250, 204, 21, 0.1);">
-            <span class="title-text" style="color: #facc15;">Main Quest</span>
-          </div>
-        </div>
+        <div class="header" style="justify-content: center;">
+  <div class="title-box" style="border-color: #facc15; background: rgba(250, 204, 21, 0.1);">
+    <span class="title-text" style="color: #facc15;">Main Quest</span>
+  </div>
+</div>
         <div class="quest-card">
           <div class="quest-title">[ 每日任務：控制指南 ]</div>
           <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">系統根據玩家目前屬性，生成之最佳化目標。</p>
