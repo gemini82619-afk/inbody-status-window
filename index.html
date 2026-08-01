@@ -445,7 +445,8 @@
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'login', username: user, password: pwd })
+          // 🟢 將 isAuto 狀態傳給後端
+          body: JSON.stringify({ action: 'login', username: user, password: pwd, isAuto: isAuto })
         });
         const result = await response.json();
 
@@ -463,7 +464,19 @@
             if (!isAuto) showSystemModal(`歡迎回來，玩家 ${user}！已成功載入資料。`, 'info');
           }
         } else {
-          showSystemModal('登入失敗：' + result.message, 'error');
+          // 🟢 如果是自動登入，且後端回傳帳號已被刪除
+          if (isAuto && result.isDeleted) {
+            // 清除過期的瀏覽器紀錄
+            localStorage.removeItem('inbody_user');
+            localStorage.removeItem('inbody_pwd');
+            // 清空輸入框
+            document.getElementById('login-user').value = '';
+            document.getElementById('login-pwd').value = '';
+            // 停留在 loginModal 不做任何動作
+          } else {
+            // 手動登入錯誤或密碼錯誤，正常彈出警告
+            showSystemModal('登入失敗：' + result.message, 'error');
+          }
         }
       } catch (e) {
         showSystemModal('連線伺服器發生錯誤。', 'error');
