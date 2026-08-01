@@ -47,7 +47,15 @@
     .chart-container { position: relative; width: 100%; height: 240px; margin-top: 10px;}
     
     .layer-4 { margin-bottom: 25px; } .data-group { margin-bottom: 15px; background: rgba(0, 20, 40, 0.4); border-left: 2px solid #00d2ff; padding: 10px 15px; } .data-group-title { font-size: 0.8rem; color: #00d2ff; margin-bottom: 10px; font-weight: bold; } .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;} .data-label { color: #a0d8ef; } .data-val { font-family: 'Orbitron'; color: #fff; font-weight: bold; }
-    .layer-5 { margin-bottom: 30px; } .trend-chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; background: rgba(0, 10, 20, 0.4); padding: 10px; border: 1px solid rgba(0, 210, 255, 0.2); }
+
+    /* ===== 歷史趨勢：三圖分割卡片樣式 ===== */
+    .layer-5 { margin-bottom: 30px; }
+    .trend-split-container { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
+    .trend-sub-card { background: rgba(0, 10, 20, 0.6); border: 1px solid rgba(0, 210, 255, 0.25); padding: 10px 12px; border-radius: 6px; box-shadow: inset 0 0 10px rgba(0, 150, 255, 0.05); }
+    .sub-card-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; font-weight: bold; margin-bottom: 6px; font-family: 'Orbitron', 'Noto Sans TC'; }
+    .sub-card-title { letter-spacing: 1px; }
+    .sub-card-unit { color: #64748b; font-size: 0.7rem; font-family: 'Orbitron'; }
+    .sub-chart-box { position: relative; width: 100%; height: 95px; }
 
     /* ===== 任務面板 ===== */
     #quest-view { display: none; }
@@ -153,7 +161,7 @@
   <div class="login-overlay" id="loginModal">
     <div class="login-card">
       <div class="title-box" style="margin-bottom: 20px;"><span class="title-text">PLAYER AUTHENTICATION</span></div>
-      <p style="color: #64748b; font-size: 0.75rem; margin-bottom: 20px;">輸入帳號與密碼。</p>
+      <p style="color: #64748b; font-size: 0.75rem; margin-bottom: 20px;">輸入帳號代稱與密碼。</p>
       <input type="text" id="login-user" class="login-input" placeholder="USER ID">
       <input type="password" id="login-pwd" class="login-input" placeholder="PASSWORD">
       <div class="remember-box">
@@ -230,14 +238,14 @@
         </div>
 
         <div class="layer-title">BASIC INFO</div>
-<div class="layer-2">
-  <div class="grid-item"><div class="grid-label">身高</div><div class="grid-value" id="ui-height">-- cm</div></div>
-  <div class="grid-item"><div class="grid-label">體重</div><div class="grid-value" id="ui-weight">-- kg</div></div>
-  <div class="grid-item"><div class="grid-label">年齡</div><div class="grid-value" id="ui-age">-- 歲</div></div>
-  <div class="grid-item"><div class="grid-label">BMI</div><div class="grid-value" id="ui-bmi">--</div></div>
-  <div class="grid-item"><div class="grid-label">每日消耗</div><div class="grid-value" id="ui-tdee">-- kcal</div></div>
-  <div class="grid-item"><div class="grid-label">內臟脂肪</div><div class="grid-value" id="vfl-display">Lv. --</div></div>
-</div>
+        <div class="layer-2">
+          <div class="grid-item"><div class="grid-label">身高</div><div class="grid-value" id="ui-height">-- cm</div></div>
+          <div class="grid-item"><div class="grid-label">體重</div><div class="grid-value" id="ui-weight">-- kg</div></div>
+          <div class="grid-item"><div class="grid-label">年齡</div><div class="grid-value" id="ui-age">-- 歲</div></div>
+          <div class="grid-item"><div class="grid-label">BMI</div><div class="grid-value" id="ui-bmi">--</div></div>
+          <div class="grid-item"><div class="grid-label">每日消耗</div><div class="grid-value" id="ui-tdee">-- kcal</div></div>
+          <div class="grid-item"><div class="grid-label">內臟脂肪</div><div class="grid-value" id="vfl-display">Lv. --</div></div>
+        </div>
 
         <div class="layer-3">
           <div class="layer-title">
@@ -270,11 +278,37 @@
           </div>
         </div>
 
-        <!-- 歷史變化趨勢圖 -->
+        <!-- 歷史變化趨勢圖 (InBody 標準三分欄獨立版) -->
         <div class="layer-5">
-          <div class="layer-title">▶ BODY COMPOSITION TRENDS (最近10次變化)</div>
-          <div class="trend-chart-container">
-            <canvas id="trendChart"></canvas>
+          <div class="layer-title">▶ BODY COMPOSITION TRENDS</div>
+          
+          <div class="trend-split-container">
+            <!-- 1. 體重 -->
+            <div class="trend-sub-card">
+              <div class="sub-card-header">
+                <span class="sub-card-title" style="color: #00d2ff;">■ 體重 (Weight)</span>
+                <span class="sub-card-unit">kg</span>
+              </div>
+              <div class="sub-chart-box"><canvas id="chartWeight"></canvas></div>
+            </div>
+
+            <!-- 2. 骨骼肌肉重 -->
+            <div class="trend-sub-card">
+              <div class="sub-card-header">
+                <span class="sub-card-title" style="color: #4ade80;">■ 骨骼肌肉重 (SMM)</span>
+                <span class="sub-card-unit">kg</span>
+              </div>
+              <div class="sub-chart-box"><canvas id="chartSMM"></canvas></div>
+            </div>
+
+            <!-- 3. 體脂肪百分比 -->
+            <div class="trend-sub-card">
+              <div class="sub-card-header">
+                <span class="sub-card-title" style="color: #ff3366;">■ 體脂肪百分比 (PBF)</span>
+                <span class="sub-card-unit">%</span>
+              </div>
+              <div class="sub-chart-box"><canvas id="chartPBF"></canvas></div>
+            </div>
           </div>
         </div>
         
@@ -354,19 +388,21 @@
 
   <script>
     // ⚠️ 請填入您的 GAS Web App URL
-    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcYSWpFsizRBiiYrNaeUSsvkskvFj9fMDWOIh3_6MdUGlzGQ0ut-U9hjIny1Y8QZKBvA/exec';
+    const GAS_URL = '貼上你的_WEB_APP_URL_在這裡';
 
-    // ⚠️ 請確保與圖片檔同資料夾或貼上 Imgur 網址
+    // ⚠️ 請確保與圖片檔同資料夾或使用相對路徑
     const CLASS_TREE_IMAGE = "uniform_class_cards.png";
 
-    let radarChart, trendChart;
+    let radarChart, chartWeight, chartSMM, chartPBF;
     let currentChartType = 'muscle';
     let currentUser = '', currentPwd = '';
+    
+    // 預設標準為 100% (未上傳資料前維持圓潤正五角形)
     let chartData = { 
-  labels: ['軀幹', '右臂', '右腿', '左腿', '左臂'], 
-  muscle: [100, 100, 100, 100, 100], 
-  fat: [100, 100, 100, 100, 100] 
-};
+      labels: ['軀幹', '右臂', '右腿', '左腿', '左臂'], 
+      muscle: [100, 100, 100, 100, 100], 
+      fat: [100, 100, 100, 100, 100] 
+    };
 
     // 5 大職業資料庫
     const classesData = [
@@ -513,7 +549,7 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
-          showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請點擊下方按鈕上傳首張 InBody 報告以鎖定 Baseline。`, 'info');
+          showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請上傳首張 InBody 報告以建立 Baseline。`, 'info');
         } else {
           showSystemModal('職業設定失敗：' + result.message, 'error');
         }
@@ -568,33 +604,37 @@
       });
     }
 
-    // 動態更新 UI 數據 (包含最新轉職稱號)
+    // 動態更新 UI 數據
     function updateUIWithData(data, history) {
-  if (!data) return;
+      if (!data) return;
 
-  if (data.title) {
-    document.getElementById('userClassDisplay').innerText = data.title;
-  }
+      if (data.title) {
+        document.getElementById('userClassDisplay').innerText = data.title;
+      }
 
-  document.getElementById('ui-score').innerText = `Lv. ${data.score || 0}`;
-  document.getElementById('ui-height').innerText = `${data.height || 0} cm`;
-  document.getElementById('ui-weight').innerText = `${data.weight || 0} kg`;
-  document.getElementById('ui-weight2').innerText = `${data.weight || 0} kg`;
-  document.getElementById('ui-age').innerText = `${data.age || '--'} 歲`; // 🟢 新增年齡渲染
-  document.getElementById('ui-bmi').innerText = data.bmi || 0;
-  document.getElementById('ui-tdee').innerText = `${data.tdee || 0} kcal`;
-  document.getElementById('ui-smm').innerText = `${data.smm || 0} kg`;
-  document.getElementById('ui-bfm').innerText = `${data.bfm || 0} kg`;
-  document.getElementById('ui-pbf').innerText = `${data.pbf || 0} %`;
-  document.getElementById('ui-whr').innerText = data.whr || 0;
-  document.getElementById('ui-vfa').innerText = `${data.vfa || 0} cm²`;
-  
-  updateVFLDisplay(data.vfl || 0);
+      document.getElementById('ui-score').innerText = `Lv. ${data.score || 0}`;
+      document.getElementById('ui-height').innerText = `${data.height || 0} cm`;
+      document.getElementById('ui-weight').innerText = `${data.weight || 0} kg`;
+      document.getElementById('ui-weight2').innerText = `${data.weight || 0} kg`;
+      document.getElementById('ui-age').innerText = `${data.age || '--'} 歲`;
+      document.getElementById('ui-bmi').innerText = data.bmi || 0;
+      document.getElementById('ui-tdee').innerText = `${data.tdee || 0} kcal`;
+      document.getElementById('ui-smm').innerText = `${data.smm || 0} kg`;
+      document.getElementById('ui-bfm').innerText = `${data.bfm || 0} kg`;
+      document.getElementById('ui-pbf').innerText = `${data.pbf || 0} %`;
+      document.getElementById('ui-whr').innerText = data.whr || 0;
+      document.getElementById('ui-vfa').innerText = `${data.vfa || 0} cm²`;
+      
+      updateVFLDisplay(data.vfl || 0);
 
       if(data.seg_muscle && data.seg_fat) {
         chartData.muscle = [data.seg_muscle.trunk, data.seg_muscle.r_arm, data.seg_muscle.r_leg, data.seg_muscle.l_leg, data.seg_muscle.l_arm];
         chartData.fat = [data.seg_fat.trunk, data.seg_fat.r_arm, data.seg_fat.r_leg, data.seg_fat.l_leg, data.seg_fat.l_arm];
-        radarChart.data.datasets[0].data = (currentChartType === 'muscle') ? chartData.muscle : chartData.fat;
+        
+        const activeData = (currentChartType === 'muscle') ? chartData.muscle : chartData.fat;
+        radarChart.data.datasets[0].data = activeData;
+        const maxVal = Math.max(...activeData, 120);
+        radarChart.options.scales.r.suggestedMax = Math.ceil(maxVal / 20) * 20 + 20;
         radarChart.update();
       }
 
@@ -613,13 +653,16 @@
         }
       }
 
-      // 更新歷史變化趨勢圖
+      // 更新歷史變化趨勢圖 (三分欄)
       if (history && history.length > 0) {
-        trendChart.data.labels = history.map(h => h.date.substring(5));
-        trendChart.data.datasets[0].data = history.map(h => h.weight);
-        trendChart.data.datasets[1].data = history.map(h => h.smm);
-        trendChart.data.datasets[2].data = history.map(h => h.pbf);
-        trendChart.update();
+        const dates   = history.map(h => h.date.substring(5));
+        const weights = history.map(h => h.weight);
+        const smms    = history.map(h => h.smm);
+        const pbfs    = history.map(h => h.pbf);
+
+        updateSingleChart(chartWeight, dates, weights);
+        updateSingleChart(chartSMM, dates, smms);
+        updateSingleChart(chartPBF, dates, pbfs);
       }
     }
 
@@ -662,115 +705,123 @@
       detailEl.style.display = (detailEl.style.display === 'block') ? 'none' : 'block';
     }
 
+    // 雷達圖初始化
     function initRadarChart() {
-  const ctx = document.getElementById('radarChart').getContext('2d');
-  radarChart = new Chart(ctx, {
-    type: 'radar',
-    data: {
-      labels: chartData.labels,
-      datasets: [{
-        label: '部位分析 (%)',
-        data: chartData.muscle,
-        backgroundColor: 'rgba(0, 210, 255, 0.25)',
-        borderColor: '#00d2ff',
-        borderWidth: 2,
-        pointBackgroundColor: '#00d2ff',
-        pointRadius: 4
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: {
-        padding: 15
-      },
-      plugins: {
-        legend: { display: false }
-      },
-      scales: {
-        r: {
-          angleLines: { color: 'rgba(0, 150, 255, 0.2)' },
-          grid: { color: 'rgba(0, 150, 255, 0.2)' },
-          pointLabels: {
-            color: '#a0d8ef',
-            font: { size: 12, weight: 'bold' }
-          },
-          min: 0,            // 🟢 從 0 開始，確保不會超出或變形
-          suggestedMax: 150, // 🟢 100% 附近會呈現漂亮的正五角形
-          ticks: { display: false }
-        }
-      }
-    }
-  });
-}
-
-    function initTrendChart() {
-      const ctx = document.getElementById('trendChart').getContext('2d');
-      trendChart = new Chart(ctx, {
-        type: 'line',
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      radarChart = new Chart(ctx, {
+        type: 'radar',
         data: {
-          labels: [],
-          datasets: [
-            { label: '體重 (kg)', data: [], borderColor: '#00d2ff', backgroundColor: '#00d2ff', tension: 0.3, yAxisID: 'y' },
-            { label: '肌肉 (kg)', data: [], borderColor: '#4ade80', backgroundColor: '#4ade80', tension: 0.3, yAxisID: 'y' },
-            { label: '體脂 (%)', data: [], borderColor: '#ff3366', backgroundColor: '#ff3366', tension: 0.3, yAxisID: 'y1' }
-          ]
+          labels: chartData.labels,
+          datasets: [{
+            label: '部位分析 (%)',
+            data: chartData.muscle,
+            backgroundColor: 'rgba(0, 210, 255, 0.25)',
+            borderColor: '#00d2ff',
+            borderWidth: 2,
+            pointBackgroundColor: '#00d2ff',
+            pointRadius: 4
+          }]
         },
         options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#a0d8ef', font: { size: 10 } } } },
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: 15 },
+          plugins: { legend: { display: false } },
           scales: {
-            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
-            y: { position: 'left', grid: { color: 'rgba(0, 210, 255, 0.1)' }, ticks: { color: '#00d2ff' } },
-            y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#ff3366' } }
+            r: {
+              angleLines: { color: 'rgba(0, 150, 255, 0.2)' },
+              grid: { color: 'rgba(0, 150, 255, 0.2)' },
+              pointLabels: { color: '#a0d8ef', font: { size: 12, weight: 'bold' } },
+              min: 0,
+              suggestedMax: 150,
+              ticks: { display: false }
+            }
           }
         }
       });
     }
 
+    // 趨勢圖初始化 (三分欄)
+    function initTrendChart() {
+      chartWeight = createSingleTrendChart('chartWeight', '體重', '#00d2ff', 'rgba(0, 210, 255, 0.15)');
+      chartSMM    = createSingleTrendChart('chartSMM', '骨骼肌', '#4ade80', 'rgba(74, 222, 128, 0.15)');
+      chartPBF    = createSingleTrendChart('chartPBF', '體脂率', '#ff3366', 'rgba(255, 51, 102, 0.15)');
+    }
+
+    function createSingleTrendChart(canvasId, label, color, bgColor) {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      return new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [{
+            label: label,
+            data: [],
+            borderColor: color,
+            backgroundColor: bgColor,
+            fill: true,
+            tension: 0.2,
+            pointRadius: 4,
+            pointBackgroundColor: color,
+            pointHoverRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#64748b', font: { size: 9 } }
+            },
+            y: {
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: color, font: { size: 10, weight: 'bold' } },
+              grace: '15%'
+            }
+          }
+        }
+      });
+    }
+
+    function updateSingleChart(chartObj, labels, data) {
+      if (!chartObj) return;
+      chartObj.data.labels = labels;
+      chartObj.data.datasets[0].data = data;
+      chartObj.update();
+    }
+
     function toggleChart() {
-  const switchContainer = document.getElementById('toggleSwitch');
-  const bg = document.getElementById('toggleBg');
-  const optMuscle = document.getElementById('optMuscle');
-  const optFat = document.getElementById('optFat');
+      const switchContainer = document.getElementById('toggleSwitch');
+      const bg = document.getElementById('toggleBg');
+      const optMuscle = document.getElementById('optMuscle');
+      const optFat = document.getElementById('optFat');
 
-  if (currentChartType === 'muscle') {
-    currentChartType = 'fat';
-    switchContainer.classList.add('fat-mode');
-    bg.classList.add('fat-mode');
-    optMuscle.classList.remove('active');
-    optFat.classList.add('active');
+      if (currentChartType === 'muscle') {
+        currentChartType = 'fat'; 
+        switchContainer.classList.add('fat-mode'); bg.classList.add('fat-mode'); optMuscle.classList.remove('active'); optFat.classList.add('active');
+        radarChart.data.datasets[0].data = chartData.fat; 
+        radarChart.data.datasets[0].borderColor = '#ff3366';
+        radarChart.data.datasets[0].backgroundColor = 'rgba(255, 51, 102, 0.25)';
+        radarChart.data.datasets[0].pointBackgroundColor = '#ff3366';
 
-    radarChart.data.datasets[0].data = chartData.fat;
-    radarChart.data.datasets[0].borderColor = '#ff3366';
-    radarChart.data.datasets[0].backgroundColor = 'rgba(255, 51, 102, 0.25)';
-    radarChart.data.datasets[0].pointBackgroundColor = '#ff3366';
+        const maxFat = Math.max(...chartData.fat, 120);
+        radarChart.options.scales.r.suggestedMax = Math.ceil(maxFat / 20) * 20 + 20;
+      } else {
+        currentChartType = 'muscle'; 
+        switchContainer.classList.remove('fat-mode'); bg.classList.remove('fat-mode'); optMuscle.classList.add('active'); optFat.classList.remove('active');
+        radarChart.data.datasets[0].data = chartData.muscle; 
+        radarChart.data.datasets[0].borderColor = '#00d2ff';
+        radarChart.data.datasets[0].backgroundColor = 'rgba(0, 210, 255, 0.25)';
+        radarChart.data.datasets[0].pointBackgroundColor = '#00d2ff';
 
-    // 🟢 動態計算脂肪數據的最大邊界，確保不暴衝
-    const maxFat = Math.max(...chartData.fat, 120);
-    radarChart.options.scales.r.suggestedMax = Math.ceil(maxFat / 20) * 20 + 20;
+        const maxMuscle = Math.max(...chartData.muscle, 120);
+        radarChart.options.scales.r.suggestedMax = Math.ceil(maxMuscle / 20) * 20 + 20;
+      }
+      radarChart.update();
+    }
 
-  } else {
-    currentChartType = 'muscle';
-    switchContainer.classList.remove('fat-mode');
-    bg.classList.remove('fat-mode');
-    optMuscle.classList.add('active');
-    optFat.classList.remove('active');
-
-    radarChart.data.datasets[0].data = chartData.muscle;
-    radarChart.data.datasets[0].borderColor = '#00d2ff';
-    radarChart.data.datasets[0].backgroundColor = 'rgba(0, 210, 255, 0.25)';
-    radarChart.data.datasets[0].pointBackgroundColor = '#00d2ff';
-
-    // 🟢 動態計算肌肉數據的最大邊界
-    const maxMuscle = Math.max(...chartData.muscle, 120);
-    radarChart.options.scales.r.suggestedMax = Math.ceil(maxMuscle / 20) * 20 + 20;
-  }
-
-  radarChart.update();
-}
-
-    // 當瀏覽器視窗大小調整時重新計算圖像縮放比例
     window.addEventListener('resize', renderCard);
   </script>
 </body>
