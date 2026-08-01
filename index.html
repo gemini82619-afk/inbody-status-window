@@ -660,13 +660,47 @@
     }
 
     function initRadarChart() {
-      const ctx = document.getElementById('radarChart').getContext('2d');
-      radarChart = new Chart(ctx, {
-        type: 'radar',
-        data: { labels: chartData.labels, datasets: [{ label: '肌肉分布 (%)', data: chartData.muscle, backgroundColor: 'rgba(0, 210, 255, 0.25)', borderColor: '#00d2ff', borderWidth: 2 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { angleLines: { color: 'rgba(0, 150, 255, 0.2)' }, grid: { color: 'rgba(0, 150, 255, 0.2)' }, pointLabels: { color: '#a0d8ef' }, min: 75, max: 125, ticks: { display: false } } } }
-      });
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  radarChart = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: chartData.labels,
+      datasets: [{
+        label: '部位分析',
+        data: chartData.muscle,
+        backgroundColor: 'rgba(0, 210, 255, 0.25)',
+        borderColor: '#00d2ff',
+        borderWidth: 2,
+        pointBackgroundColor: '#00d2ff',
+        pointRadius: 4
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      layout: {
+        padding: 20 // 🟢 關鍵修正 1：增加邊界留白，防止文字與點被切割或壓邊
+      },
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        r: {
+          angleLines: { color: 'rgba(0, 150, 255, 0.2)' },
+          grid: { color: 'rgba(0, 150, 255, 0.2)' },
+          pointLabels: {
+            color: '#a0d8ef',
+            font: { size: 12, weight: 'bold' }
+          },
+          // 🟢 關鍵修正 2：改用 suggested，數值超過 140% 時網格會自動依比例按需求擴大
+          suggestedMin: 60,
+          suggestedMax: 140,
+          ticks: { display: false }
+        }
+      }
     }
+  });
+}
 
     function initTrendChart() {
       const ctx = document.getElementById('trendChart').getContext('2d');
@@ -693,20 +727,46 @@
     }
 
     function toggleChart() {
-      const switchContainer = document.getElementById('toggleSwitch');
-      const bg = document.getElementById('toggleBg');
-      const optMuscle = document.getElementById('optMuscle');
-      const optFat = document.getElementById('optFat');
+  const switchContainer = document.getElementById('toggleSwitch');
+  const bg = document.getElementById('toggleBg');
+  const optMuscle = document.getElementById('optMuscle');
+  const optFat = document.getElementById('optFat');
 
-      if (currentChartType === 'muscle') {
-        currentChartType = 'fat'; switchContainer.classList.add('fat-mode'); bg.classList.add('fat-mode'); optMuscle.classList.remove('active'); optFat.classList.add('active');
-        radarChart.data.datasets[0].data = chartData.fat; radarChart.data.datasets[0].borderColor = '#ff3366';
-      } else {
-        currentChartType = 'muscle'; switchContainer.classList.remove('fat-mode'); bg.classList.remove('fat-mode'); optMuscle.classList.add('active'); optFat.classList.remove('active');
-        radarChart.data.datasets[0].data = chartData.muscle; radarChart.data.datasets[0].borderColor = '#00d2ff';
-      }
-      radarChart.update();
-    }
+  if (currentChartType === 'muscle') {
+    currentChartType = 'fat';
+    switchContainer.classList.add('fat-mode');
+    bg.classList.add('fat-mode');
+    optMuscle.classList.remove('active');
+    optFat.classList.add('active');
+
+    radarChart.data.datasets[0].data = chartData.fat;
+    radarChart.data.datasets[0].borderColor = '#ff3366';
+    radarChart.data.datasets[0].backgroundColor = 'rgba(255, 51, 102, 0.25)';
+    radarChart.data.datasets[0].pointBackgroundColor = '#ff3366';
+
+    // 🟢 動態計算脂肪數據的最大邊界，確保不暴衝
+    const maxFat = Math.max(...chartData.fat, 120);
+    radarChart.options.scales.r.suggestedMax = Math.ceil(maxFat / 20) * 20 + 20;
+
+  } else {
+    currentChartType = 'muscle';
+    switchContainer.classList.remove('fat-mode');
+    bg.classList.remove('fat-mode');
+    optMuscle.classList.add('active');
+    optFat.classList.remove('active');
+
+    radarChart.data.datasets[0].data = chartData.muscle;
+    radarChart.data.datasets[0].borderColor = '#00d2ff';
+    radarChart.data.datasets[0].backgroundColor = 'rgba(0, 210, 255, 0.25)';
+    radarChart.data.datasets[0].pointBackgroundColor = '#00d2ff';
+
+    // 🟢 動態計算肌肉數據的最大邊界
+    const maxMuscle = Math.max(...chartData.muscle, 120);
+    radarChart.options.scales.r.suggestedMax = Math.ceil(maxMuscle / 20) * 20 + 20;
+  }
+
+  radarChart.update();
+}
 
     // 當瀏覽器視窗大小調整時重新計算圖像縮放比例
     window.addEventListener('resize', renderCard);
