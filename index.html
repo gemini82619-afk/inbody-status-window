@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>玩家系統介面 - 科技風提示窗版</title>
+  <title>玩家系統介面 - 登入與趨勢圖完整版</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -21,10 +21,11 @@
     .corner-decors::before { top: 10px; left: 10px; border-right: none; border-bottom: none; } .corner-decors::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
 
     .layer-title { font-family: 'Orbitron', sans-serif; color: #00d2ff; font-size: 0.85rem; letter-spacing: 2px; border-bottom: 1px solid rgba(0, 210, 255, 0.3); padding-bottom: 4px; margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; }
-    .header { text-align: center; margin-bottom: 20px; }
+    .header { text-align: center; margin-bottom: 20px; position: relative; }
     .title-box { display: inline-flex; align-items: center; border: 1px solid rgba(195, 240, 255, 0.6); padding: 6px 20px; background: rgba(0, 150, 255, 0.1); box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); }
     .title-text { font-family: 'Orbitron', sans-serif; color: #ffffff; font-size: 1.1rem; letter-spacing: 3px; text-shadow: 0 0 10px #00d2ff; }
-    
+    .user-tag { position: absolute; right: 0; top: 5px; font-size: 0.75rem; color: #00d2ff; font-family: 'Orbitron'; cursor: pointer; border: 1px dashed rgba(0,210,255,0.4); padding: 2px 6px; }
+
     @keyframes pulse-glow { 0%, 100% { text-shadow: 0 0 10px #00d2ff, 0 0 20px #0055ff; } 50% { text-shadow: 0 0 20px #00d2ff, 0 0 40px #0055ff; } }
     .layer-1 { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 25px; }
     .class-box { text-align: right; font-size: 0.85rem; color: #a0d8ef; border-right: 2px solid #00d2ff; padding-right: 15px; }
@@ -32,66 +33,60 @@
     .level-box { font-family: 'Orbitron', sans-serif; font-size: 2.8rem; font-weight: bold; color: #fff; animation: pulse-glow 3s infinite alternate; line-height: 1;}
     .layer-2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 25px; background: rgba(0, 150, 255, 0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(0, 210, 255, 0.1); }
     .grid-item { text-align: center; padding: 6px 0; } .grid-label { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; } .grid-value { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; color: #e2e8f0; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);}
-    .vfl-safe { color: #4ade80 !important; text-shadow: 0 0 8px rgba(74, 222, 128, 0.6) !important; } .vfl-warn { color: #facc15 !important; text-shadow: 0 0 8px rgba(250, 204, 21, 0.6) !important; } .vfl-danger { color: #ff3366 !important; text-shadow: 0 0 8px rgba(255, 51, 102, 0.8) !important; }
-    @keyframes alert-blink { 0%, 100% { opacity: 1; text-shadow: 0 0 15px #ff0000; } 50% { opacity: 0.5; text-shadow: 0 0 5px #ff0000; } }
-    .vfl-fatal { color: #ff0000 !important; font-weight: bold; animation: alert-blink 1s infinite; } .alert-icon { display: inline-block; margin-right: 4px; font-size: 0.9rem; }
+    .vfl-safe { color: #4ade80 !important; } .vfl-warn { color: #facc15 !important; } .vfl-danger { color: #ff3366 !important; }
+
     .layer-3 { margin-bottom: 25px; position: relative; }
-    .toggle-switch { position: relative; display: flex; width: 140px; height: 26px; background: rgba(0, 150, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.4); border-radius: 13px; cursor: pointer; overflow: hidden; transition: border-color 0.3s; }
-    .toggle-bg { position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: rgba(0, 210, 255, 0.3); border-radius: 13px; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s; z-index: 1; box-shadow: inset 0 0 8px rgba(255,255,255,0.2); }
+    .toggle-switch { position: relative; display: flex; width: 140px; height: 26px; background: rgba(0, 150, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.4); border-radius: 13px; cursor: pointer; overflow: hidden; }
+    .toggle-bg { position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: rgba(0, 210, 255, 0.3); border-radius: 13px; transition: transform 0.3s; }
     .toggle-switch.fat-mode { border-color: rgba(255, 51, 102, 0.5); } .toggle-bg.fat-mode { transform: translateX(100%); background: rgba(255, 51, 102, 0.3); }
-    .toggle-option { flex: 1; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', sans-serif; font-size: 0.65rem; color: #64748b; z-index: 2; transition: color 0.3s, text-shadow 0.3s; letter-spacing: 1px; }
-    .toggle-option.active.muscle-text { color: #fff; font-weight: bold; text-shadow: 0 0 5px #00d2ff; } .toggle-option.active.fat-text { color: #fff; font-weight: bold; text-shadow: 0 0 5px #ff3366; }
+    .toggle-option { flex: 1; display: flex; align-items: center; justify-content: center; font-family: 'Orbitron'; font-size: 0.65rem; color: #64748b; z-index: 2; }
+    .toggle-option.active.muscle-text { color: #fff; text-shadow: 0 0 5px #00d2ff; } .toggle-option.active.fat-text { color: #fff; text-shadow: 0 0 5px #ff3366; }
     .chart-container { position: relative; width: 100%; height: 240px; margin-top: 10px;}
-    .layer-4 { margin-bottom: 30px; } .data-group { margin-bottom: 15px; background: rgba(0, 20, 40, 0.4); border-left: 2px solid #00d2ff; padding: 10px 15px; } .data-group-title { font-size: 0.8rem; color: #00d2ff; margin-bottom: 10px; font-weight: bold; } .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;} .data-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;} .data-label { color: #a0d8ef; } .data-val { font-family: 'Orbitron', sans-serif; color: #fff; font-weight: bold; }
+    
+    .layer-4 { margin-bottom: 25px; } .data-group { margin-bottom: 15px; background: rgba(0, 20, 40, 0.4); border-left: 2px solid #00d2ff; padding: 10px 15px; } .data-group-title { font-size: 0.8rem; color: #00d2ff; margin-bottom: 10px; font-weight: bold; } .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;} .data-label { color: #a0d8ef; } .data-val { font-family: 'Orbitron'; color: #fff; font-weight: bold; }
 
+    /* 第五層：身體組成歷史變化趨勢圖 */
+    .layer-5 { margin-bottom: 30px; }
+    .trend-chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; background: rgba(0, 10, 20, 0.4); padding: 10px; border: 1px solid rgba(0, 210, 255, 0.2); }
+
+    /* 任務面板 */
     #quest-view { display: none; }
-    .quest-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #facc15; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(250, 204, 21, 0.1), 0 0 10px rgba(250, 204, 21, 0.2); }
-    .quest-title { color: #facc15; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 20px; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); letter-spacing: 2px; }
+    .quest-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #facc15; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(250, 204, 21, 0.1); }
+    .quest-title { color: #facc15; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 20px; }
     .quest-group { margin-bottom: 12px; }
-    .quest-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 12px 15px; border-left: 3px solid #facc15; cursor: pointer; transition: background 0.3s, transform 0.2s; }
-    .quest-item:hover { background: rgba(250, 204, 21, 0.15); transform: translateX(4px); }
-    .quest-item.completed { border-left-color: #4ade80 !important; } 
-    .quest-item.completed:hover { background: rgba(74, 222, 128, 0.15); } 
-    .quest-item.completed .q-val { color: #4ade80 !important; }
-    .q-label { font-size: 0.9rem; color: #e2e8f0; pointer-events: none; } .q-val { font-family: 'Orbitron'; font-size: 1.1rem; font-weight: bold; color: #fff; pointer-events: none; }
-    @keyframes slideDownFade { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-    .quest-details { display: none; background: rgba(0, 10, 20, 0.6); border-left: 3px solid #facc15; padding: 15px; border-bottom: 1px dashed rgba(250, 204, 21, 0.3); animation: slideDownFade 0.3s ease-out; }
-    .quest-group.completed .quest-details { border-left-color: #4ade80; border-bottom-color: rgba(74, 222, 128, 0.3); }
-    .ai-suggestion-title { font-size: 0.75rem; color: #00d2ff; margin-bottom: 8px; font-weight: bold; } .ai-suggestion-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 15px; }
-    .ai-warning { font-size: 0.7rem; color: #ff3366; text-align: right; font-family: 'Noto Sans TC', sans-serif; letter-spacing: 0.5px; }
+    .quest-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 12px 15px; border-left: 3px solid #facc15; cursor: pointer; }
+    .quest-item.completed { border-left-color: #4ade80 !important; }
+    .q-label { font-size: 0.9rem; color: #e2e8f0; } .q-val { font-family: 'Orbitron'; font-size: 1.1rem; font-weight: bold; color: #fff; }
+    .quest-details { display: none; background: rgba(0, 10, 20, 0.6); border-left: 3px solid #facc15; padding: 15px; }
+    .ai-suggestion-title { font-size: 0.75rem; color: #00d2ff; margin-bottom: 8px; font-weight: bold; } .ai-suggestion-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 15px; } .ai-warning { font-size: 0.7rem; color: #ff3366; text-align: right; }
 
+    /* 底部導航 & 上傳 */
     .bottom-nav { display: flex; gap: 10px; padding: 15px 24px; background: rgba(2, 8, 16, 0.9); border-top: 1px solid rgba(0, 210, 255, 0.3); z-index: 12; }
-    .nav-btn { flex: 1; padding: 12px; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; }
-    .btn-status { background: rgba(0, 150, 255, 0.2); border: 1px solid #00d2ff; color: #c3f0ff; } .btn-status:hover { background: rgba(0, 150, 255, 0.4); box-shadow: 0 0 15px rgba(0, 210, 255, 0.5); color: #fff;}
-    .btn-quest { background: rgba(250, 204, 21, 0.1); border: 1px solid #facc15; color: #fef08a; } .btn-quest:hover { background: rgba(250, 204, 21, 0.3); box-shadow: 0 0 15px rgba(250, 204, 21, 0.5); color: #fff;}
+    .nav-btn { flex: 1; padding: 12px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .btn-status { background: rgba(0, 150, 255, 0.2); border: 1px solid #00d2ff; color: #c3f0ff; }
+    .btn-quest { background: rgba(250, 204, 21, 0.1); border: 1px solid #facc15; color: #fef08a; }
     #file-input { display: none; }
-    .upload-action-btn { width: 100%; margin-top: 20px; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; font-size: 1rem; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
-    .upload-action-btn:hover { background: #00d2ff; color: #000; box-shadow: 0 0 20px rgba(0, 210, 255, 0.6); }
+    .upload-action-btn { width: 100%; margin-top: 20px; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 
-    /* 全螢幕 AI 解析遮罩 */
+    /* 彈窗 & 遮罩 */
     .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 999; backdrop-filter: blur(8px); }
-    .loading-spinner { width: 60px; height: 60px; border: 3px solid transparent; border-top-color: #00d2ff; border-bottom-color: #00d2ff; border-radius: 50%; animation: spin 1.5s linear infinite; margin-bottom: 20px; box-shadow: 0 0 15px rgba(0, 210, 255, 0.5); }
-    @keyframes spin { 0% { transform: rotate(0deg) scale(1); } 50% { transform: rotate(180deg) scale(1.1); } 100% { transform: rotate(360deg) scale(1); } }
-    .loading-text { font-family: 'Orbitron'; color: #00d2ff; font-size: 1.2rem; letter-spacing: 4px; text-shadow: 0 0 10px #00d2ff; animation: pulse 1s infinite alternate; }
-    @keyframes pulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
-    .loading-subtext { margin-top: 10px; font-size: 0.8rem; color: #64748b; font-family: 'Noto Sans TC'; }
+    .loading-spinner { width: 60px; height: 60px; border: 3px solid transparent; border-top-color: #00d2ff; border-bottom-color: #00d2ff; border-radius: 50%; animation: spin 1.5s linear infinite; margin-bottom: 20px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .loading-text { font-family: 'Orbitron'; color: #00d2ff; font-size: 1.2rem; letter-spacing: 4px; }
+    .loading-subtext { margin-top: 10px; font-size: 0.8rem; color: #64748b; }
 
-    /* ================= 新增：科幻 UI 風格懸浮提示彈窗 ================= */
-    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1000; animation: modalFadeIn 0.25s ease-out; }
-    @keyframes modalFadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    .modal-box { background: linear-gradient(180deg, rgba(6, 17, 33, 0.98) 0%, rgba(2, 8, 16, 0.99) 100%); border: 1px solid #00d2ff; box-shadow: 0 0 30px rgba(0, 210, 255, 0.3), inset 0 0 20px rgba(0, 210, 255, 0.1); width: 88%; max-width: 380px; padding: 22px; position: relative; text-align: center; }
-    .modal-title-box { display: inline-flex; align-items: center; border: 1px solid #00d2ff; background: rgba(0, 150, 255, 0.1); padding: 4px 16px; margin-bottom: 16px; }
-    .modal-title { font-family: 'Orbitron', sans-serif; color: #00d2ff; font-size: 0.95rem; letter-spacing: 2px; text-shadow: 0 0 8px #00d2ff; }
-    .modal-msg { font-size: 0.9rem; color: #e2e8f0; line-height: 1.6; margin-bottom: 22px; word-break: break-all; text-align: left; }
-    .modal-btn { width: 100%; padding: 12px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold; letter-spacing: 2px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
-    .modal-btn:hover { background: #00d2ff; color: #000; box-shadow: 0 0 15px rgba(0, 210, 255, 0.6); }
-
-    /* 錯誤狀態樣式 (警示紅) */
-    .modal-box.error { border-color: #ff3366; box-shadow: 0 0 30px rgba(255, 51, 102, 0.3), inset 0 0 20px rgba(255, 51, 102, 0.1); }
-    .modal-box.error .modal-title-box { border-color: #ff3366; background: rgba(255, 51, 102, 0.1); }
-    .modal-box.error .modal-title { color: #ff3366; text-shadow: 0 0 8px #ff3366; }
-    .modal-box.error .modal-btn { border-color: #ff3366; background: rgba(255, 51, 102, 0.15); }
-    .modal-box.error .modal-btn:hover { background: #ff3366; color: #fff; box-shadow: 0 0 15px rgba(255, 51, 102, 0.6); }
+    /* 全息登入 Modal */
+    .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
+    .login-card { background: linear-gradient(180deg, rgba(6, 17, 33, 0.98) 0%, rgba(2, 8, 16, 0.99) 100%); border: 1px solid #00d2ff; box-shadow: 0 0 30px rgba(0, 210, 255, 0.3); width: 88%; max-width: 360px; padding: 25px; text-align: center; }
+    .login-input { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0, 150, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.4); color: #fff; font-family: 'Orbitron'; text-align: center; font-size: 0.9rem; outline: none; }
+    .login-input:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
+    .remember-box { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px; font-size: 0.8rem; color: #a0d8ef; }
+    
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.85); backdrop-filter: blur(8px); display: none; justify-content: center; align-items: center; z-index: 1001; }
+    .modal-box { background: rgba(6, 17, 33, 0.98); border: 1px solid #00d2ff; width: 88%; max-width: 380px; padding: 22px; text-align: center; }
+    .modal-box.error { border-color: #ff3366; } .modal-box.error .modal-btn { border-color: #ff3366; background: rgba(255,51,102,0.15); }
+    .modal-msg { font-size: 0.9rem; color: #e2e8f0; margin-bottom: 20px; text-align: left; }
+    .modal-btn { width: 100%; padding: 10px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -103,10 +98,25 @@
     <div class="loading-subtext">正在連結雲端主機進行影像 OCR 與 AI 語意解析</div>
   </div>
 
+  <!-- 登入與建立帳號視窗 -->
+  <div class="login-overlay" id="loginModal">
+    <div class="login-card">
+      <div class="title-box" style="margin-bottom: 20px;"><span class="title-text">PLAYER AUTHENTICATION</span></div>
+      <p style="color: #64748b; font-size: 0.75rem; margin-bottom: 20px;">輸入帳號代稱與密碼。無紀錄將自動建立全新玩家檔案。</p>
+      <input type="text" id="login-user" class="login-input" placeholder="帳號代稱 (USER ID)">
+      <input type="password" id="login-pwd" class="login-input" placeholder="安全密碼 (PASSWORD)">
+      <div class="remember-box">
+        <input type="checkbox" id="remember-me" checked>
+        <label for="remember-me">記住登入狀態 (AUTO LOGIN)</label>
+      </div>
+      <button class="upload-action-btn" onclick="handleLogin()">[ ENTER SYSTEM ]</button>
+    </div>
+  </div>
+
   <!-- 科幻風自訂提示彈窗 -->
   <div class="modal-overlay" id="customModal">
     <div class="modal-box" id="modalBox">
-      <div class="modal-title-box"><span class="modal-title" id="modalTitle">SYSTEM NOTIFICATION</span></div>
+      <div class="title-box" style="margin-bottom: 15px;"><span class="title-text" id="modalTitle" style="font-size: 0.85rem;">SYSTEM MSG</span></div>
       <div class="modal-msg" id="modalMsg">--</div>
       <button class="modal-btn" onclick="closeSystemModal()">[ ACKNOWLEDGE ]</button>
     </div>
@@ -120,7 +130,10 @@
       
       <!-- 狀態面板 -->
       <div id="status-view">
-        <div class="header"><div class="title-box"><span class="title-text">STATUS WINDOW</span></div></div>
+        <div class="header">
+          <div class="title-box"><span class="title-text">! STATUS WINDOW</span></div>
+          <div class="user-tag" id="userTag" onclick="logout()">[LOGOUT]</div>
+        </div>
         
         <div class="layer-1">
           <div class="class-box">職業 (CLASS)<br><div class="class-name">暗影潛伏者</div></div>
@@ -167,6 +180,14 @@
             <div class="data-row"><span class="data-label">內臟脂肪面積 (VFA)</span><span class="data-val" id="ui-vfa">-- cm²</span></div>
           </div>
         </div>
+
+        <!-- 第五層：歷史趨勢折線圖 -->
+        <div class="layer-5">
+          <div class="layer-title">▶ BODY COMPOSITION TRENDS (最近10次變化)</div>
+          <div class="trend-chart-container">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
         
         <input type="file" id="file-input" accept="image/*">
         <button class="upload-action-btn" onclick="document.getElementById('file-input').click()">[ UPDATE DATA SCANNED ]</button>
@@ -175,59 +196,59 @@
       <!-- 任務面板 -->
       <div id="quest-view">
         <div class="header">
-          <div class="title-box" style="border-color: #facc15; background: rgba(250, 204, 21, 0.1); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);">
-            <span class="title-text" style="color: #facc15; text-shadow: 0 0 10px #facc15;">Main Quest</span>
+          <div class="title-box" style="border-color: #facc15; background: rgba(250, 204, 21, 0.1);">
+            <span class="title-text" style="color: #facc15;">Main Quest</span>
           </div>
         </div>
         <div class="quest-card">
           <div class="quest-title">[ 每日任務：控制指南 ]</div>
-          <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">系統根據玩家目前屬性，生成之最佳化目標。點擊展開詳細攻略。</p>
+          <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">系統根據玩家目前屬性，生成之最佳化目標。</p>
           
-          <div class="quest-group" id="q-group-target">
+          <div class="quest-group">
             <div class="quest-item" onclick="toggleQuestDetails('q-detail-1')">
               <span class="q-label">目標體重 (Target)</span>
               <span class="q-val" id="q-target">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-1">
               <div class="ai-suggestion-title">💬 系統 AI 解析攻略：</div>
-              <div class="ai-suggestion-text" id="q-advice-target">請先上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成，僅供建議與參考。</div>
+              <div class="ai-suggestion-text" id="q-advice-target">請上傳 InBody 報告以載入專屬通關攻略。</div>
+              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
-          <div class="quest-group" id="q-group-weight">
+          <div class="quest-group">
             <div class="quest-item" id="q-item-weight" onclick="toggleQuestDetails('q-detail-2')">
               <span class="q-label">體重控制 (Weight Ctrl)</span>
               <span class="q-val" id="q-weight-ctrl">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-2">
               <div class="ai-suggestion-title">💬 系統 AI 解析攻略：</div>
-              <div class="ai-suggestion-text" id="q-advice-weight">請先上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成，僅供建議與參考。</div>
+              <div class="ai-suggestion-text" id="q-advice-weight">請上傳 InBody 報告以載入專屬通關攻略。</div>
+              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
-          <div class="quest-group" id="q-group-muscle">
+          <div class="quest-group">
             <div class="quest-item" id="q-item-muscle" onclick="toggleQuestDetails('q-detail-3')">
               <span class="q-label">肌肉控制 (Muscle Ctrl)</span>
               <span class="q-val" id="q-muscle-ctrl">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-3">
               <div class="ai-suggestion-title">✨ 系統 AI 解析攻略：</div>
-              <div class="ai-suggestion-text" id="q-advice-muscle">請先上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成，僅供建議與參考。</div>
+              <div class="ai-suggestion-text" id="q-advice-muscle">請上傳 InBody 報告以載入專屬通關攻略。</div>
+              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
-          <div class="quest-group" id="q-group-fat">
+          <div class="quest-group">
             <div class="quest-item" id="q-item-fat" onclick="toggleQuestDetails('q-detail-4')">
               <span class="q-label">脂肪控制 (Fat Ctrl)</span>
               <span class="q-val" id="q-fat-ctrl">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-4">
               <div class="ai-suggestion-title">💬 系統 AI 解析攻略：</div>
-              <div class="ai-suggestion-text" id="q-advice-fat">請先上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成，僅供建議與參考。</div>
+              <div class="ai-suggestion-text" id="q-advice-fat">請上傳 InBody 報告以載入專屬通關攻略。</div>
+              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
@@ -243,39 +264,86 @@
   </div>
 
   <script>
-    // ⚠️ 請確認你的 GAS Web App URL
-    const GAS_URL = '貼上你的_WEB_APP_URL_在這裡';
+    // ⚠️ 請填入你的 GAS Web App URL
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcYSWpFsizRBiiYrNaeUSsvkskvFj9fMDWOIh3_6MdUGlzGQ0ut-U9hjIny1Y8QZKBvA/exec';
 
-    let radarChart;
+    let radarChart, trendChart;
     let currentChartType = 'muscle';
+    let currentUser = '', currentPwd = '';
     let chartData = { labels: ['軀幹', '右臂', '右腿', '左腿', '左臂'], muscle: [0,0,0,0,0], fat: [0,0,0,0,0] };
 
-    window.onload = () => { initRadarChart(); };
+    window.onload = () => { 
+      initRadarChart(); 
+      initTrendChart();
+      checkAutoLogin();
+    };
 
-    // ================= 新增：科幻 UI 提示彈窗控制 =================
-    function showSystemModal(message, type = 'info', title = 'SYSTEM NOTIFICATION') {
-      const modal = document.getElementById('customModal');
-      const box = document.getElementById('modalBox');
-      const titleEl = document.getElementById('modalTitle');
-      const msgEl = document.getElementById('modalMsg');
+    // 自動登入檢查
+    function checkAutoLogin() {
+      const savedUser = localStorage.getItem('inbody_user');
+      const savedPwd = localStorage.getItem('inbody_pwd');
+      if (savedUser && savedPwd) {
+        document.getElementById('login-user').value = savedUser;
+        document.getElementById('login-pwd').value = savedPwd;
+        handleLogin(true);
+      }
+    }
 
-      titleEl.innerText = title;
-      msgEl.innerText = message;
+    // 處理登入請求
+    async function handleLogin(isAuto = false) {
+      const user = document.getElementById('login-user').value.trim();
+      const pwd = document.getElementById('login-pwd').value.trim();
+      const remember = document.getElementById('remember-me').checked;
 
-      if (type === 'error') {
-        box.classList.add('error');
-      } else {
-        box.classList.remove('error');
+      if (!user || !pwd) {
+        showSystemModal('請輸入完整的帳號與密碼！', 'error');
+        return;
       }
 
-      modal.style.display = 'flex';
+      document.getElementById('loadingOverlay').style.display = 'flex';
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'login', username: user, password: pwd })
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          currentUser = user;
+          currentPwd = pwd;
+          if (remember) {
+            localStorage.setItem('inbody_user', user);
+            localStorage.setItem('inbody_pwd', pwd);
+          } else {
+            localStorage.removeItem('inbody_user');
+            localStorage.removeItem('inbody_pwd');
+          }
+
+          document.getElementById('userTag').innerText = `[${user}]`;
+          document.getElementById('loginModal').style.display = 'none';
+
+          if (result.latest) {
+            updateUIWithData(result.latest, result.history);
+          }
+          if (!isAuto) showSystemModal(`歡迎登入，玩家 ${user}！已讀取最新歷史紀錄。`, 'info');
+        } else {
+          showSystemModal('登入失敗：' + result.message, 'error');
+        }
+      } catch (e) {
+        showSystemModal('連線伺服器發生錯誤。', 'error');
+      } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+      }
     }
 
-    function closeSystemModal() {
-      document.getElementById('customModal').style.display = 'none';
+    function logout() {
+      localStorage.removeItem('inbody_user');
+      localStorage.removeItem('inbody_pwd');
+      location.reload();
     }
 
-    // ================= 上傳觸發與 API 通訊 =================
+    // 上傳檔案處理
     document.getElementById('file-input').addEventListener('change', async function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -288,23 +356,24 @@
 
         const response = await fetch(GAS_URL, {
           method: 'POST',
-          body: JSON.stringify({ image: base64Data })
+          body: JSON.stringify({ 
+            action: 'upload', 
+            username: currentUser, 
+            password: currentPwd, 
+            image: base64Data 
+          })
         });
         
         const result = await response.json();
 
         if (result.status === 'success') {
-          updateUIWithData(result.data);
-          // 改用自訂科幻風彈窗
-          showSystemModal('身體屬性與控制任務數據已成功同步至系統！', 'info', 'SUCCESS SYNCHRONIZED');
+          updateUIWithData(result.latest, result.history);
+          showSystemModal('數據解析成功，已寫入個人紀錄！', 'info');
         } else {
-          // 改用自訂科幻風彈窗 (錯誤風格)
-          showSystemModal('解析錯誤：' + result.message, 'error', 'PARSING ERROR');
+          showSystemModal('解析錯誤：' + result.message, 'error');
         }
       } catch (error) {
-        // 改用自訂科幻風彈窗 (錯誤風格)
-        showSystemModal('連線主機發生錯誤，請檢查網路連線或 CORS 設定。', 'error', 'CONNECTIVITY ERROR');
-        console.error(error);
+        showSystemModal('連線發生錯誤。', 'error');
       } finally {
         document.getElementById('loadingOverlay').style.display = 'none';
         e.target.value = '';
@@ -320,7 +389,9 @@
       });
     }
 
-    function updateUIWithData(data) {
+    function updateUIWithData(data, history) {
+      if (!data) return;
+
       document.getElementById('ui-score').innerText = `Lv. ${data.score || 0}`;
       document.getElementById('ui-height').innerText = `${data.height || 0} cm`;
       document.getElementById('ui-weight').innerText = `${data.weight || 0} kg`;
@@ -339,16 +410,13 @@
       if(data.seg_muscle && data.seg_fat) {
         chartData.muscle = [data.seg_muscle.trunk, data.seg_muscle.r_arm, data.seg_muscle.r_leg, data.seg_muscle.l_leg, data.seg_muscle.l_arm];
         chartData.fat = [data.seg_fat.trunk, data.seg_fat.r_arm, data.seg_fat.r_leg, data.seg_fat.l_leg, data.seg_fat.l_arm];
-        
         radarChart.data.datasets[0].data = (currentChartType === 'muscle') ? chartData.muscle : chartData.fat;
         radarChart.update();
       }
 
       if (data.control_guide) {
         const cg = data.control_guide;
-        
         document.getElementById('q-target').innerText = cg.target_weight ? `${cg.target_weight} kg` : '-- kg';
-        
         updateControlItem('q-item-weight', 'q-weight-ctrl', cg.weight_ctrl);
         updateControlItem('q-item-muscle', 'q-muscle-ctrl', cg.muscle_ctrl);
         updateControlItem('q-item-fat', 'q-fat-ctrl', cg.fat_ctrl);
@@ -360,26 +428,25 @@
           if (cg.advice.fat) document.getElementById('q-advice-fat').innerText = cg.advice.fat;
         }
       }
+
+      // 更新 Layer 5 歷史趨勢折線圖
+      if (history && history.length > 0) {
+        trendChart.data.labels = history.map(h => h.date.substring(5)); // 只取 MM-DD
+        trendChart.data.datasets[0].data = history.map(h => h.weight);
+        trendChart.data.datasets[1].data = history.map(h => h.smm);
+        trendChart.data.datasets[2].data = history.map(h => h.pbf);
+        trendChart.update();
+      }
     }
 
     function updateControlItem(itemId, valId, val) {
       const itemEl = document.getElementById(itemId);
       const valEl = document.getElementById(valId);
-      
-      if (val === null || val === undefined) {
-        valEl.innerText = '-- kg';
-        return;
-      }
-
+      if (val === null || val === undefined) { valEl.innerText = '-- kg'; return; }
       if (val === 0 || val === 0.0) {
-        valEl.innerText = '+ 0.0 kg (達成)';
-        valEl.style.color = '#4ade80';
-        itemEl.classList.add('completed');
+        valEl.innerText = '+ 0.0 kg (達成)'; valEl.style.color = '#4ade80'; itemEl.classList.add('completed');
       } else {
-        const prefix = val > 0 ? '+ ' : '';
-        valEl.innerText = `${prefix}${val} kg`;
-        valEl.style.color = '#ff3366';
-        itemEl.classList.remove('completed');
+        const prefix = val > 0 ? '+ ' : ''; valEl.innerText = `${prefix}${val} kg`; valEl.style.color = '#ff3366'; itemEl.classList.remove('completed');
       }
     }
 
@@ -389,9 +456,17 @@
       if (level >= 1 && level <= 8) { vflDiv.innerHTML = `Lv. ${level}`; vflDiv.classList.add('vfl-safe'); } 
       else if (level >= 9 && level <= 10) { vflDiv.innerHTML = `Lv. ${level}`; vflDiv.classList.add('vfl-warn'); } 
       else if (level >= 11 && level <= 15) { vflDiv.innerHTML = `Lv. ${level}`; vflDiv.classList.add('vfl-danger'); } 
-      else if (level > 15) { vflDiv.innerHTML = `<span class="alert-icon">⚠️</span>Lv. ${level}`; vflDiv.classList.add('vfl-fatal'); } 
       else { vflDiv.innerHTML = `Lv. ${level}`; }
     }
+
+    function showSystemModal(message, type = 'info') {
+      const modal = document.getElementById('customModal');
+      const box = document.getElementById('modalBox');
+      document.getElementById('modalMsg').innerText = message;
+      if (type === 'error') box.classList.add('error'); else box.classList.remove('error');
+      modal.style.display = 'flex';
+    }
+    function closeSystemModal() { document.getElementById('customModal').style.display = 'none'; }
 
     function switchTab(tab) {
       document.getElementById('status-view').style.display = (tab === 'status') ? 'block' : 'none';
@@ -407,8 +482,35 @@
       const ctx = document.getElementById('radarChart').getContext('2d');
       radarChart = new Chart(ctx, {
         type: 'radar',
-        data: { labels: chartData.labels, datasets: [{ label: '肌肉分布 (%)', data: chartData.muscle, backgroundColor: 'rgba(0, 210, 255, 0.25)', borderColor: '#00d2ff', borderWidth: 2, pointBackgroundColor: '#fff', pointBorderColor: '#00d2ff', pointRadius: 4 }] },
-        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { angleLines: { color: 'rgba(0, 150, 255, 0.2)' }, grid: { color: 'rgba(0, 150, 255, 0.2)', circular: true }, pointLabels: { color: '#a0d8ef', font: { family: 'Noto Sans TC', size: 11, weight: 'bold' } }, min: 75, max: 125, ticks: { display: false } } }, animation: { duration: 800, easing: 'easeOutQuart' } }
+        data: { labels: chartData.labels, datasets: [{ label: '肌肉分布 (%)', data: chartData.muscle, backgroundColor: 'rgba(0, 210, 255, 0.25)', borderColor: '#00d2ff', borderWidth: 2 }] },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { r: { angleLines: { color: 'rgba(0, 150, 255, 0.2)' }, grid: { color: 'rgba(0, 150, 255, 0.2)' }, pointLabels: { color: '#a0d8ef' }, min: 75, max: 125, ticks: { display: false } } } }
+      });
+    }
+
+    function initTrendChart() {
+      const ctx = document.getElementById('trendChart').getContext('2d');
+      trendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: [],
+          datasets: [
+            { label: '體重 (kg)', data: [], borderColor: '#00d2ff', backgroundColor: '#00d2ff', tension: 0.3, yAxisID: 'y' },
+            { label: '肌肉 (kg)', data: [], borderColor: '#4ade80', backgroundColor: '#4ade80', tension: 0.3, yAxisID: 'y' },
+            { label: '體脂 (%)', data: [], borderColor: '#ff3366', backgroundColor: '#ff3366', tension: 0.3, yAxisID: 'y1' }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#a0d8ef', font: { size: 10 } } }
+          },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+            y: { position: 'left', grid: { color: 'rgba(0, 210, 255, 0.1)' }, ticks: { color: '#00d2ff' } },
+            y1: { position: 'right', grid: { drawOnChartArea: false }, ticks: { color: '#ff3366' } }
+          }
+        }
       });
     }
 
@@ -420,10 +522,10 @@
 
       if (currentChartType === 'muscle') {
         currentChartType = 'fat'; switchContainer.classList.add('fat-mode'); bg.classList.add('fat-mode'); optMuscle.classList.remove('active'); optFat.classList.add('active');
-        radarChart.data.datasets[0].data = chartData.fat; radarChart.data.datasets[0].label = '脂肪分布 (%)'; radarChart.data.datasets[0].backgroundColor = 'rgba(255, 51, 102, 0.25)'; radarChart.data.datasets[0].borderColor = '#ff3366'; radarChart.data.datasets[0].pointBorderColor = '#ff3366'; radarChart.options.scales.r.angleLines.color = 'rgba(255, 51, 102, 0.2)'; radarChart.options.scales.r.grid.color = 'rgba(255, 51, 102, 0.2)';
+        radarChart.data.datasets[0].data = chartData.fat; radarChart.data.datasets[0].borderColor = '#ff3366';
       } else {
         currentChartType = 'muscle'; switchContainer.classList.remove('fat-mode'); bg.classList.remove('fat-mode'); optMuscle.classList.add('active'); optFat.classList.remove('active');
-        radarChart.data.datasets[0].data = chartData.muscle; radarChart.data.datasets[0].label = '肌肉分布 (%)'; radarChart.data.datasets[0].backgroundColor = 'rgba(0, 210, 255, 0.25)'; radarChart.data.datasets[0].borderColor = '#00d2ff'; radarChart.data.datasets[0].pointBorderColor = '#00d2ff'; radarChart.options.scales.r.angleLines.color = 'rgba(0, 150, 255, 0.2)'; radarChart.options.scales.r.grid.color = 'rgba(0, 150, 255, 0.2)';
+        radarChart.data.datasets[0].data = chartData.muscle; radarChart.data.datasets[0].borderColor = '#00d2ff';
       }
       radarChart.update();
     }
