@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>玩家系統介面 - 職業進化完整版</title>
+  <title>賽博 RPG - 健身狀態與職業進化系統</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background-color: #030712; background-image: linear-gradient(rgba(0, 150, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 150, 255, 0.05) 1px, transparent 1px); background-size: 30px 30px; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
 
-    /* 主視窗框架 */
+    /* ===== 主視窗框架 ===== */
     .status-window { background: linear-gradient(180deg, rgba(6, 17, 33, 0.95) 0%, rgba(2, 8, 16, 0.98) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(80, 227, 255, 0.4); width: 100%; max-width: 480px; height: 90vh; display: flex; flex-direction: column; position: relative; box-shadow: inset 0 0 60px rgba(0, 130, 255, 0.1), 0 0 25px rgba(0, 130, 255, 0.2); overflow: hidden; }
     .scroll-content::-webkit-scrollbar { display: none; }
     .scroll-content { padding: 24px; overflow-y: auto; flex: 1; position: relative; z-index: 11; }
@@ -21,7 +21,7 @@
     .corner-decors::before, .corner-decors::after { content: ''; position: absolute; width: 15px; height: 15px; border: 2px solid #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
     .corner-decors::before { top: 10px; left: 10px; border-right: none; border-bottom: none; } .corner-decors::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
 
-    /* 抬頭與屬性樣式 */
+    /* ===== 抬頭與屬性樣式 ===== */
     .layer-title { font-family: 'Orbitron', sans-serif; color: #00d2ff; font-size: 0.85rem; letter-spacing: 2px; border-bottom: 1px solid rgba(0, 210, 255, 0.3); padding-bottom: 4px; margin-bottom: 15px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; }
     .header { text-align: center; margin-bottom: 20px; position: relative; }
     .title-box { display: inline-flex; align-items: center; border: 1px solid rgba(195, 240, 255, 0.6); padding: 6px 20px; background: rgba(0, 150, 255, 0.1); box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); }
@@ -37,7 +37,7 @@
     .grid-item { text-align: center; padding: 6px 0; } .grid-label { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; } .grid-value { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; color: #e2e8f0; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);}
     .vfl-safe { color: #4ade80 !important; } .vfl-warn { color: #facc15 !important; } .vfl-danger { color: #ff3366 !important; }
 
-    /* 圖表與細節 */
+    /* ===== 圖表與數據組 ===== */
     .layer-3 { margin-bottom: 25px; position: relative; }
     .toggle-switch { position: relative; display: flex; width: 140px; height: 26px; background: rgba(0, 150, 255, 0.1); border: 1px solid rgba(0, 210, 255, 0.4); border-radius: 13px; cursor: pointer; overflow: hidden; }
     .toggle-bg { position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: rgba(0, 210, 255, 0.3); border-radius: 13px; transition: transform 0.3s; }
@@ -49,7 +49,7 @@
     .layer-4 { margin-bottom: 25px; } .data-group { margin-bottom: 15px; background: rgba(0, 20, 40, 0.4); border-left: 2px solid #00d2ff; padding: 10px 15px; } .data-group-title { font-size: 0.8rem; color: #00d2ff; margin-bottom: 10px; font-weight: bold; } .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;} .data-label { color: #a0d8ef; } .data-val { font-family: 'Orbitron'; color: #fff; font-weight: bold; }
     .layer-5 { margin-bottom: 30px; } .trend-chart-container { position: relative; width: 100%; height: 220px; margin-top: 10px; background: rgba(0, 10, 20, 0.4); padding: 10px; border: 1px solid rgba(0, 210, 255, 0.2); }
 
-    /* 任務面板 */
+    /* ===== 任務面板 ===== */
     #quest-view { display: none; }
     .quest-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #facc15; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(250, 204, 21, 0.1); }
     .quest-title { color: #facc15; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 20px; }
@@ -60,7 +60,7 @@
     .quest-details { display: none; background: rgba(0, 10, 20, 0.6); border-left: 3px solid #facc15; padding: 15px; }
     .ai-suggestion-title { font-size: 0.75rem; color: #00d2ff; margin-bottom: 8px; font-weight: bold; } .ai-suggestion-text { font-size: 0.85rem; color: #cbd5e1; line-height: 1.6; margin-bottom: 15px; } .ai-warning { font-size: 0.7rem; color: #ff3366; text-align: right; }
 
-    /* 底部導航 & 上傳 */
+    /* ===== 底部導航與按鈕 ===== */
     .bottom-nav { display: flex; gap: 10px; padding: 15px 24px; background: rgba(2, 8, 16, 0.9); border-top: 1px solid rgba(0, 210, 255, 0.3); z-index: 12; }
     .nav-btn { flex: 1; padding: 12px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
     .btn-status { background: rgba(0, 150, 255, 0.2); border: 1px solid #00d2ff; color: #c3f0ff; }
@@ -68,14 +68,13 @@
     #file-input { display: none; }
     .upload-action-btn { width: 100%; margin-top: 20px; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 
-    /* Loading Overlay */
+    /* ===== Overlays & Modals ===== */
     .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(8px); }
     .loading-spinner { width: 60px; height: 60px; border: 3px solid transparent; border-top-color: #00d2ff; border-bottom-color: #00d2ff; border-radius: 50%; animation: spin 1.5s linear infinite; margin-bottom: 20px; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .loading-text { font-family: 'Orbitron'; color: #00d2ff; font-size: 1.2rem; letter-spacing: 4px; }
     .loading-subtext { margin-top: 10px; font-size: 0.8rem; color: #64748b; }
 
-    /* 全息登入 Modal */
     .login-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.95); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(10px); }
     .login-card { background: linear-gradient(180deg, rgba(6, 17, 33, 0.98) 0%, rgba(2, 8, 16, 0.99) 100%); border: 1px solid #00d2ff; box-shadow: 0 0 30px rgba(0, 210, 255, 0.3); width: 88%; max-width: 360px; padding: 25px; text-align: center; }
     .login-input { width: 100%; padding: 12px; margin-bottom: 15px; background: rgba(0, 150, 255, 0.05); border: 1px solid rgba(0, 210, 255, 0.4); color: #fff; font-family: 'Orbitron'; text-align: center; font-size: 0.9rem; outline: none; }
@@ -88,7 +87,7 @@
     .modal-msg { font-size: 0.9rem; color: #e2e8f0; margin-bottom: 20px; text-align: left; }
     .modal-btn { width: 100%; padding: 10px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 
-    /* ========== 職業選擇 Modal 樣式 (Carousel) ========== */
+    /* ===== 職業選擇 Modal 樣式 (Carousel) ===== */
     .class-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.95); backdrop-filter: blur(12px); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 1005; }
     .class-header-box { text-align: center; margin-bottom: 20px; }
     .class-title-tag { display: inline-block; border: 1px solid #facc15; background: rgba(250, 204, 21, 0.1); padding: 5px 18px; font-family: 'Orbitron'; color: #facc15; font-size: 0.9rem; letter-spacing: 2px; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
@@ -104,7 +103,6 @@
     .card-top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: 'Orbitron'; font-size: 0.75rem; color: #64748b; }
     .class-badge { padding: 3px 10px; border-radius: 2px; font-weight: bold; font-size: 0.7rem; letter-spacing: 1px; }
 
-    /* 裁切圖片 Frame */
     .sprite-frame { width: 100%; height: 175px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.2); overflow: hidden; position: relative; margin-bottom: 12px; background: #000; }
     .thumb-frame { width: 56px; height: 35px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.3); overflow: hidden; position: relative; flex-shrink: 0; background: #000; }
     .sprite-img, .thumb-img { position: absolute; max-width: none; transition: all 0.3s ease; transform-origin: top left; }
@@ -120,7 +118,7 @@
     .confirm-btn { width: 100%; max-width: 340px; margin-top: 20px; padding: 14px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; font-size: 0.95rem; letter-spacing: 2px; cursor: pointer; transition: 0.3s; text-transform: uppercase; }
     .confirm-btn:hover { background: #00d2ff; color: #000; box-shadow: 0 0 25px rgba(0, 210, 255, 0.6); }
 
-    /* 各職業色彩主題 */
+    /* 各職業主題色彩 */
     .theme-blue { border-color: #00d2ff !important; box-shadow: 0 0 30px rgba(0, 210, 255, 0.3) !important; }
     .theme-blue .class-badge { background: rgba(0, 210, 255, 0.2); color: #00d2ff; border: 1px solid #00d2ff; }
     .theme-blue .evolution-box { border-left-color: #00d2ff; } .theme-blue .evo-title { color: #00d2ff; }
@@ -155,9 +153,9 @@
   <div class="login-overlay" id="loginModal">
     <div class="login-card">
       <div class="title-box" style="margin-bottom: 20px;"><span class="title-text">PLAYER AUTHENTICATION</span></div>
-      <p style="color: #64748b; font-size: 0.75rem; margin-bottom: 20px;">輸入帳號代稱與密碼。新玩家將觸發職業選擇選單。</p>
-      <input type="text" id="login-user" class="login-input" placeholder="帳號代稱 (USER ID)">
-      <input type="password" id="login-pwd" class="login-input" placeholder="安全密碼 (PASSWORD)">
+      <p style="color: #64748b; font-size: 0.75rem; margin-bottom: 20px;">輸入帳號與密碼。</p>
+      <input type="text" id="login-user" class="login-input" placeholder="USER ID">
+      <input type="password" id="login-pwd" class="login-input" placeholder="PASSWORD">
       <div class="remember-box">
         <input type="checkbox" id="remember-me" checked>
         <label for="remember-me">記住登入狀態 (AUTO LOGIN)</label>
@@ -355,10 +353,10 @@
   </div>
 
   <script>
-    // ⚠️ 請填入你的 GAS Web App URL
-    const GAS_URL = '貼上你的_WEB_APP_URL_在這裡';
+    // ⚠️ 請填入您的 GAS Web App URL
+    const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcYSWpFsizRBiiYrNaeUSsvkskvFj9fMDWOIh3_6MdUGlzGQ0ut-U9hjIny1Y8QZKBvA/exec';
 
-    // ⚠️ 圖片檔名 (需與 HTML 在同一資料夾或使用 Imgur 網址)
+    // ⚠️ 請確保與圖片檔同資料夾或貼上 Imgur 網址
     const CLASS_TREE_IMAGE = "uniform_class_cards.png";
 
     let radarChart, trendChart;
@@ -371,7 +369,7 @@
       { name: "摸魚大隊長", row: 0, badge: "DEFENSE", theme: "theme-blue", colorCode: "#00d2ff", tier2: "國寶級薪水小偷", tier3: "辦公室不動明王", desc: "偏重肌肉量增長與體能防禦力累積，建立穩如泰山的硬核防線。" },
       { name: "精神小伙", row: 1, badge: "MUSCLE", theme: "theme-green", colorCode: "#4ade80", tier2: "時間管理大師", tier3: "血汗工廠鋼鐵人", desc: "追求極致骨骼肌重與高基礎代謝率，轉化能量為純粹的鋼鐵力量。" },
       { name: "下午茶法師", row: 2, badge: "FAT-BURN", theme: "theme-pink", colorCode: "#ff3366", tier2: "珍珠奶茶大召喚師", tier3: "糖分帝國締造者", desc: "專精降低體脂肪率與內臟脂肪等級，完成糖分轉化與魔力淨化。" },
-      { name: "甩鍋防禦者", row: 3, badge: "AGILITY", theme: "theme-purple", colorCode: "#c084fc", tier2: "太極拳第 87 代傳人", tier3: "責任蒸發尊者", desc: "追求極致腰臀比與低體脂率，達到體脂與責任一併蒸發的境界。" },
+      { name: "甩鍋防禦者", row: 3, badge: "AGILITY", theme: "theme-purple", colorCode: "#c084fc", tier2: "太極拳第 87 代傳人", tier3: "責任尊者", desc: "追求極致腰臀比與低體脂率，達到體脂與責任一併蒸發的境界。" },
       { name: "飄逸幽靈", row: 4, badge: "SPEED", theme: "theme-yellow", colorCode: "#facc15", tier2: "下班打卡疾風手", tier3: "空間縫隙潛行者", desc: "維持輕盈敏捷體態同時微幅提升肌肉質量，實現終極的空間潛行。" }
     ];
 
@@ -418,12 +416,11 @@
           document.getElementById('userTag').innerText = `[${user}]`;
           document.getElementById('loginModal').style.display = 'none';
 
-          // 判斷是否為全新使用者 (若新帳號無歷史資料，彈出職業選擇)
-          if (!result.history || result.history.length === 0) {
+          if (result.isNewUser) {
             openClassModal();
           } else {
             if (result.latest) updateUIWithData(result.latest, result.history);
-            if (!isAuto) showSystemModal(`歡迎回來，玩家 ${user}！已讀取最新歷史紀錄。`, 'info');
+            if (!isAuto) showSystemModal(`歡迎回來，玩家 ${user}！已成功載入資料。`, 'info');
           }
         } else {
           showSystemModal('登入失敗：' + result.message, 'error');
@@ -441,11 +438,12 @@
       renderCard();
     }
 
-    // 裁切縮放演算法
+    // 自動計算精確裁切與縮放比例
     function applySpritePosition(elementId, row, col) {
       const el = document.getElementById(elementId);
       if (!el) return;
       const parent = el.parentElement;
+      
       const imgWidth = 2032, imgHeight = 2160, cardW = 640, cardH = 400, gapX = 24, gapY = 24, margin = 32;
 
       const rawLeft = margin + col * (cardW + gapX);
@@ -491,11 +489,35 @@
       renderCard();
     }
 
-    function confirmClassSelection() {
+    // 創角完成並傳送至後端
+    async function confirmClassSelection() {
       const selected = classesData[currentClassIndex];
       document.getElementById('userClassDisplay').innerText = selected.name;
       document.getElementById('classSelectModal').style.display = 'none';
-      showSystemModal(`[角色創建成功] 已選擇初始職業：【${selected.name}】！`, 'info');
+
+      document.getElementById('loadingOverlay').style.display = 'flex';
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'initClass',
+            username: currentUser,
+            password: currentPwd,
+            selectedClass: selected.name
+          })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請點擊下方按鈕上傳首張 InBody 報告以鎖定 Baseline。`, 'info');
+        } else {
+          showSystemModal('職業設定失敗：' + result.message, 'error');
+        }
+      } catch (e) {
+        showSystemModal('連線伺服器發生錯誤。', 'error');
+      } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+      }
     }
 
     function logout() {
@@ -523,7 +545,7 @@
         const result = await response.json();
         if (result.status === 'success') {
           updateUIWithData(result.latest, result.history);
-          showSystemModal('數據解析成功，已寫入個人紀錄！', 'info');
+          showSystemModal('數據解析成功，已同步寫入個人資料庫！', 'info');
         } else {
           showSystemModal('解析錯誤：' + result.message, 'error');
         }
@@ -542,8 +564,14 @@
       });
     }
 
+    // 動態更新 UI 數據 (包含最新轉職稱號)
     function updateUIWithData(data, history) {
       if (!data) return;
+
+      // 🟢 更新最新職業稱號
+      if (data.title) {
+        document.getElementById('userClassDisplay').innerText = data.title;
+      }
 
       document.getElementById('ui-score').innerText = `Lv. ${data.score || 0}`;
       document.getElementById('ui-height').innerText = `${data.height || 0} cm`;
@@ -582,7 +610,7 @@
         }
       }
 
-      // 更新歷史變化圖表
+      // 更新歷史變化趨勢圖
       if (history && history.length > 0) {
         trendChart.data.labels = history.map(h => h.date.substring(5));
         trendChart.data.datasets[0].data = history.map(h => h.weight);
@@ -680,6 +708,7 @@
       radarChart.update();
     }
 
+    // 當瀏覽器視窗大小調整時重新計算圖像縮放比例
     window.addEventListener('resize', renderCard);
   </script>
 </body>
