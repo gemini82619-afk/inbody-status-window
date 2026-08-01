@@ -230,14 +230,14 @@
         </div>
 
         <div class="layer-title">BASIC INFO</div>
-        <div class="layer-2">
-          <div class="grid-item"><div class="grid-label">身高</div><div class="grid-value" id="ui-height">-- cm</div></div>
-          <div class="grid-item"><div class="grid-label">體重</div><div class="grid-value" id="ui-weight">-- kg</div></div>
-          <div class="grid-item"><div class="grid-label">BMI</div><div class="grid-value" id="ui-bmi">--</div></div>
-          <div class="grid-item"><div class="grid-label">每日消耗</div><div class="grid-value" id="ui-tdee">-- kcal</div></div>
-          <div class="grid-item"><div class="grid-label">基礎代謝</div><div class="grid-value" id="ui-bmr">-- kcal</div></div>
-          <div class="grid-item"><div class="grid-label">內臟脂肪</div><div class="grid-value" id="vfl-display">Lv. --</div></div>
-        </div>
+<div class="layer-2">
+  <div class="grid-item"><div class="grid-label">身高</div><div class="grid-value" id="ui-height">-- cm</div></div>
+  <div class="grid-item"><div class="grid-label">體重</div><div class="grid-value" id="ui-weight">-- kg</div></div>
+  <div class="grid-item"><div class="grid-label">年齡</div><div class="grid-value" id="ui-age">-- 歲</div></div>
+  <div class="grid-item"><div class="grid-label">BMI</div><div class="grid-value" id="ui-bmi">--</div></div>
+  <div class="grid-item"><div class="grid-label">每日消耗</div><div class="grid-value" id="ui-tdee">-- kcal</div></div>
+  <div class="grid-item"><div class="grid-label">內臟脂肪</div><div class="grid-value" id="vfl-display">Lv. --</div></div>
+</div>
 
         <div class="layer-3">
           <div class="layer-title">
@@ -566,27 +566,26 @@
 
     // 動態更新 UI 數據 (包含最新轉職稱號)
     function updateUIWithData(data, history) {
-      if (!data) return;
+  if (!data) return;
 
-      // 🟢 更新最新職業稱號
-      if (data.title) {
-        document.getElementById('userClassDisplay').innerText = data.title;
-      }
+  if (data.title) {
+    document.getElementById('userClassDisplay').innerText = data.title;
+  }
 
-      document.getElementById('ui-score').innerText = `Lv. ${data.score || 0}`;
-      document.getElementById('ui-height').innerText = `${data.height || 0} cm`;
-      document.getElementById('ui-weight').innerText = `${data.weight || 0} kg`;
-      document.getElementById('ui-weight2').innerText = `${data.weight || 0} kg`;
-      document.getElementById('ui-bmi').innerText = data.bmi || 0;
-      document.getElementById('ui-tdee').innerText = `${data.tdee || 0} kcal`;
-      document.getElementById('ui-bmr').innerText = `${data.bmr || 0} kcal`;
-      document.getElementById('ui-smm').innerText = `${data.smm || 0} kg`;
-      document.getElementById('ui-bfm').innerText = `${data.bfm || 0} kg`;
-      document.getElementById('ui-pbf').innerText = `${data.pbf || 0} %`;
-      document.getElementById('ui-whr').innerText = data.whr || 0;
-      document.getElementById('ui-vfa').innerText = `${data.vfa || 0} cm²`;
-      
-      updateVFLDisplay(data.vfl || 0);
+  document.getElementById('ui-score').innerText = `Lv. ${data.score || 0}`;
+  document.getElementById('ui-height').innerText = `${data.height || 0} cm`;
+  document.getElementById('ui-weight').innerText = `${data.weight || 0} kg`;
+  document.getElementById('ui-weight2').innerText = `${data.weight || 0} kg`;
+  document.getElementById('ui-age').innerText = `${data.age || '--'} 歲`; // 🟢 新增年齡渲染
+  document.getElementById('ui-bmi').innerText = data.bmi || 0;
+  document.getElementById('ui-tdee').innerText = `${data.tdee || 0} kcal`;
+  document.getElementById('ui-smm').innerText = `${data.smm || 0} kg`;
+  document.getElementById('ui-bfm').innerText = `${data.bfm || 0} kg`;
+  document.getElementById('ui-pbf').innerText = `${data.pbf || 0} %`;
+  document.getElementById('ui-whr').innerText = data.whr || 0;
+  document.getElementById('ui-vfa').innerText = `${data.vfa || 0} cm²`;
+  
+  updateVFLDisplay(data.vfl || 0);
 
       if(data.seg_muscle && data.seg_fat) {
         chartData.muscle = [data.seg_muscle.trunk, data.seg_muscle.r_arm, data.seg_muscle.r_leg, data.seg_muscle.l_leg, data.seg_muscle.l_arm];
