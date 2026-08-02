@@ -450,7 +450,7 @@
 
         <!-- ═══════════ MISSION GUIDE ═══════════ -->
         <div class="quest-card guide-card">
-          <div class="quest-title">[ MISSION GUIDE：控制指南 ]</div>
+          <div class="quest-title">[ MISSION GUIDE ]</div>
           <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">系統根據玩家目前屬性，生成之最佳化目標。</p>
 
           <div class="quest-group">
@@ -919,7 +919,7 @@
       }
 
       // mastery 模式：雙軌熟練度進度條
-      subtitle.innerText = '系統根據玩家目前屬性，生成之轉職任務進度。';
+      subtitle.innerText = '轉職任務進度';
       let html = '';
       (quest.metrics || []).forEach(m => {
         const unitLabel = m.unit ? m.unit : '';
@@ -1000,7 +1000,7 @@
       const percent = Math.round((doneCount / DAILY_QUEST_ITEMS.length) * 100);
       document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
       document.getElementById('daily-bar-fill').style.width = `${percent}%`;
-      document.getElementById('daily-streak').innerText = `🔥 ${computeStreak(store)} Days`;
+      document.getElementById('daily-streak').innerText = `${computeStreak(store)} Days`;
     }
 
     function toggleDailyItem(key) {
