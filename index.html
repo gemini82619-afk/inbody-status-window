@@ -3,7 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>賽博 RPG - 健身狀態與職業進化系統</title>
+  <title>獨自升級 - InBody紀錄系統</title>
+
+  <!-- iOS 加入主畫面設定 -->
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <meta name="apple-mobile-web-app-title" content="獨自升級">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <!-- Android / PWA 設定 -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#00d2ff">
+
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
@@ -246,7 +257,7 @@
             <div><div class="evo-label">三轉職業</div><div class="evo-path-title" id="tier3Text">辦公室不動明王</div></div>
           </div>
         </div>
-        <div class="class-desc" id="classDesc">偏重肌肉量增長與體能防禦力累積，建立穩如泰山的硬核防線。</div>
+        <div class="class-desc" id="classDesc">肌肉才是王，重量才夠狂；別人拼線條較量，摸魚摸出真氣場。</div>
       </div>
       <div class="nav-arrow" onclick="changeCard(1)">▶</div>
     </div>
@@ -309,6 +320,7 @@
             <div class="data-group-title">▶ 肌肉 / 脂肪分析</div>
             <div class="data-row"><span class="data-label">體重 (Weight)</span><span class="data-val" id="ui-weight2">-- kg</span></div>
             <div class="data-row"><span class="data-label">骨骼肌肉重 (SMM)</span><span class="data-val" id="ui-smm">-- kg</span></div>
+            <div class="data-row"><span class="data-label">基礎代謝率 (BMR)</span><span class="data-val" id="ui-bmr">-- kcal</span></div>
             <div class="data-row"><span class="data-label">脂肪重 (Body Fat Mass)</span><span class="data-val" id="ui-bfm">-- kg</span></div>
           </div>
           <div class="data-group">
@@ -440,11 +452,26 @@
     };
 
     const classesData = [
-      { name: "摸魚大隊長", row: 0, badge: "DEFENSE", theme: "theme-blue", colorCode: "#00d2ff", tier2: "國寶級薪水小偷", tier3: "辦公室不動明王", desc: "偏重肌肉量增長與體能防禦力累積，建立穩如泰山的硬核防線。" },
-      { name: "精神小伙", row: 1, badge: "MUSCLE", theme: "theme-green", colorCode: "#4ade80", tier2: "時間管理大師", tier3: "血汗工廠鋼鐵人", desc: "追求極致骨骼肌重與高基礎代謝率，轉化能量為純粹的鋼鐵力量。" },
-      { name: "下午茶法師", row: 2, badge: "FAT-BURN", theme: "theme-pink", colorCode: "#ff3366", tier2: "珍珠奶茶大召喚師", tier3: "糖分帝國締造者", desc: "專精降低體脂肪率與內臟脂肪等級，完成糖分轉化與魔力淨化。" },
-      { name: "甩鍋防禦者", row: 3, badge: "AGILITY", theme: "theme-purple", colorCode: "#c084fc", tier2: "太極拳第 87 代傳人", tier3: "責任尊者", desc: "追求極致腰臀比與低體脂率，達到體脂與責任一併蒸發的境界。" },
-      { name: "飄逸幽靈", row: 4, badge: "SPEED", theme: "theme-yellow", colorCode: "#facc15", tier2: "下班打卡疾風手", tier3: "空間縫隙潛行者", desc: "維持輕盈敏捷體態同時微幅提升肌肉質量，實現終極的空間潛行。" }
+      { name: "摸魚大隊長", row: 0, badge: "DEFENSE", theme: "theme-blue", colorCode: "#00d2ff", tier2: "國寶級薪水小偷", tier3: "辦公室不動明王",
+        desc: "肌肉才是王，重量才夠狂；別人拼線條較量，摸魚摸出真氣場。",
+        tier2Desc: "護城河築牆，摸魚也稱王；薪水小偷坐上榜，穩坐辦公室之王。",
+        tier3Desc: "肌肉煉成牆，穩如泰山藏；辦公室不動明王，誰也撼不動城牆。" },
+      { name: "精神小伙", row: 1, badge: "MUSCLE", theme: "theme-green", colorCode: "#4ade80", tier2: "時間管理大師", tier3: "血汗工廠鋼鐵人",
+        desc: "代謝跟著衝，肌肉引擎動；別人加班拚命衝，我靠代謝全開動。",
+        tier2Desc: "效率全開湧，雙修引擎動；時間管理見真雄，每分每秒全力衝。",
+        tier3Desc: "血汗煉成功，永動不落空；血汗工廠稱英雄，燃燒代謝樂無窮。" },
+      { name: "下午茶法師", row: 2, badge: "FAT-BURN", theme: "theme-pink", colorCode: "#ff3366", tier2: "珍珠奶茶大召喚師", tier3: "糖分帝國締造者",
+        desc: "內臟先淨清，體態自然輕；看不出來也能行，糖分帝國我稱贏。",
+        tier2Desc: "脂肪雙雙清，法力漸漸精；召喚師來顯神靈，喝了也能代謝清。",
+        tier3Desc: "體內脂盡清，力量真正精；糖分帝國我稱贏，統治全靠自己明。" },
+      { name: "甩鍋防禦者", row: 3, badge: "AGILITY", theme: "theme-purple", colorCode: "#c084fc", tier2: "太極拳第 87 代傳人", tier3: "責任尊者",
+        desc: "腰線甩得掉，責任也甩掉；體態練得剛剛好，甩鍋甩出新高潮。",
+        tier2Desc: "腰臀降得妙，甩鍋甩得俏；太極勁道更加巧，借力使力甩得掉。",
+        tier3Desc: "責任甩得俏，一身樂逍遙；責任尊者真本事，甩得乾淨甩得妙。" },
+      { name: "飄逸幽靈", row: 4, badge: "SPEED", theme: "theme-yellow", colorCode: "#facc15", tier2: "下班打卡疾風手", tier3: "空間縫隙潛行者",
+        desc: "體重漸漸離，肌肉不能移；別人瘦成沒了力，我輕盈仍然有力。",
+        tier2Desc: "體重再減離，肌肉仍守力；打卡下班快如疾，身輕如燕不費力。",
+        tier3Desc: "形似無形跡，力量藏於己；空間縫隙來去疾，輕盈潛行不留跡。" }
     ];
 
     let currentClassIndex = 0;
@@ -672,6 +699,7 @@
       document.getElementById('ui-bmi').innerText = data.bmi || 0;
       document.getElementById('ui-tdee').innerText = `${data.tdee || 0} kcal`;
       document.getElementById('ui-smm').innerText = `${data.smm || 0} kg`;
+      document.getElementById('ui-bmr').innerText = `${data.bmr || 0} kcal`;
       document.getElementById('ui-bfm').innerText = `${data.bfm || 0} kg`;
       document.getElementById('ui-pbf').innerText = `${data.pbf || 0} %`;
       document.getElementById('ui-whr').innerText = data.whr || 0;
