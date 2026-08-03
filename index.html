@@ -472,7 +472,7 @@
         
         <input type="file" id="file-input" accept="image/*">
         <div class="action-btn-row">
-          <button class="upload-action-btn" onclick="document.getElementById('file-input').click()">[ UPDATE DATA SCANNED ]</button>
+          <button class="upload-action-btn" id="uploadActionBtn" onclick="document.getElementById('file-input').click()">[ UPDATE DATA SCANNED ]</button>
           <button class="manual-action-btn" onclick="openManualModal()">[ 手動輸入 ]</button>
         </div>
       </div>
@@ -549,7 +549,7 @@
           </div>
           <div class="manual-optional-note"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
 
-          <button class="manual-submit-btn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
+          <button class="manual-submit-btn" id="manualSubmitBtn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
           <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">取消</button>
         </div>
       </div>
@@ -851,6 +851,8 @@
       if (!file) return;
 
       document.getElementById('loadingOverlay').style.display = 'flex';
+      const uploadBtn = document.getElementById('uploadActionBtn');
+      uploadBtn.disabled = true; uploadBtn.style.opacity = '0.5'; uploadBtn.style.pointerEvents = 'none';
 
       try {
         const base64Image = await getBase64(file);
@@ -875,9 +877,16 @@
           showSystemModal('解析錯誤：' + result.message, 'error');
         }
       } catch (error) {
-        showSystemModal('連線發生錯誤。', 'error');
+        const recovered = await verifyUploadActuallySucceeded();
+        if (recovered) {
+          updateUIWithData(recovered.latest, recovered.history, recovered.quest);
+          showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複上傳同一張照片。', 'info');
+        } else {
+          showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新上傳，避免產生重複紀錄。', 'error');
+        }
       } finally {
         document.getElementById('loadingOverlay').style.display = 'none';
+        uploadBtn.disabled = false; uploadBtn.style.opacity = '1'; uploadBtn.style.pointerEvents = 'auto';
         e.target.value = '';
       }
     });
@@ -924,6 +933,8 @@
 
       closeManualModal();
       document.getElementById('loadingOverlay').style.display = 'flex';
+      const submitBtn = document.getElementById('manualSubmitBtn');
+      submitBtn.disabled = true; submitBtn.style.opacity = '0.5'; submitBtn.style.pointerEvents = 'none';
 
       try {
         const response = await fetch(GAS_URL, {
@@ -945,14 +956,39 @@
           showSystemModal('輸入錯誤：' + result.message, 'error');
         }
       } catch (error) {
-        showSystemModal('連線發生錯誤。', 'error');
+        const recovered = await verifyUploadActuallySucceeded();
+        if (recovered) {
+          updateUIWithData(recovered.latest, recovered.history, recovered.quest);
+          showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複送出同一筆資料。', 'info');
+        } else {
+          showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新送出，避免產生重複紀錄。', 'error');
+        }
       } finally {
         document.getElementById('loadingOverlay').style.display = 'none';
+        submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.pointerEvents = 'auto';
       }
+    }
+
+    let lastKnownScanDate = null; // 記錄目前畫面上最新一筆紀錄的日期，供連線失敗後比對是否其實已經成功寫入
+
+    // 上傳/手動輸入連線失敗時，主動重新問一次伺服器目前最新紀錄，判斷剛剛是不是其實已經處理成功、只是回應沒送到
+    async function verifyUploadActuallySucceeded() {
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'login', username: currentUser, password: currentPwd, isAuto: true })
+        });
+        const result = await response.json();
+        if (result.status === 'success' && result.latest && result.latest.date !== lastKnownScanDate) {
+          return result; // 發現有新紀錄，代表剛剛其實已經成功寫入，只是回應沒傳到
+        }
+      } catch (e) { /* 重新確認也失敗，就照原本的失敗訊息處理 */ }
+      return null;
     }
 
     function updateUIWithData(data, history, quest) {
       if (!data) return;
+      lastKnownScanDate = data.date || lastKnownScanDate;
 
       currentQuest = quest || null;
       renderQuestStatusBanner(currentQuest);
@@ -1215,7 +1251,9 @@
       document.getElementById('daily-streak').innerText = `${computeStreak(dailyStoreCache)} Days`;
     }
 
-    async function toggleDailyItem(key) {
+    let dailyToggleQueue = Promise.resolve(); // 打卡請求佇列：確保一次只有一個請求在飛，依序處理不重疊
+
+    function toggleDailyItem(key) {
       const today = todayKey();
       // 樂觀更新：先立即反應畫面，不等後端回應，操作起來才不會卡頓
       if (!dailyStoreCache[today]) { dailyStoreCache[today] = { tasks: getTodayTasks(), percent: 0 }; }
@@ -1224,6 +1262,11 @@
       task.checked = !task.checked;
       renderDailyQuest();
 
+      // 排進佇列，等前一個打卡請求處理完才送出下一個，避免併發請求互相覆蓋
+      dailyToggleQueue = dailyToggleQueue.then(() => sendDailyToggle(today, key, task));
+    }
+
+    async function sendDailyToggle(today, key, task) {
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
