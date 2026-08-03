@@ -23,6 +23,38 @@
 
     /* ===== 主視窗框架 ===== */
     .status-window { background: linear-gradient(180deg, rgba(6, 17, 33, 0.95) 0%, rgba(2, 8, 16, 0.98) 100%); backdrop-filter: blur(10px); border: 1px solid rgba(80, 227, 255, 0.4); width: 100%; max-width: 480px; height: 90vh; display: flex; flex-direction: column; position: relative; box-shadow: inset 0 0 60px rgba(0, 130, 255, 0.1), 0 0 25px rgba(0, 130, 255, 0.2); overflow: hidden; }
+
+    /* ═══════════ 頁籤切換雜訊轉場（純CSS + SVG feTurbulence，無外部素材/無Canvas）═══════════ */
+    .glitch-overlay {
+      position: absolute; inset: 0; z-index: 50; pointer-events: none; opacity: 0; mix-blend-mode: screen;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0.5 0.5 0.5 0 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 120px 120px;
+    }
+    .glitch-overlay.active { animation: glitchFlash 300ms steps(6, end); }
+    .glitch-scanline {
+      position: absolute; left: 0; right: 0; top: -60px; height: 60px;
+      background: linear-gradient(180deg, transparent, rgba(0, 210, 255, 0.7), transparent);
+    }
+    .glitch-overlay.active .glitch-scanline { animation: glitchScanSweep 300ms linear; }
+    @keyframes glitchFlash {
+      0% { opacity: 0; } 12% { opacity: 0.5; } 28% { opacity: 0.12; } 42% { opacity: 0.5; }
+      58% { opacity: 0.08; } 75% { opacity: 0.3; } 100% { opacity: 0; }
+    }
+    @keyframes glitchScanSweep { 0% { top: -60px; } 100% { top: 100%; } }
+    .glitch-jitter { animation: glitchJitter 300ms steps(8, end); }
+    @keyframes glitchJitter {
+      0%, 100% { transform: translate(0, 0); filter: none; }
+      12% { transform: translate(-3px, 1px); filter: hue-rotate(10deg); }
+      24% { transform: translate(3px, -1px); filter: none; }
+      36% { transform: translate(-2px, 2px); filter: hue-rotate(-8deg); }
+      48% { transform: translate(2px, -2px); filter: none; }
+      65% { transform: translate(-1px, 1px); }
+      82% { transform: translate(1px, 0); }
+    }
+    /* 使用者系統開啟「減少動態效果」時，跳過雜訊/抖動動畫 */
+    @media (prefers-reduced-motion: reduce) {
+      .glitch-overlay.active, .glitch-overlay.active .glitch-scanline, .glitch-jitter { animation: none !important; }
+    }
     .scroll-content::-webkit-scrollbar { display: none; }
     .scroll-content { padding: 24px; overflow-y: auto; flex: 1; position: relative; z-index: 11; }
     .scanlines { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.03) 51%); background-size: 100% 4px; pointer-events: none; z-index: 10; }
@@ -343,6 +375,7 @@
   </div>
 
   <div class="status-window">
+    <div class="glitch-overlay" id="glitchOverlay"><div class="glitch-scanline"></div></div>
     <div class="scanlines"></div>
     
     <div class="scroll-content">
@@ -1241,8 +1274,27 @@
     function closeSystemModal() { document.getElementById('customModal').style.display = 'none'; }
 
     function switchTab(tab) {
-      document.getElementById('status-view').style.display = (tab === 'status') ? 'block' : 'none';
-      document.getElementById('quest-view').style.display = (tab === 'quest') ? 'block' : 'none';
+      const doSwap = () => {
+        document.getElementById('status-view').style.display = (tab === 'status') ? 'block' : 'none';
+        document.getElementById('quest-view').style.display = (tab === 'quest') ? 'block' : 'none';
+      };
+
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) { doSwap(); return; }
+
+      const overlay = document.getElementById('glitchOverlay');
+      const card = document.querySelector('.status-window');
+      overlay.classList.remove('active');
+      card.classList.remove('glitch-jitter');
+      void overlay.offsetWidth; // 強制重繪，讓快速連續點擊時動畫也能重新播放
+      overlay.classList.add('active');
+      card.classList.add('glitch-jitter');
+
+      setTimeout(doSwap, 90); // 在雜訊閃爍最亮的時間點切換內容，把瞬間跳動蓋住
+      setTimeout(() => {
+        overlay.classList.remove('active');
+        card.classList.remove('glitch-jitter');
+      }, 300);
     }
 
     function toggleQuestDetails(detailId) {
