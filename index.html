@@ -1256,22 +1256,23 @@
       document.getElementById('daily-streak').innerText = `${computeStreak(dailyStoreCache)} Days`;
     }
 
-    let dailyToggleQueue = Promise.resolve(); // 打卡請求佇列：確保一次只有一個請求在飛，依序處理不重疊
+    let dailyToggleQueue = Promise.resolve(); // 打卡佇列：把「讀取狀態→翻轉→顯示→送出→定案」整個流程都排進同一個序列，
+                                               // 確保上一次點擊完全處理完(含拿到伺服器回應)才開始下一次，避免中途被回應蓋掉造成畫面閃爍
 
     function toggleDailyItem(key) {
       const today = todayKey();
-      // 樂觀更新：先立即反應畫面，不等後端回應，操作起來才不會卡頓
+      dailyToggleQueue = dailyToggleQueue.then(() => performDailyToggle(today, key));
+    }
+
+    async function performDailyToggle(today, key) {
       if (!dailyStoreCache[today]) { dailyStoreCache[today] = { tasks: getTodayTasks(), percent: 0 }; }
       const task = dailyStoreCache[today].tasks.filter(t => t.key === key)[0];
       if (!task) return;
+
+      // 樂觀更新：立即反應畫面，但這個動作本身已經排在佇列裡，不會被更早的請求回應搶先蓋掉
       task.checked = !task.checked;
       renderDailyQuest();
 
-      // 排進佇列，等前一個打卡請求處理完才送出下一個，避免併發請求互相覆蓋
-      dailyToggleQueue = dailyToggleQueue.then(() => sendDailyToggle(today, key, task));
-    }
-
-    async function sendDailyToggle(today, key, task) {
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
