@@ -830,6 +830,7 @@
         const result = await response.json();
         if (result.status === 'success') {
           showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請上傳數據以鎖定 Baseline。`, 'info');
+          fetchDailyQuest(); // 🟢 換職業會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
         } else {
           showSystemModal('職業設定失敗：' + result.message, 'error');
         }
@@ -866,6 +867,7 @@
         const result = await response.json();
         if (result.status === 'success') {
           updateUIWithData(result.latest, result.history, result.quest);
+          fetchDailyQuest(); // 🟢 上傳會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
           
           if (result.rpg) {
             const rpg = result.rpg;
@@ -880,6 +882,7 @@
         const recovered = await verifyUploadActuallySucceeded();
         if (recovered) {
           updateUIWithData(recovered.latest, recovered.history, recovered.quest);
+          fetchDailyQuest();
           showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複上傳同一張照片。', 'info');
         } else {
           showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新上傳，避免產生重複紀錄。', 'error');
@@ -945,6 +948,7 @@
 
         if (result.status === 'success') {
           updateUIWithData(result.latest, result.history, result.quest);
+          fetchDailyQuest();
 
           if (result.rpg) {
             const rpg = result.rpg;
@@ -959,6 +963,7 @@
         const recovered = await verifyUploadActuallySucceeded();
         if (recovered) {
           updateUIWithData(recovered.latest, recovered.history, recovered.quest);
+          fetchDailyQuest();
           showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複送出同一筆資料。', 'info');
         } else {
           showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新送出，避免產生重複紀錄。', 'error');
