@@ -86,12 +86,13 @@
     @keyframes pulse-glow { 0%, 100% { text-shadow: 0 0 10px #00d2ff, 0 0 20px #0055ff; } 50% { text-shadow: 0 0 20px #00d2ff, 0 0 40px #0055ff; } }
     
     /* 🟢 修正：第一層屬性欄 (帳號 + 職業 + Lv) */
-    .layer-1 { display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 25px; }
-    .user-id-box { text-align: right; font-size: 0.75rem; color: #a0d8ef; border-right: 2px solid #00d2ff; padding-right: 10px; }
-    .user-id-name { font-size: 1.05rem; font-weight: bold; color: #fff; text-shadow: 0 0 8px #00d2ff; margin-top: 4px; font-family: 'Orbitron'; letter-spacing: 1px; }
-    .class-box { text-align: right; font-size: 0.75rem; color: #a0d8ef; border-right: 2px solid #00d2ff; padding-right: 10px; }
-    .class-name { font-size: 1.05rem; font-weight: bold; color: #fff; text-shadow: 0 0 8px #00d2ff; margin-top: 4px; letter-spacing: 1px; }
-    .level-box { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: bold; color: #fff; animation: pulse-glow 3s infinite alternate; line-height: 1; flex-shrink: 0; }
+    .layer-1 { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 25px; }
+    .layer-1-top { display: flex; justify-content: center; align-items: flex-start; width: 100%; }
+    .user-id-box { flex: 1; min-width: 0; text-align: center; font-size: 0.75rem; color: #a0d8ef; border-right: 2px solid #00d2ff; padding: 0 10px; }
+    .user-id-name { font-size: 1.05rem; font-weight: bold; color: #fff; text-shadow: 0 0 8px #00d2ff; margin-top: 4px; font-family: 'Orbitron'; letter-spacing: 1px; overflow-wrap: break-word; }
+    .class-box { flex: 1; min-width: 0; text-align: center; font-size: 0.75rem; color: #a0d8ef; padding: 0 10px; }
+    .class-name { font-size: 1.05rem; font-weight: bold; color: #fff; text-shadow: 0 0 8px #00d2ff; margin-top: 4px; letter-spacing: 1px; overflow-wrap: break-word; }
+    .level-box { font-family: 'Orbitron', sans-serif; font-size: 2.2rem; font-weight: bold; color: #fff; animation: pulse-glow 3s infinite alternate; line-height: 1; padding-top: 10px; border-top: 1px solid rgba(0, 210, 255, 0.3); }
     
     .layer-2 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 25px; background: rgba(0, 150, 255, 0.03); padding: 10px; border-radius: 8px; border: 1px solid rgba(0, 210, 255, 0.1); }
     .grid-item { text-align: center; padding: 6px 0; } .grid-label { font-size: 0.7rem; color: #64748b; margin-bottom: 4px; } .grid-value { font-family: 'Orbitron', sans-serif; font-size: 1.05rem; color: #e2e8f0; text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);}
@@ -106,7 +107,7 @@
     .toggle-option.active.muscle-text { color: #fff; text-shadow: 0 0 5px #00d2ff; } .toggle-option.active.fat-text { color: #fff; text-shadow: 0 0 5px #ff3366; }
     .chart-container { position: relative; width: 100%; height: 240px; margin-top: 10px;}
     
-    .layer-4 { margin-bottom: 25px; } .data-group { margin-bottom: 15px; background: rgba(0, 20, 40, 0.4); border-left: 2px solid #00d2ff; padding: 10px 15px; } .data-group-title { font-size: 0.8rem; color: #00d2ff; margin-bottom: 10px; font-weight: bold; } .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;} .data-label { color: #a0d8ef; } .data-val { font-family: 'Orbitron'; color: #fff; font-weight: bold; }
+    .layer-4 { margin-bottom: 25px; } .data-group { margin-bottom: 15px; background: rgba(0, 20, 40, 0.4); border-left: 2px solid #00d2ff; padding: 10px 15px; } .data-group-title { font-size: 0.8rem; color: #00d2ff; margin-bottom: 10px; font-weight: bold; } .data-group-title::before { content: ""; display: inline-block; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid currentColor; margin-right: 6px; vertical-align: middle; } .data-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9rem; border-bottom: 1px dashed rgba(255,255,255,0.1); padding-bottom: 4px;} .data-label { color: #a0d8ef; } .data-val { font-family: 'Orbitron'; color: #fff; font-weight: bold; }
 
     /* ===== 歷史趨勢：三圖分割卡片樣式 ===== */
     .layer-5 { margin-bottom: 30px; }
@@ -138,9 +139,12 @@
     .mq-subtitle { font-size: 0.75rem; color: #94a3b8; text-align: center; margin-bottom: 16px; }
     .mq-metric { margin-bottom: 16px; }
     .mq-metric-head { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 6px; }
-    .mq-metric-name { color: #e2e8f0; }
-    .mq-metric-name.met::before { content: "☑ "; color: #4ade80; }
-    .mq-metric-name:not(.met)::before { content: "☐ "; color: #facc15; }
+    .mq-metric-name { color: #e2e8f0; display: inline-flex; align-items: center; }
+    .i-svg { width: 1em; height: 1em; vertical-align: -0.15em; flex-shrink: 0; }
+    /* 純CSS繪製的checkbox圖示：不依賴emoji字型，跨裝置樣式100%一致 */
+    .icon-checkbox { display: inline-block; width: 13px; height: 13px; box-sizing: border-box; border: 2px solid #facc15; border-radius: 2px; margin-right: 6px; position: relative; flex-shrink: 0; }
+    .icon-checkbox.is-checked { border-color: #4ade80; background: #4ade80; }
+    .icon-checkbox.is-checked::after { content: ""; position: absolute; left: 2px; top: -1px; width: 4px; height: 7px; border: solid #06111f; border-width: 0 2px 2px 0; transform: rotate(40deg); }
     .mq-metric-val { font-family: 'Orbitron'; color: #facc15; font-size: 0.8rem; }
     .mq-bar-track { width: 100%; height: 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(250,204,21,0.3); }
     .mq-bar-fill { height: 100%; background: linear-gradient(90deg, #facc15, #fde68a); transition: width 0.4s ease; }
@@ -151,8 +155,9 @@
     .mq-task-box.demotion .mq-task-icon, .mq-task-box.demotion .mq-task-title { color: #ff3366; }
     .mq-task-title { font-family: 'Orbitron'; font-weight: bold; font-size: 1rem; margin-bottom: 6px; }
     .mq-task-progress { font-family: 'Orbitron'; font-size: 1.3rem; letter-spacing: 4px; margin-bottom: 6px; }
-    .mq-task-progress .dot-on { color: #facc15; } .mq-task-progress .dot-off { color: #334155; }
-    .mq-task-box.demotion .mq-task-progress .dot-on { color: #ff3366; }
+    .mq-task-progress .dot-on, .mq-task-progress .dot-off { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin: 0 3px; }
+    .mq-task-progress .dot-on { background: #facc15; } .mq-task-progress .dot-off { background: #334155; }
+    .mq-task-box.demotion .mq-task-progress .dot-on { background: #ff3366; }
     .mq-task-desc { font-size: 0.75rem; color: #94a3b8; }
     .mq-maxed-box { text-align: center; padding: 24px 10px; color: #facc15; font-family: 'Orbitron'; font-weight: bold; }
 
@@ -161,8 +166,9 @@
     .daily-title { color: #4ade80; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 16px; }
     .daily-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.04); margin-bottom: 8px; cursor: pointer; border-left: 3px solid #334155; transition: 0.2s; }
     .daily-item.checked { border-left-color: #4ade80; background: rgba(74, 222, 128, 0.08); }
-    .daily-checkbox { width: 18px; height: 18px; border: 2px solid #4ade80; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #4ade80; }
-    .daily-item.checked .daily-checkbox { background: #4ade80; color: #030712; }
+    .daily-checkbox { width: 18px; height: 18px; border: 2px solid #4ade80; flex-shrink: 0; box-sizing: border-box; position: relative; }
+    .daily-item.checked .daily-checkbox { background: #4ade80; }
+    .daily-item.checked .daily-checkbox::after { content: ""; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px; border: solid #030712; border-width: 0 2px 2px 0; transform: rotate(40deg); }
     .daily-label { font-size: 0.85rem; color: #e2e8f0; }
     .daily-item.checked .daily-label { color: #86efac; text-decoration: line-through; text-decoration-color: rgba(134,239,172,0.5); }
     .daily-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; border-top: 1px dashed rgba(74,222,128,0.25); padding-top: 14px; }
@@ -214,6 +220,8 @@
     .modal-box { background: rgba(6, 17, 33, 0.98); border: 1px solid #00d2ff; width: 88%; max-width: 380px; padding: 22px; text-align: center; }
     .modal-box.error { border-color: #ff3366; } .modal-box.error .modal-btn { border-color: #ff3366; background: rgba(255,51,102,0.15); }
     .modal-msg { font-size: 0.9rem; color: #e2e8f0; margin-bottom: 20px; text-align: left; line-height: 1.6; }
+    .bullet-arrow { display: inline-block; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #00d2ff; margin-right: 6px; vertical-align: middle; }
+    .modal-reason-title { color: #00d2ff; font-weight: bold; margin: 10px 0 6px; }
     .modal-btn { width: 100%; padding: 10px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 
     /* ===== 職業選擇 Modal 樣式 (Carousel) ===== */
@@ -297,7 +305,7 @@
     </div>
 
     <div class="carousel-container">
-      <div class="nav-arrow" onclick="changeCard(-1)">◀</div>
+      <div class="nav-arrow" onclick="changeCard(-1)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg></div>
       <div class="hero-card theme-blue" id="heroCard">
         <div class="card-top-bar">
           <span id="pageIndicator">01 / 05</span>
@@ -320,7 +328,7 @@
         </div>
         <div class="class-desc" id="classDesc">肌肉才是王，重量才夠狂；別人拼線條較量，摸魚摸出真氣場。</div>
       </div>
-      <div class="nav-arrow" onclick="changeCard(1)">▶</div>
+      <div class="nav-arrow" onclick="changeCard(1)"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></div>
     </div>
 
     <button class="confirm-btn" id="confirmBtn" onclick="confirmClassSelection()">[ SELECT THIS CLASS ]</button>
@@ -347,9 +355,10 @@
 </div>
         
         <div class="layer-1">
-          <!-- 🟢 1. 帳號 (ID) 移至職業 (一轉) 的左側 -->
-          <div class="user-id-box">帳號 (ID)<br><div class="user-id-name" id="displayUserId">--</div></div>
-          <div class="class-box"><span id="ui-class-tier-label">職業 (一轉)</span><br><div class="class-name" id="userClassDisplay">摸魚大隊長</div></div>
+          <div class="layer-1-top">
+            <div class="user-id-box">帳號 (ID)<br><div class="user-id-name" id="displayUserId">--</div></div>
+            <div class="class-box"><span id="ui-class-tier-label">職業 (一轉)</span><br><div class="class-name" id="userClassDisplay">摸魚大隊長</div></div>
+          </div>
           <div class="level-box" id="ui-score">Lv. --</div>
         </div>
 
@@ -381,18 +390,18 @@
         <div class="layer-4">
           <div class="layer-title">DETAILS ANALYSIS</div>
           <div class="data-group">
-            <div class="data-group-title">▶ 肌肉 / 脂肪分析</div>
+            <div class="data-group-title">肌肉 / 脂肪分析</div>
             <div class="data-row"><span class="data-label">體重 (Weight)</span><span class="data-val" id="ui-weight2">-- kg</span></div>
             <div class="data-row"><span class="data-label">骨骼肌肉重 (SMM)</span><span class="data-val" id="ui-smm">-- kg</span></div>
             <div class="data-row"><span class="data-label">基礎代謝率 (BMR)</span><span class="data-val" id="ui-bmr">-- kcal</span></div>
             <div class="data-row"><span class="data-label">脂肪重 (Body Fat Mass)</span><span class="data-val" id="ui-bfm">-- kg</span></div>
           </div>
           <div class="data-group">
-            <div class="data-group-title">▶ 肥胖分析</div>
+            <div class="data-group-title">肥胖分析</div>
             <div class="data-row"><span class="data-label">體脂肪百分比 (PBF)</span><span class="data-val" id="ui-pbf">-- %</span></div>
           </div>
           <div class="data-group">
-            <div class="data-group-title">▶ 腹部肥胖分析</div>
+            <div class="data-group-title">腹部肥胖分析</div>
             <div class="data-row"><span class="data-label">腰臀比 (WHR)</span><span class="data-val" id="ui-whr">--</span></div>
             <div class="data-row"><span class="data-label">內臟脂肪面積 (VFA)</span><span class="data-val" id="ui-vfa">-- cm²</span></div>
           </div>
@@ -505,7 +514,7 @@
               <input type="number" id="m-hip" placeholder="cm" step="0.1">
             </div>
           </div>
-          <div class="manual-optional-note">⚠ 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
+          <div class="manual-optional-note"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
 
           <button class="manual-submit-btn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
           <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">取消</button>
@@ -552,9 +561,9 @@
               <span class="q-val" id="q-target">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-1">
-              <div class="ai-suggestion-title">💬 系統 AI 解析攻略：</div>
+              <div class="ai-suggestion-title"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4V5Z"/></svg> 系統 AI 解析攻略：</div>
               <div class="ai-suggestion-text" id="q-advice-target">請上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
+              <div class="ai-warning"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
@@ -564,9 +573,9 @@
               <span class="q-val" id="q-weight-ctrl">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-2">
-              <div class="ai-suggestion-title">💬 系統 AI 解析攻略：</div>
+              <div class="ai-suggestion-title"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4V5Z"/></svg> 系統 AI 解析攻略：</div>
               <div class="ai-suggestion-text" id="q-advice-weight">請上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
+              <div class="ai-warning"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
@@ -576,9 +585,9 @@
               <span class="q-val" id="q-muscle-ctrl">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-3">
-              <div class="ai-suggestion-title">✨ 系統 AI 解析攻略：</div>
+              <div class="ai-suggestion-title"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4V5Z"/></svg> 系統 AI 解析攻略：</div>
               <div class="ai-suggestion-text" id="q-advice-muscle">請上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
+              <div class="ai-warning"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
@@ -588,9 +597,9 @@
               <span class="q-val" id="q-fat-ctrl">-- kg</span>
             </div>
             <div class="quest-details" id="q-detail-4">
-              <div class="ai-suggestion-title">💬 系統 AI 解析攻略：</div>
+              <div class="ai-suggestion-title"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4V5Z"/></svg> 系統 AI 解析攻略：</div>
               <div class="ai-suggestion-text" id="q-advice-fat">請上傳 InBody 報告以載入專屬通關攻略。</div>
-              <div class="ai-warning">⚠ 此內容為 AI 自動解析生成。</div>
+              <div class="ai-warning"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 此內容為 AI 自動解析生成。</div>
             </div>
           </div>
 
@@ -607,6 +616,10 @@
 
   <script>
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbxcYSWpFsizRBiiYrNaeUSsvkskvFj9fMDWOIh3_6MdUGlzGQ0ut-U9hjIny1Y8QZKBvA/exec';
+
+    // 🟢 共用SVG圖示：純向量繪製，不依賴系統emoji字型，跨裝置渲染100%一致
+    const ICON_WARN = '<svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg>';
+    const ICON_CHAT = '<svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4V5Z"/></svg>';
     const CLASS_TREE_IMAGE = "uniform_class_cards.png";
 
     let radarChart, chartWeight, chartSMM, chartPBF;
@@ -829,11 +842,7 @@
           
           if (result.rpg) {
             const rpg = result.rpg;
-            const popupMsg = `【轉職/體態進展報告】\n\n` +
-                             `▸ 當前階級：${rpg.tier}\n` +
-                             `▸ 當前稱號：【${rpg.title}】\n\n` +
-                             `💬 判定原因：\n${rpg.reason}`;
-            showSystemModal(popupMsg, 'info');
+            showSystemModal(buildRpgResultHtml(rpg, '當前稱號'), 'info', true);
           } else {
             showSystemModal('數據解析成功，已同步寫入個人資料庫！', 'info');
           }
@@ -903,11 +912,7 @@
 
           if (result.rpg) {
             const rpg = result.rpg;
-            const popupMsg = `【轉職/體態進展報告】\n\n` +
-                             `▸ 當前階級：${rpg.tier}\n` +
-                             `▸ 當前職業：【${rpg.title}】\n\n` +
-                             `💬 判定原因：\n${rpg.reason}`;
-            showSystemModal(popupMsg, 'info');
+            showSystemModal(buildRpgResultHtml(rpg, '當前職業'), 'info', true);
           } else {
             showSystemModal('手動輸入紀錄已同步寫入個人資料庫！', 'info');
           }
@@ -1045,10 +1050,10 @@
       banner.style.display = 'block';
       if (quest.direction === 'promotion') {
         banner.className = 'quest-status-banner promotion';
-        banner.innerText = `🎯 轉職任務進行中（${quest.confirmCount}/2 次確認）— 詳情請至任務頁面查看`;
+        banner.innerHTML = `轉職任務進行中（${quest.confirmCount}/2 次確認）— 詳情請至任務頁面查看`;
       } else {
         banner.className = 'quest-status-banner demotion';
-        banner.innerText = `⚠ 降階警示進行中（${quest.confirmCount}/2 次確認）— 詳情請至任務頁面查看`;
+        banner.innerHTML = `${ICON_WARN} 降階警示進行中（${quest.confirmCount}/2 次確認）— 詳情請至任務頁面查看`;
       }
     }
 
@@ -1065,23 +1070,23 @@
 
       if (quest.mode === 'metric_missing') {
         subtitle.innerText = '本次記錄缺少職業判定所需資料。';
-        body.innerHTML = `<div class="mq-maxed-box" style="color:#ff3366;">⚠ 缺少腰臀比(WHR)資料，暫無法計算本職業轉職進度<br><span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;">請於下次記錄同時填寫腰圍與臀圍</span></div>`;
+        body.innerHTML = `<div class="mq-maxed-box" style="color:#ff3366;">${ICON_WARN} 缺少腰臀比(WHR)資料，暫無法計算本職業轉職進度<br><span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;">請於下次記錄同時填寫腰圍與臀圍</span></div>`;
         return;
       }
 
       if (quest.mode === 'maxed') {
         subtitle.innerText = '恭喜！已達成最終轉職階段。';
-        body.innerHTML = `<div class="mq-maxed-box">👑 三轉已達成，職業養成完畢</div>`;
+        body.innerHTML = `<div class="mq-maxed-box">三轉已達成，職業養成完畢</div>`;
         return;
       }
 
       if (quest.mode === 'task') {
         const isPromotion = quest.direction === 'promotion';
         subtitle.innerText = isPromotion ? '轉職任務進行中' : '降階警示進行中';
-        const dotHtml = [1, 2].map(i => `<span class="${i <= quest.confirmCount ? 'dot-on' : 'dot-off'}">●</span>`).join(' ');
+        const dotHtml = [1, 2].map(i => `<span class="${i <= quest.confirmCount ? 'dot-on' : 'dot-off'}"></span>`).join(' ');
         body.innerHTML = `
           <div class="mq-task-box ${isPromotion ? 'promotion' : 'demotion'}">
-            <div class="mq-task-icon">${isPromotion ? '🎯' : '⚠'}</div>
+            ${isPromotion ? '' : `<div class="mq-task-icon">${ICON_WARN}</div>`}
             <div class="mq-task-title">${isPromotion ? '轉職任務進行中' : '降階警示進行中'}</div>
             <div class="mq-task-progress">${dotHtml}</div>
             <div class="mq-task-desc">數據${isPromotion ? '達標' : '未達標'} ${quest.confirmCount} / 2 次，${isPromotion ? '再次上傳確認即可正式轉職' : '再次上傳如仍未達標將確認降階'}</div>
@@ -1098,7 +1103,7 @@
         html += `
           <div class="mq-metric">
             <div class="mq-metric-head">
-              <span class="mq-metric-name ${m.met ? 'met' : ''}">${m.label}</span>
+              <span class="mq-metric-name"><span class="icon-checkbox ${m.met ? 'is-checked' : ''}"></span>${m.label}</span>
               <span class="mq-metric-val">${m.direction === 'gain' ? '+' : ''}${curText}${unitLabel} / ${m.direction === 'gain' ? '+' : '-'}${m.target}${unitLabel}</span>
             </div>
             <div class="mq-bar-track"><div class="mq-bar-fill ${m.met ? 'met' : ''}" style="width:${m.percent}%;"></div></div>
@@ -1109,7 +1114,7 @@
       html += `
         <div class="mq-metric">
           <div class="mq-metric-head">
-            <span class="mq-metric-name ${scoreMet ? 'met' : ''}">InBody 總分</span>
+            <span class="mq-metric-name"><span class="icon-checkbox ${scoreMet ? 'is-checked' : ''}"></span>InBody 總分</span>
             <span class="mq-metric-val">${quest.scoreCurrent} / ${quest.scoreTarget}</span>
           </div>
           <div class="mq-bar-track"><div class="mq-bar-fill ${scoreMet ? 'met' : ''}" style="width:${scorePercent}%;"></div></div>
@@ -1162,7 +1167,7 @@
         const checked = !!todayRecord[item.key];
         return `
           <div class="daily-item ${checked ? 'checked' : ''}" onclick="toggleDailyItem('${item.key}')">
-            <div class="daily-checkbox">${checked ? '✓' : ''}</div>
+            <div class="daily-checkbox"></div>
             <div class="daily-label">${item.label}</div>
           </div>`;
       }).join('');
@@ -1171,7 +1176,7 @@
       const percent = Math.round((doneCount / DAILY_QUEST_ITEMS.length) * 100);
       document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
       document.getElementById('daily-bar-fill').style.width = `${percent}%`;
-      document.getElementById('daily-streak').innerText = `🔥 ${computeStreak(store)} Days`;
+      document.getElementById('daily-streak').innerText = `${computeStreak(store)} Days`;
     }
 
     function toggleDailyItem(key) {
@@ -1183,12 +1188,33 @@
       renderDailyQuest();
     }
 
-    function showSystemModal(message, type = 'info') {
+    function showSystemModal(message, type = 'info', isHtml = false) {
       const modal = document.getElementById('customModal');
       const box = document.getElementById('modalBox');
-      document.getElementById('modalMsg').innerText = message;
+      const msgEl = document.getElementById('modalMsg');
+      if (isHtml) { msgEl.innerHTML = message; } else { msgEl.innerText = message; }
       if (type === 'error') box.classList.add('error'); else box.classList.remove('error');
       modal.style.display = 'flex';
+    }
+
+    // 動態內容一律先跑過escapeHtml，即使目前rpg.tier/title/reason都是後端固定樣板產生，仍防禦性處理避免未來被當成HTML執行
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.innerText = String(str);
+      return div.innerHTML;
+    }
+
+    // 組出轉職彈窗的安全HTML：文字內容escape，💬圖示則是寫死的SVG常數（非使用者輸入，可放心用innerHTML插入）
+    function buildRpgResultHtml(rpg, titleLabel) {
+      return `
+        <div style="text-align:center; font-weight:bold; margin-bottom:12px; color:#facc15;">【轉職/體態進展報告】</div>
+        <div style="margin-bottom:10px;">
+          <span class="bullet-arrow"></span>當前階級：${escapeHtml(rpg.tier)}<br>
+          <span class="bullet-arrow"></span>${titleLabel}：【${escapeHtml(rpg.title)}】
+        </div>
+        <div class="modal-reason-title">${ICON_CHAT} 判定原因：</div>
+        <div>${escapeHtml(rpg.reason).replace(/\n/g, '<br>')}</div>
+      `;
     }
     function closeSystemModal() { document.getElementById('customModal').style.display = 'none'; }
 
