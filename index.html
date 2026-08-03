@@ -627,14 +627,6 @@
     let currentUser = '', currentPwd = '';
     let currentQuest = null;
 
-    const DAILY_QUEST_ITEMS = [
-      { key: 'water', label: '今日喝水 2000 ml' },
-      { key: 'protein', label: '今日蛋白質達標' },
-      { key: 'workout', label: '完成重量訓練' },
-      { key: 'sleep', label: '睡眠 7 小時' },
-      { key: 'steps', label: '步數 8000+' }
-    ];
-    
     let chartData = { 
       labels: ['軀幹', '右臂', '右腿', '左腿', '左臂'], 
       muscle: [100, 100, 100, 100, 100], 
@@ -702,7 +694,7 @@
         if (result.status === 'success') {
           currentUser = user; currentPwd = pwd;
           if (remember) { localStorage.setItem('inbody_user', user); localStorage.setItem('inbody_pwd', pwd); }
-          renderDailyQuest();
+          fetchDailyQuest();
           
           // 🟢 呈現玩家帳號名稱至 Layer 1 的 ID 區塊
           document.getElementById('displayUserId').innerText = user;
@@ -1122,35 +1114,51 @@
       body.innerHTML = html;
     }
 
-    // ═══════════ 任務頁：DAILY QUEST（使用者手動打卡，資料存於本機瀏覽器）═══════════
+    // ═══════════ 任務頁：DAILY QUEST（依職業＋MISSION GUIDE動態組合，存進 Google Sheet，同帳號跨裝置同步）═══════════
     function todayKey() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
-    function dailyStorageKey(user) { return `daily_quest_${user || 'guest'}`; }
 
-    function loadDailyStore() {
+    let dailyStoreCache = {};      // { "YYYY-MM-DD": { tasks:[{key,label,checked}], percent } }
+    let currentQuestSetCache = []; // 目前生效的任務組合 [{key,label}]，當「今天」還沒有任何紀錄時當預設模板用
+
+    // 取得「今天」要顯示的任務清單：已有紀錄就用紀錄本身；否則用目前生效的任務組合鋪出全部未勾選的預設狀態
+    function getTodayTasks() {
+      const today = todayKey();
+      if (dailyStoreCache[today] && dailyStoreCache[today].tasks && dailyStoreCache[today].tasks.length > 0) {
+        return dailyStoreCache[today].tasks;
+      }
+      return currentQuestSetCache.map(t => ({ key: t.key, label: t.label, checked: false }));
+    }
+
+    async function fetchDailyQuest() {
+      if (!currentUser) { renderDailyQuest(); return; }
       try {
-        const raw = localStorage.getItem(dailyStorageKey(currentUser));
-        return raw ? JSON.parse(raw) : {};
-      } catch (e) { return {}; }
-    }
-    function saveDailyStore(store) {
-      try { localStorage.setItem(dailyStorageKey(currentUser), JSON.stringify(store)); } catch (e) {}
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'getDailyQuest', username: currentUser, password: currentPwd })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          dailyStoreCache = result.dailyStore || {};
+          currentQuestSetCache = result.currentQuestSet || [];
+        }
+      } catch (e) { /* 網路異常時維持現有畫面，不中斷使用 */ }
+      renderDailyQuest();
     }
 
+    // 連續天數只看「當天任務是否全部完成」，不管任務內容本身是否跟前一天不同
     function computeStreak(store) {
       let streak = 0;
       let d = new Date();
-      // 若今天尚未全部完成，從「昨天」開始往前算連續全勤天數；若今天已全部完成，從今天開始算
       const today = todayKey();
-      const todayDone = store[today] && DAILY_QUEST_ITEMS.every(item => store[today][item.key]);
+      const isAllDone = (dayRecord) => !!dayRecord && dayRecord.tasks && dayRecord.tasks.length > 0 && dayRecord.tasks.every(t => t.checked);
+      const todayDone = isAllDone(store[today]);
       if (!todayDone) { d.setDate(d.getDate() - 1); }
       while (true) {
         const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        const dayRecord = store[key];
-        const allDone = dayRecord && DAILY_QUEST_ITEMS.every(item => dayRecord[item.key]);
-        if (!allDone) break;
+        if (!isAllDone(store[key])) break;
         streak++;
         d.setDate(d.getDate() - 1);
       }
@@ -1158,33 +1166,47 @@
     }
 
     function renderDailyQuest() {
-      const store = loadDailyStore();
-      const key = todayKey();
-      const todayRecord = store[key] || {};
+      const tasks = getTodayTasks();
 
       const listEl = document.getElementById('daily-list');
-      listEl.innerHTML = DAILY_QUEST_ITEMS.map(item => {
-        const checked = !!todayRecord[item.key];
-        return `
-          <div class="daily-item ${checked ? 'checked' : ''}" onclick="toggleDailyItem('${item.key}')">
+      listEl.innerHTML = tasks.map(t => `
+          <div class="daily-item ${t.checked ? 'checked' : ''}" onclick="toggleDailyItem('${t.key}')">
             <div class="daily-checkbox"></div>
-            <div class="daily-label">${item.label}</div>
-          </div>`;
-      }).join('');
+            <div class="daily-label">${t.label}</div>
+          </div>`).join('');
 
-      const doneCount = DAILY_QUEST_ITEMS.filter(item => todayRecord[item.key]).length;
-      const percent = Math.round((doneCount / DAILY_QUEST_ITEMS.length) * 100);
+      const doneCount = tasks.filter(t => t.checked).length;
+      const percent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
       document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
       document.getElementById('daily-bar-fill').style.width = `${percent}%`;
-      document.getElementById('daily-streak').innerText = `${computeStreak(store)} Days`;
+      document.getElementById('daily-streak').innerText = `${computeStreak(dailyStoreCache)} Days`;
     }
 
-    function toggleDailyItem(key) {
-      const store = loadDailyStore();
+    async function toggleDailyItem(key) {
       const today = todayKey();
-      if (!store[today]) store[today] = {};
-      store[today][key] = !store[today][key];
-      saveDailyStore(store);
+      // 樂觀更新：先立即反應畫面，不等後端回應，操作起來才不會卡頓
+      if (!dailyStoreCache[today]) { dailyStoreCache[today] = { tasks: getTodayTasks(), percent: 0 }; }
+      const task = dailyStoreCache[today].tasks.filter(t => t.key === key)[0];
+      if (!task) return;
+      task.checked = !task.checked;
+      renderDailyQuest();
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'toggleDailyQuest', username: currentUser, password: currentPwd, date: today, key: key })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          dailyStoreCache = result.dailyStore || dailyStoreCache;
+        } else {
+          task.checked = !task.checked; // 失敗則還原剛剛的樂觀更新
+          showSystemModal('每日任務更新失敗：' + result.message, 'error');
+        }
+      } catch (e) {
+        task.checked = !task.checked;
+        showSystemModal('連線發生錯誤，本次打卡未儲存，請重試。', 'error');
+      }
       renderDailyQuest();
     }
 
