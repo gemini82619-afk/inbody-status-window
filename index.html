@@ -183,7 +183,19 @@
     .btn-status { background: rgba(0, 150, 255, 0.2); border: 1px solid #00d2ff; color: #c3f0ff; }
     .btn-quest { background: rgba(250, 204, 21, 0.1); border: 1px solid #facc15; color: #fef08a; }
     #file-input { display: none; }
-    .upload-action-btn { width: 100%; margin-top: 20px; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
+    .upload-action-btn { flex: 1; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
+    .manual-action-btn { flex: 1; padding: 15px; background: rgba(74, 222, 128, 0.1); border: 1px solid #4ade80; color: #4ade80; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
+    .action-btn-row { display: flex; gap: 10px; margin-top: 20px; }
+    .no-data-box { width: 100%; height: 100%; min-height: 200px; display: flex; align-items: center; justify-content: center; border: 2px solid #ff3366; color: #ff3366; font-family: 'Orbitron'; font-weight: bold; font-size: 1.1rem; letter-spacing: 2px; background: rgba(255, 51, 102, 0.06); }
+
+    /* ===== 手動輸入 Modal ===== */
+    .manual-form-row { display: flex; gap: 10px; margin-bottom: 12px; }
+    .manual-form-group { flex: 1; }
+    .manual-form-group label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px; }
+    .manual-form-group input, .manual-form-group select { width: 100%; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid #334155; color: #e2e8f0; font-family: 'Noto Sans TC'; }
+    .manual-form-group input:focus, .manual-form-group select:focus { outline: none; border-color: #4ade80; }
+    .manual-optional-note { font-size: 0.7rem; color: #64748b; margin: 4px 0 12px; }
+    .manual-submit-btn { width: 100%; padding: 14px; background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; color: #4ade80; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
     /* ===== Overlays & Modals ===== */
     .loading-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(2, 8, 16, 0.95); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 2000; backdrop-filter: blur(8px); }
@@ -362,7 +374,8 @@
               <span class="toggle-option fat-text" id="optFat">FAT</span>
             </div>
           </div>
-          <div class="chart-container"><canvas id="radarChart"></canvas></div>
+          <div class="chart-container" id="radarChartContainer"><canvas id="radarChart"></canvas></div>
+          <div class="no-data-box" id="radarNoDataBox" style="display:none;">NO DATA</div>
         </div>
 
         <div class="layer-4">
@@ -416,7 +429,87 @@
         </div>
         
         <input type="file" id="file-input" accept="image/*">
-        <button class="upload-action-btn" onclick="document.getElementById('file-input').click()">[ UPDATE DATA SCANNED ]</button>
+        <div class="action-btn-row">
+          <button class="upload-action-btn" onclick="document.getElementById('file-input').click()">[ UPDATE DATA SCANNED ]</button>
+          <button class="manual-action-btn" onclick="openManualModal()">[ 手動輸入 ]</button>
+        </div>
+      </div>
+
+      <!-- ═══════════ 手動輸入 Modal ═══════════ -->
+      <div id="manualInputModal" class="login-overlay" style="display:none; z-index: 2500;">
+        <div class="login-card" style="max-width: 420px; text-align: left; max-height: 85vh; overflow-y: auto;">
+          <h3 style="color:#4ade80; font-family:'Orbitron'; text-align:center; margin-bottom:18px; letter-spacing:2px;">手動輸入紀錄</h3>
+
+          <div class="manual-form-row">
+            <div class="manual-form-group">
+              <label>日期</label>
+              <input type="date" id="m-date">
+            </div>
+            <div class="manual-form-group">
+              <label>性別</label>
+              <select id="m-gender">
+                <option value="男性">男性</option>
+                <option value="女性">女性</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="manual-form-row">
+            <div class="manual-form-group">
+              <label>年齡</label>
+              <input type="number" id="m-age" placeholder="歲">
+            </div>
+            <div class="manual-form-group">
+              <label>身高 (cm)</label>
+              <input type="number" id="m-height" placeholder="cm" step="0.1">
+            </div>
+          </div>
+
+          <div class="manual-form-row">
+            <div class="manual-form-group">
+              <label>體重 (kg)</label>
+              <input type="number" id="m-weight" placeholder="kg" step="0.1">
+            </div>
+            <div class="manual-form-group">
+              <label>骨骼肌重 (SMM) (kg)</label>
+              <input type="number" id="m-smm" placeholder="kg" step="0.1">
+            </div>
+          </div>
+
+          <div class="manual-form-row">
+            <div class="manual-form-group">
+              <label>體脂肪率 (PBF) (%)</label>
+              <input type="number" id="m-pbf" placeholder="%" step="0.1">
+            </div>
+            <div class="manual-form-group">
+              <label>基礎代謝率 (BMR) (kcal)</label>
+              <input type="number" id="m-bmr" placeholder="kcal">
+            </div>
+          </div>
+
+          <div class="manual-form-row">
+            <div class="manual-form-group">
+              <label>內臟脂肪等級 (VFL)</label>
+              <input type="number" id="m-vfl" placeholder="1-20">
+            </div>
+            <div class="manual-form-group"></div>
+          </div>
+
+          <div class="manual-form-row">
+            <div class="manual-form-group">
+              <label>腰圍 (cm)（選填）</label>
+              <input type="number" id="m-waist" placeholder="cm" step="0.1">
+            </div>
+            <div class="manual-form-group">
+              <label>臀圍 (cm)（選填）</label>
+              <input type="number" id="m-hip" placeholder="cm" step="0.1">
+            </div>
+          </div>
+          <div class="manual-optional-note">⚠ 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
+
+          <button class="manual-submit-btn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
+          <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">取消</button>
+        </div>
       </div>
 
       <div id="quest-view">
@@ -429,7 +522,7 @@
         <!-- ═══════════ MAIN QUEST ═══════════ -->
         <div class="quest-card">
           <div class="quest-title">[ MAIN QUEST ]</div>
-          <p class="mq-subtitle" id="mq-subtitle">系統根據玩家目前屬性，生成轉職任務進度。</p>
+          <p class="mq-subtitle" id="mq-subtitle">轉職任務</p>
           <div id="mq-body">
             <div class="mq-subtitle">請先上傳一次 InBody 報告以載入轉職任務。</div>
           </div>
@@ -444,14 +537,14 @@
               <div class="daily-completion-label" id="daily-completion-label">Daily Completion 0%</div>
               <div class="daily-bar-track"><div class="daily-bar-fill" id="daily-bar-fill" style="width:0%;"></div></div>
             </div>
-            <div class="daily-streak" id="daily-streak">🔥 0 Days</div>
+            <div class="daily-streak" id="daily-streak">0 Days</div>
           </div>
         </div>
 
         <!-- ═══════════ MISSION GUIDE ═══════════ -->
         <div class="quest-card guide-card">
           <div class="quest-title">[ MISSION GUIDE ]</div>
-          <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">體態控制目標</p>
+          <p style="color: #94a3b8; font-size: 0.8rem; text-align: center; margin-bottom: 20px;">根據玩家目前屬性，自動生成之目標。</p>
 
           <div class="quest-group">
             <div class="quest-item" onclick="toggleQuestDetails('q-detail-1')">
@@ -698,7 +791,7 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
-          showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請點擊下方按鈕上傳首張 InBody 報告以鎖定 Baseline。`, 'info');
+          showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請上傳數據以鎖定 Baseline。`, 'info');
         } else {
           showSystemModal('職業設定失敗：' + result.message, 'error');
         }
@@ -762,6 +855,72 @@
       });
     }
 
+    // ═══════════ 手動輸入 Modal ═══════════
+    function openManualModal() {
+      document.getElementById('m-date').value = todayKey();
+      document.getElementById('manualInputModal').style.display = 'flex';
+    }
+    function closeManualModal() {
+      document.getElementById('manualInputModal').style.display = 'none';
+    }
+
+    async function submitManualInput() {
+      const val = id => document.getElementById(id).value;
+
+      const manualData = {
+        date: val('m-date'),
+        gender: val('m-gender'),
+        age: val('m-age'),
+        height: val('m-height'),
+        weight: val('m-weight'),
+        smm: val('m-smm'),
+        pbf: val('m-pbf'),
+        bmr: val('m-bmr'),
+        vfl: val('m-vfl'),
+        waist: val('m-waist'),
+        hip: val('m-hip')
+      };
+
+      const requiredKeys = ['date', 'gender', 'age', 'height', 'weight', 'smm', 'pbf', 'bmr', 'vfl'];
+      const missing = requiredKeys.filter(k => manualData[k] === '' || manualData[k] === null);
+      if (missing.length > 0) {
+        showSystemModal('請完整填寫必填欄位後再送出。', 'error');
+        return;
+      }
+
+      closeManualModal();
+      document.getElementById('loadingOverlay').style.display = 'flex';
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'manualUpload', username: currentUser, password: currentPwd, manualData: manualData })
+        });
+        const result = await response.json();
+
+        if (result.status === 'success') {
+          updateUIWithData(result.latest, result.history, result.quest);
+
+          if (result.rpg) {
+            const rpg = result.rpg;
+            const popupMsg = `【轉職/體態進展報告】\n\n` +
+                             `▸ 當前階級：${rpg.tier}\n` +
+                             `▸ 當前職業：【${rpg.title}】\n\n` +
+                             `💬 判定原因：\n${rpg.reason}`;
+            showSystemModal(popupMsg, 'info');
+          } else {
+            showSystemModal('手動輸入紀錄已同步寫入個人資料庫！', 'info');
+          }
+        } else {
+          showSystemModal('輸入錯誤：' + result.message, 'error');
+        }
+      } catch (error) {
+        showSystemModal('連線發生錯誤。', 'error');
+      } finally {
+        document.getElementById('loadingOverlay').style.display = 'none';
+      }
+    }
+
     function updateUIWithData(data, history, quest) {
       if (!data) return;
 
@@ -792,12 +951,15 @@
       document.getElementById('ui-bmr').innerText = `${data.bmr || 0} kcal`;
       document.getElementById('ui-bfm').innerText = `${data.bfm || 0} kg`;
       document.getElementById('ui-pbf').innerText = `${data.pbf || 0} %`;
-      document.getElementById('ui-whr').innerText = data.whr || 0;
-      document.getElementById('ui-vfa').innerText = `${data.vfa || 0} cm²`;
+      document.getElementById('ui-whr').innerText = (data.whr === null || data.whr === undefined) ? 'N/A' : data.whr;
+      document.getElementById('ui-vfa').innerText = (data.vfa === null || data.vfa === undefined) ? 'N/A' : `${data.vfa} cm²`;
       
       updateVFLDisplay(data.vfl || 0);
 
-      if(data.seg_muscle && data.seg_fat) {
+      if (data.seg_muscle && data.seg_fat) {
+        document.getElementById('radarChartContainer').style.display = 'block';
+        document.getElementById('radarNoDataBox').style.display = 'none';
+
         chartData.muscle = [data.seg_muscle.trunk, data.seg_muscle.r_arm, data.seg_muscle.r_leg, data.seg_muscle.l_leg, data.seg_muscle.l_arm];
         chartData.fat = [data.seg_fat.trunk, data.seg_fat.r_arm, data.seg_fat.r_leg, data.seg_fat.l_leg, data.seg_fat.l_arm];
         
@@ -806,6 +968,9 @@
         const maxVal = Math.max(...activeData, 120);
         radarChart.options.scales.r.suggestedMax = Math.ceil(maxVal / 20) * 20 + 20;
         radarChart.update();
+      } else {
+        document.getElementById('radarChartContainer').style.display = 'none';
+        document.getElementById('radarNoDataBox').style.display = 'flex';
       }
 
       if (data.control_guide) {
@@ -898,6 +1063,12 @@
         return;
       }
 
+      if (quest.mode === 'metric_missing') {
+        subtitle.innerText = '本次記錄缺少職業判定所需資料。';
+        body.innerHTML = `<div class="mq-maxed-box" style="color:#ff3366;">⚠ 缺少腰臀比(WHR)資料，暫無法計算本職業轉職進度<br><span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;">請於下次記錄同時填寫腰圍與臀圍</span></div>`;
+        return;
+      }
+
       if (quest.mode === 'maxed') {
         subtitle.innerText = '恭喜！已達成最終轉職階段。';
         body.innerHTML = `<div class="mq-maxed-box">👑 三轉已達成，職業養成完畢</div>`;
@@ -906,7 +1077,7 @@
 
       if (quest.mode === 'task') {
         const isPromotion = quest.direction === 'promotion';
-        subtitle.innerText = isPromotion ? '轉職任務進行中，數據熟練度暫不顯示。' : '降階警示進行中，數據熟練度暫不顯示。';
+        subtitle.innerText = isPromotion ? '轉職任務進行中' : '降階警示進行中';
         const dotHtml = [1, 2].map(i => `<span class="${i <= quest.confirmCount ? 'dot-on' : 'dot-off'}">●</span>`).join(' ');
         body.innerHTML = `
           <div class="mq-task-box ${isPromotion ? 'promotion' : 'demotion'}">
@@ -1000,7 +1171,7 @@
       const percent = Math.round((doneCount / DAILY_QUEST_ITEMS.length) * 100);
       document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
       document.getElementById('daily-bar-fill').style.width = `${percent}%`;
-      document.getElementById('daily-streak').innerText = `${computeStreak(store)} Days`;
+      document.getElementById('daily-streak').innerText = `🔥 ${computeStreak(store)} Days`;
     }
 
     function toggleDailyItem(key) {
