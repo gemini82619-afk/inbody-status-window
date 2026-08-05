@@ -382,6 +382,83 @@
     </div>
   </div>
 
+  <!-- ═══════════ 手動輸入 Modal（跟其他彈窗一樣放在body層級，避免被.status-window的backdrop-filter限制住fixed定位範圍）═══════════ -->
+  <div id="manualInputModal" class="login-overlay" style="display:none; z-index: 2500;">
+    <div class="login-card" style="max-width: 420px; text-align: left; max-height: 85vh; overflow-y: auto;">
+      <div class="title-box" style="margin: 0 auto 18px; display: table;"><span class="title-text">MANUAL ENTRY</span></div>
+
+      <div class="manual-form-row">
+        <div class="manual-form-group">
+          <label>日期</label>
+          <input type="date" id="m-date">
+        </div>
+        <div class="manual-form-group">
+          <label>性別</label>
+          <select id="m-gender">
+            <option value="男性">男性</option>
+            <option value="女性">女性</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="manual-form-row">
+        <div class="manual-form-group">
+          <label>年齡</label>
+          <input type="number" id="m-age" placeholder="歲">
+        </div>
+        <div class="manual-form-group">
+          <label>身高 (cm)</label>
+          <input type="number" id="m-height" placeholder="cm" step="0.1">
+        </div>
+      </div>
+
+      <div class="manual-form-row">
+        <div class="manual-form-group">
+          <label>體重 (kg)</label>
+          <input type="number" id="m-weight" placeholder="kg" step="0.1">
+        </div>
+        <div class="manual-form-group">
+          <label>骨骼肌重 (SMM) (kg)</label>
+          <input type="number" id="m-smm" placeholder="kg" step="0.1">
+        </div>
+      </div>
+
+      <div class="manual-form-row">
+        <div class="manual-form-group">
+          <label>體脂肪率 (PBF) (%)</label>
+          <input type="number" id="m-pbf" placeholder="%" step="0.1">
+        </div>
+        <div class="manual-form-group">
+          <label>基礎代謝率 (BMR) (kcal)</label>
+          <input type="number" id="m-bmr" placeholder="kcal">
+        </div>
+      </div>
+
+      <div class="manual-form-row">
+        <div class="manual-form-group">
+          <label>內臟脂肪等級 (VFL)</label>
+          <input type="number" id="m-vfl" placeholder="1-20">
+        </div>
+        <div class="manual-form-group"></div>
+      </div>
+
+      <div class="manual-form-row">
+        <div class="manual-form-group">
+          <label>腰圍 (cm)（選填）</label>
+          <input type="number" id="m-waist" placeholder="cm" step="0.1">
+        </div>
+        <div class="manual-form-group">
+          <label>臀圍 (cm)（選填）</label>
+          <input type="number" id="m-hip" placeholder="cm" step="0.1">
+        </div>
+      </div>
+      <div class="manual-optional-note"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
+
+      <button class="manual-submit-btn" id="manualSubmitBtn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
+      <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">取消</button>
+    </div>
+  </div>
+
   <div class="status-window">
     <div class="glitch-overlay" id="glitchOverlay"><div class="glitch-scanline"></div></div>
     <div class="scanlines"></div>
@@ -480,85 +557,8 @@
         
         <input type="file" id="file-input" accept="image/*">
         <div class="action-btn-row">
-          <button class="upload-action-btn" id="uploadActionBtn" onclick="document.getElementById('file-input').click()">[ UPDATE DATA SCANNED ]</button>
-          <button class="manual-action-btn" onclick="openManualModal()">[ 手動輸入 ]</button>
-        </div>
-      </div>
-
-      <!-- ═══════════ 手動輸入 Modal ═══════════ -->
-      <div id="manualInputModal" class="login-overlay" style="display:none; z-index: 2500;">
-        <div class="login-card" style="max-width: 420px; text-align: left; max-height: 85vh; overflow-y: auto;">
-          <h3 style="color:#4ade80; font-family:'Orbitron'; text-align:center; margin-bottom:18px; letter-spacing:2px;">手動輸入紀錄</h3>
-
-          <div class="manual-form-row">
-            <div class="manual-form-group">
-              <label>日期</label>
-              <input type="date" id="m-date">
-            </div>
-            <div class="manual-form-group">
-              <label>性別</label>
-              <select id="m-gender">
-                <option value="男性">男性</option>
-                <option value="女性">女性</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="manual-form-row">
-            <div class="manual-form-group">
-              <label>年齡</label>
-              <input type="number" id="m-age" placeholder="歲">
-            </div>
-            <div class="manual-form-group">
-              <label>身高 (cm)</label>
-              <input type="number" id="m-height" placeholder="cm" step="0.1">
-            </div>
-          </div>
-
-          <div class="manual-form-row">
-            <div class="manual-form-group">
-              <label>體重 (kg)</label>
-              <input type="number" id="m-weight" placeholder="kg" step="0.1">
-            </div>
-            <div class="manual-form-group">
-              <label>骨骼肌重 (SMM) (kg)</label>
-              <input type="number" id="m-smm" placeholder="kg" step="0.1">
-            </div>
-          </div>
-
-          <div class="manual-form-row">
-            <div class="manual-form-group">
-              <label>體脂肪率 (PBF) (%)</label>
-              <input type="number" id="m-pbf" placeholder="%" step="0.1">
-            </div>
-            <div class="manual-form-group">
-              <label>基礎代謝率 (BMR) (kcal)</label>
-              <input type="number" id="m-bmr" placeholder="kcal">
-            </div>
-          </div>
-
-          <div class="manual-form-row">
-            <div class="manual-form-group">
-              <label>內臟脂肪等級 (VFL)</label>
-              <input type="number" id="m-vfl" placeholder="1-20">
-            </div>
-            <div class="manual-form-group"></div>
-          </div>
-
-          <div class="manual-form-row">
-            <div class="manual-form-group">
-              <label>腰圍 (cm)（選填）</label>
-              <input type="number" id="m-waist" placeholder="cm" step="0.1">
-            </div>
-            <div class="manual-form-group">
-              <label>臀圍 (cm)（選填）</label>
-              <input type="number" id="m-hip" placeholder="cm" step="0.1">
-            </div>
-          </div>
-          <div class="manual-optional-note"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
-
-          <button class="manual-submit-btn" id="manualSubmitBtn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
-          <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">取消</button>
+          <button class="upload-action-btn" id="uploadActionBtn" onclick="document.getElementById('file-input').click()">[ SCAN DATA ]</button>
+          <button class="manual-action-btn" onclick="openManualModal()">[ ENTER DATA ]</button>
         </div>
       </div>
 
