@@ -230,7 +230,12 @@
     .manual-form-row { display: flex; gap: 10px; margin-bottom: 12px; }
     .manual-form-group { flex: 1; }
     .manual-form-group label { display: block; font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px; }
-    .manual-form-group input, .manual-form-group select { width: 100%; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid #334155; color: #e2e8f0; font-family: 'Noto Sans TC'; font-size: 16px; }
+    .manual-form-group input, .manual-form-group select { width: 100%; padding: 8px; background: rgba(255,255,255,0.05); border: 1px solid #334155; color: #e2e8f0; font-family: 'Noto Sans TC'; font-size: 16px; -webkit-appearance: none; appearance: none; border-radius: 0; }
+    .manual-form-group select {
+      background-image: linear-gradient(45deg, transparent 50%, #94a3b8 50%), linear-gradient(135deg, #94a3b8 50%, transparent 50%);
+      background-position: calc(100% - 18px) calc(50% - 3px), calc(100% - 13px) calc(50% - 3px);
+      background-size: 5px 5px, 5px 5px; background-repeat: no-repeat; padding-right: 28px;
+    }
     .manual-form-group input:focus, .manual-form-group select:focus { outline: none; border-color: #4ade80; }
     .manual-optional-note { font-size: 0.7rem; color: #64748b; margin: 4px 0 12px; }
     .manual-submit-btn { width: 100%; padding: 14px; background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; color: #4ade80; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; margin-top: 10px; }
@@ -454,8 +459,8 @@
       </div>
       <div class="manual-optional-note"><svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg> 腰圍/臀圍需同時填寫才會計算腰臀比(WHR)；若職業選擇甩鍋防禦者且缺此資料，本次將無法用於職業判定。</div>
 
-      <button class="manual-submit-btn" id="manualSubmitBtn" onclick="submitManualInput()">[ 送出紀錄 ]</button>
-      <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">取消</button>
+      <button class="manual-submit-btn" id="manualSubmitBtn" onclick="submitManualInput()">[ SUBMIT ]</button>
+      <button class="manual-submit-btn" style="border-color:#64748b; color:#94a3b8; background:transparent; margin-top:8px;" onclick="closeManualModal()">[ CANCEL ]</button>
     </div>
   </div>
 
