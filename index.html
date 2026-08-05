@@ -254,6 +254,14 @@
     .modal-msg { font-size: 0.9rem; color: #e2e8f0; margin-bottom: 20px; text-align: left; line-height: 1.6; }
     .bullet-arrow { display: inline-block; width: 0; height: 0; border-top: 4px solid transparent; border-bottom: 4px solid transparent; border-left: 6px solid #00d2ff; margin-right: 6px; vertical-align: middle; }
     .modal-reason-title { color: #00d2ff; font-weight: bold; margin: 10px 0 6px; }
+
+    /* ═══ 轉職confirmed彈窗(晉升/降階瞬間專用) — 顏色規則獨立於.error機制:外框/標題/按鈕維持統一藍色，只有新稱號那一格變色 ═══ */
+    .transform-heading { font-family: 'Orbitron'; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 16px; color: #00d2ff; text-shadow: 0 0 10px rgba(0,210,255,0.5); text-align: center; }
+    .title-slot { width: 100%; box-sizing: border-box; border: 1px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.03); padding: 10px; font-family: 'Orbitron'; font-size: 0.95rem; letter-spacing: 1px; color: #cbd5e1; text-align: center; }
+    .title-slot.new.promotion-color { border-color: #4ade80; color: #4ade80; background: rgba(74,222,128,0.08); text-shadow: 0 0 12px rgba(74,222,128,0.6); }
+    .title-slot.new.demotion-color { border-color: #ff3366; color: #ff3366; background: rgba(255,51,102,0.08); text-shadow: 0 0 12px rgba(255,51,102,0.6); }
+    .transform-arrow { font-family: 'Orbitron'; font-size: 1.2rem; margin: 8px 0; color: #00d2ff; text-align: center; }
+    .transform-detail { margin-top: 16px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,0.15); font-size: 0.8rem; color: #94a3b8; line-height: 1.7; text-align: left; }
     .modal-btn { width: 100%; padding: 10px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 
     /* ===== 職業選擇 Modal 樣式 (Carousel) ===== */
@@ -313,7 +321,7 @@
   <div class="loading-overlay" id="loadingOverlay">
     <div class="loading-spinner"></div>
     <div class="loading-text">SYSTEM SYNCHRONIZING...</div>
-    <div class="loading-subtext">正在連結雲端主機進行數據讀取與 AI 解析</div>
+    <div class="loading-subtext">正在解析InBody數據...</div>
   </div>
 
   <div class="login-overlay" id="loginModal">
@@ -368,7 +376,7 @@
 
   <div class="modal-overlay" id="customModal">
     <div class="modal-box" id="modalBox">
-      <div class="title-box" style="margin-bottom: 15px;"><span class="title-text" id="modalTitle" style="font-size: 0.85rem;">SYSTEM MSG</span></div>
+      <div class="title-box" style="margin-bottom: 15px;"><span class="title-text" id="modalTitle" style="font-size: 0.85rem;">NOTIFICATION</span></div>
       <div class="modal-msg" id="modalMsg">--</div>
       <button class="modal-btn" onclick="closeSystemModal()">[ ACKNOWLEDGE ]</button>
     </div>
@@ -866,12 +874,17 @@
         
         const result = await response.json();
         if (result.status === 'success') {
+          const oldTitle = document.getElementById('userClassDisplay').innerText; // 🟢 updateUIWithData會覆寫成新稱號,要先記下來
           updateUIWithData(result.latest, result.history, result.quest);
           fetchDailyQuest(); // 🟢 上傳會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
           
           if (result.rpg) {
             const rpg = result.rpg;
-            showSystemModal(buildRpgResultHtml(rpg, '當前稱號'), 'info', true);
+            if (rpg.status === 'PROMOTED' || rpg.status === 'DEMOTED') {
+              showSystemModal(buildTierChangeModalHtml(rpg, oldTitle), 'info', true);
+            } else {
+              showSystemModal(buildRpgResultHtml(rpg, '當前稱號'), 'info', true);
+            }
           } else {
             showSystemModal('數據解析成功，已同步寫入個人資料庫！', 'info');
           }
@@ -947,12 +960,17 @@
         const result = await response.json();
 
         if (result.status === 'success') {
+          const oldTitle = document.getElementById('userClassDisplay').innerText;
           updateUIWithData(result.latest, result.history, result.quest);
           fetchDailyQuest();
 
           if (result.rpg) {
             const rpg = result.rpg;
-            showSystemModal(buildRpgResultHtml(rpg, '當前職業'), 'info', true);
+            if (rpg.status === 'PROMOTED' || rpg.status === 'DEMOTED') {
+              showSystemModal(buildTierChangeModalHtml(rpg, oldTitle), 'info', true);
+            } else {
+              showSystemModal(buildRpgResultHtml(rpg, '當前職業'), 'info', true);
+            }
           } else {
             showSystemModal('手動輸入紀錄已同步寫入個人資料庫！', 'info');
           }
@@ -1318,6 +1336,20 @@
         </div>
         <div class="modal-reason-title">${ICON_CHAT} 判定原因：</div>
         <div>${escapeHtml(rpg.reason).replace(/\n/g, '<br>')}</div>
+      `;
+    }
+
+    // 專門給「真正確認晉升/降階」那一刻用的舊稱號→新稱號對比彈窗，只有rpg.status為PROMOTED/DEMOTED時才會用到
+    function buildTierChangeModalHtml(rpg, oldTitle) {
+      const isPromotion = rpg.status === 'PROMOTED';
+      const heading = isPromotion ? 'JOB TRANSFER SUCCESS' : 'TIER DOWNGRADE';
+      const colorClass = isPromotion ? 'promotion-color' : 'demotion-color';
+      return `
+        <div class="transform-heading">${heading}</div>
+        <div class="title-slot">${escapeHtml(oldTitle)}</div>
+        <div class="transform-arrow">▼</div>
+        <div class="title-slot new ${colorClass}">${escapeHtml(rpg.title)}</div>
+        <div class="transform-detail">${escapeHtml(rpg.reason).replace(/\n/g, '<br>')}</div>
       `;
     }
     function closeSystemModal() { document.getElementById('customModal').style.display = 'none'; }
