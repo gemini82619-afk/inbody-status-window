@@ -1166,7 +1166,7 @@
       const valEl = document.getElementById(valId);
       if (val === null || val === undefined) { valEl.innerText = '-- kg'; return; }
       if (val === 0 || val === 0.0) {
-        valEl.innerText = '+ 0.0 kg (達成)'; valEl.style.color = '#4ade80'; itemEl.classList.add('completed');
+        valEl.innerText = '維持'; valEl.style.color = '#4ade80'; itemEl.classList.add('completed');
       } else {
         const prefix = val > 0 ? '+ ' : ''; valEl.innerText = `${prefix}${val} kg`; valEl.style.color = '#ff3366'; itemEl.classList.remove('completed');
       }
