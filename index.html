@@ -387,6 +387,23 @@
     </div>
   </div>
 
+  <!-- ═══════════ 強制補填生日 Modal（無取消/關閉按鈕，設定成功前無法使用系統其他功能）═══════════ -->
+  <div id="forceBirthdateModal" class="login-overlay" style="display:none; z-index: 3000;">
+    <div class="login-card" style="max-width: 380px; text-align: center;">
+      <div class="title-box" style="margin: 0 auto 16px; display: table;"><span class="title-text">SYSTEM REQUIRED</span></div>
+      <p style="font-size: 0.85rem; color: #94a3b8; margin-bottom: 18px; line-height: 1.6;">
+        偵測到帳號尚未設定出生年月日，這是計算年齡所必需的資料，請填寫後才能繼續使用系統。<br>
+        <span style="color:#ff3366;">⚠ 設定後將無法自行修改，如需變更請聯繫管理員。</span>
+      </p>
+      <div class="manual-form-group" style="margin-bottom: 10px;">
+        <label>出生年月日</label>
+        <input type="date" id="force-birthdate">
+      </div>
+      <div id="force-birthdate-error" style="color:#ff3366; font-size:0.75rem; margin-bottom:10px; min-height:16px;"></div>
+      <button class="manual-submit-btn" onclick="submitForceBirthdate()">[ 確認送出 ]</button>
+    </div>
+  </div>
+
   <!-- ═══════════ 手動輸入 Modal（跟其他彈窗一樣放在body層級，避免被.status-window的backdrop-filter限制住fixed定位範圍）═══════════ -->
   <div id="manualInputModal" class="login-overlay" style="display:none; z-index: 2500;">
     <div class="login-card" style="max-width: 420px; text-align: left; max-height: 85vh; overflow-y: auto;">
@@ -408,13 +425,10 @@
 
       <div class="manual-form-row">
         <div class="manual-form-group">
-          <label>年齡</label>
-          <input type="number" id="m-age" placeholder="歲">
-        </div>
-        <div class="manual-form-group">
           <label>身高 (cm)</label>
           <input type="number" id="m-height" placeholder="cm" step="0.1">
         </div>
+        <div class="manual-form-group"></div>
       </div>
 
       <div class="manual-form-row">
@@ -750,7 +764,8 @@
             openClassModal();
           } else {
             if (result.latest) updateUIWithData(result.latest, result.history, result.quest);
-            if (!isAuto) showSystemModal(`歡迎回來，玩家 ${user}！已成功載入資料。`, 'info');
+            if (!result.birthdate) { openForceBirthdateModal(); }
+            else if (!isAuto) showSystemModal(`歡迎回來，玩家 ${user}！已成功載入資料。`, 'info');
           }
         } else {
           if (isAuto && result.isDeleted) {
@@ -842,8 +857,9 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
-          showSystemModal(`[角色創建成功] 已綁定初始職業：【${selected.name}】！\n請上傳數據以鎖定 Baseline。`, 'info');
           fetchDailyQuest(); // 🟢 換職業會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
+          // 🟢 新帳號職業選好後緊接著要求補填生日(生日永遠是空的)，直接進強制彈窗，不疊加另一個成功提示彈窗
+          openForceBirthdateModal();
         } else {
           showSystemModal('職業設定失敗：' + result.message, 'error');
         }
@@ -919,6 +935,44 @@
       });
     }
 
+    // ═══════════ 強制補填生日 Modal ═══════════
+    function openForceBirthdateModal() {
+      document.getElementById('force-birthdate-error').innerText = '';
+      document.getElementById('force-birthdate').value = '';
+      document.getElementById('forceBirthdateModal').style.display = 'flex';
+    }
+
+    async function submitForceBirthdate() {
+      const errEl = document.getElementById('force-birthdate-error');
+      const birthdate = document.getElementById('force-birthdate').value;
+      if (!birthdate) {
+        errEl.innerText = '請選擇出生年月日。';
+        return;
+      }
+      const birthYear = new Date(birthdate).getFullYear();
+      const thisYear = new Date().getFullYear();
+      if (isNaN(new Date(birthdate).getTime()) || thisYear - birthYear < 0 || thisYear - birthYear > 120) {
+        errEl.innerText = '請確認輸入的日期是否正確。';
+        return;
+      }
+
+      errEl.innerText = '處理中...';
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'setBirthdate', username: currentUser, password: currentPwd, birthdate: birthdate })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          document.getElementById('forceBirthdateModal').style.display = 'none';
+        } else {
+          errEl.innerText = result.message || '設定失敗，請重試一次。';
+        }
+      } catch (error) {
+        errEl.innerText = '連線發生錯誤，請重試一次。';
+      }
+    }
+
     // ═══════════ 手動輸入 Modal ═══════════
     function openManualModal() {
       document.getElementById('m-date').value = todayKey();
@@ -934,7 +988,6 @@
       const manualData = {
         date: val('m-date'),
         gender: val('m-gender'),
-        age: val('m-age'),
         height: val('m-height'),
         weight: val('m-weight'),
         smm: val('m-smm'),
@@ -945,7 +998,7 @@
         hip: val('m-hip')
       };
 
-      const requiredKeys = ['date', 'gender', 'age', 'height', 'weight', 'smm', 'pbf', 'bmr', 'vfl'];
+      const requiredKeys = ['date', 'gender', 'height', 'weight', 'smm', 'pbf', 'bmr', 'vfl'];
       const missing = requiredKeys.filter(k => manualData[k] === '' || manualData[k] === null);
       if (missing.length > 0) {
         showSystemModal('請完整填寫必填欄位後再送出。', 'error');
