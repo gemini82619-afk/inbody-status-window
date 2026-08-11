@@ -270,20 +270,20 @@
     .modal-btn { width: 100%; padding: 10px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
 
     /* ===== 狀態頁職業卡牌展示 Modal ===== */
-    .class-card-viewer-overlay { position: fixed; inset: 0; z-index: 1010; display: none; align-items: center; justify-content: center; background: rgba(2, 8, 16, 0.96); backdrop-filter: blur(12px); padding: 12px 8px; box-sizing: border-box; }
+    .class-card-viewer-overlay { position: fixed; inset: 0; z-index: 1010; display: none; align-items: center; justify-content: center; background: rgba(2, 8, 16, 0.82); backdrop-filter: blur(12px); padding: 12px 8px; box-sizing: border-box; }
     .class-card-viewer { position: relative; width: 100%; height: 100%; min-height: 0; display: flex; align-items: center; justify-content: center; }
     .class-card-viewer-image-wrap { width: min(88vw, 720px); height: min(calc(100dvh - 72px), 1008px); display: flex; align-items: center; justify-content: center; }
     .class-card-viewer-image { max-width: 100%; max-height: 100%; width: auto; height: auto; aspect-ratio: 5 / 7; object-fit: contain; display: block; border-radius: 6px; }
-    .class-card-viewer-close { position: absolute; top: 4px; right: 2px; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; background: rgba(255,255,255,0.06); color: #fff; font-size: 1.5rem; line-height: 1; cursor: pointer; z-index: 2; }
-    .class-card-viewer-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 44px; height: 56px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; background: rgba(255,255,255,0.06); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; }
+    .class-card-viewer-close { position: absolute; top: 4px; right: 2px; width: 48px; height: 48px; border: none; border-radius: 50%; background: transparent; color: #00d2ff; font-size: 1.8rem; line-height: 1; cursor: pointer; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 0; text-shadow: 0 0 10px rgba(0,210,255,0.45); -webkit-tap-highlight-color: transparent; }
+    .class-card-viewer-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 52px; height: 64px; border: none; border-radius: 999px; background: transparent; color: #00d2ff; display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 2; padding: 0; text-shadow: 0 0 10px rgba(0,210,255,0.45); -webkit-tap-highlight-color: transparent; }
     .class-card-viewer-arrow.left { left: 2px; }
     .class-card-viewer-arrow.right { right: 2px; }
-    .class-card-viewer-arrow:hover, .class-card-viewer-close:hover { border-color: #00d2ff; color: #00d2ff; box-shadow: 0 0 15px rgba(0,210,255,0.35); }
+    .class-card-viewer-arrow:hover, .class-card-viewer-close:hover { background: transparent; border-color: transparent; color: #4de4ff; box-shadow: none; text-shadow: 0 0 14px rgba(0,210,255,0.65); }
     .class-name-clickable { cursor: pointer; }
     .class-name-clickable:hover { text-shadow: 0 0 8px #00d2ff, 0 0 18px rgba(0,210,255,0.5); }
     @media (max-width: 480px) {
       .class-card-viewer-image-wrap { width: min(88vw, 430px); height: min(calc(100dvh - 64px), 602px); }
-      .class-card-viewer-arrow { width: 40px; height: 50px; }
+      .class-card-viewer-arrow { width: 48px; height: 58px; }
       .class-card-viewer-arrow.left { left: 0; }
       .class-card-viewer-arrow.right { right: 0; }
     }
