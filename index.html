@@ -274,6 +274,13 @@
     .class-header-box { text-align: center; margin-bottom: 20px; }
     .class-title-tag { display: inline-block; border: 1px solid #facc15; background: rgba(250, 204, 21, 0.1); padding: 5px 18px; font-family: 'Orbitron'; color: #facc15; font-size: 0.9rem; letter-spacing: 2px; text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
     .class-sub-title { font-size: 0.85rem; color: #94a3b8; margin-top: 8px; font-weight: bold; }
+    .card-gender-switch { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
+    .card-gender-btn { min-width: 96px; padding: 7px 14px; border: 1px solid rgba(255,255,255,0.22); background: rgba(255,255,255,0.04); color: #94a3b8; font-family: 'Orbitron'; font-size: 0.7rem; letter-spacing: 1px; cursor: pointer; transition: all 0.2s ease; }
+    .card-gender-btn:hover { border-color: rgba(255,255,255,0.5); color: #fff; background: rgba(255,255,255,0.08); }
+    .card-gender-btn.active { border-color: #facc15; color: #facc15; background: rgba(250,204,21,0.12); box-shadow: 0 0 14px rgba(250,204,21,0.18); }
+    .selection-card-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .selection-tier-row { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .selection-tier-row:last-child { margin-bottom: 0; }
 
     .carousel-container { display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 480px; }
     .nav-arrow { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #fff; font-family: 'Orbitron'; font-size: 1.5rem; width: 44px; height: 80px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: all 0.2s ease; user-select: none; }
@@ -319,165 +326,6 @@
     .theme-yellow { border-color: #facc15 !important; box-shadow: 0 0 30px rgba(250, 204, 21, 0.3) !important; }
     .theme-yellow .class-badge { background: rgba(250, 204, 21, 0.2); color: #facc15; border: 1px solid #facc15; }
     .theme-yellow .evolution-box { border-left-color: #facc15; } .theme-yellow .evo-title { color: #facc15; }
-
-
-    /* ===== 職業卡牌展示頁 ===== */
-    .class-card-viewer {
-      position: fixed;
-      inset: 0;
-      z-index: 4000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(1, 5, 12, 0.94);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      overflow: hidden;
-      touch-action: none;
-    }
-    .class-card-viewer.active { display: flex; }
-    .class-card-viewer::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        linear-gradient(rgba(0, 210, 255, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 210, 255, 0.035) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-    .class-card-viewer::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(to bottom, transparent 50%, rgba(0, 210, 255, 0.025) 51%);
-      background-size: 100% 4px;
-    }
-    .class-card-viewer-close {
-      position: absolute;
-      top: 18px;
-      right: 18px;
-      z-index: 3;
-      width: 42px;
-      height: 42px;
-      border: 1px solid rgba(0, 210, 255, 0.55);
-      background: rgba(0, 20, 40, 0.65);
-      color: #c3f0ff;
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.35rem;
-      line-height: 1;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 14px rgba(0, 210, 255, 0.18);
-      transition: 0.2s ease;
-    }
-    .class-card-viewer-close:hover,
-    .class-card-viewer-close:focus-visible {
-      color: #fff;
-      border-color: #00d2ff;
-      box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
-      outline: none;
-    }
-    .class-card-stage {
-      position: relative;
-      z-index: 2;
-      width: min(100vw, 900px);
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px 78px;
-    }
-    .class-card-nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 3;
-      width: 52px;
-      height: 72px;
-      border: 1px solid rgba(0, 210, 255, 0.6);
-      background: rgba(0, 20, 40, 0.55);
-      color: #c3f0ff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 16px rgba(0, 210, 255, 0.15);
-      transition: 0.2s ease;
-    }
-    .class-card-nav.prev { left: 18px; }
-    .class-card-nav.next { right: 18px; }
-    .class-card-nav:hover,
-    .class-card-nav:focus-visible {
-      color: #fff;
-      border-color: #00d2ff;
-      background: rgba(0, 100, 160, 0.25);
-      box-shadow: 0 0 24px rgba(0, 210, 255, 0.38);
-      outline: none;
-    }
-    .class-card-image-wrap {
-      position: relative;
-      height: min(74vh, 760px);
-      width: min(calc((74vh * 5 / 7)), 540px);
-      max-width: calc(100vw - 156px);
-      aspect-ratio: 5 / 7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .class-card-image {
-      display: block;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      user-select: none;
-      -webkit-user-drag: none;
-      filter: drop-shadow(0 0 24px rgba(0, 210, 255, 0.18));
-      opacity: 1;
-      transform: translateX(0);
-    }
-    .class-card-image.card-switch-next { animation: classCardSlideNext 180ms ease-out; }
-    .class-card-image.card-switch-prev { animation: classCardSlidePrev 180ms ease-out; }
-    @keyframes classCardSlideNext {
-      0% { opacity: 0; transform: translateX(18px); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
-    @keyframes classCardSlidePrev {
-      0% { opacity: 0; transform: translateX(-18px); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
-    .class-name.class-name-clickable {
-      cursor: pointer;
-      transition: 0.2s ease;
-    }
-    .class-name.class-name-clickable:hover,
-    .class-name.class-name-clickable:focus-visible {
-      color: #fff;
-      text-shadow: 0 0 10px #00d2ff, 0 0 20px rgba(0, 210, 255, 0.7);
-      outline: none;
-    }
-    @media (max-width: 600px) {
-      .class-card-stage { padding: 18px 58px; }
-      .class-card-image-wrap {
-        height: min(70vh, 700px);
-        width: min(calc((70vh * 5 / 7)), calc(100vw - 116px));
-        max-width: calc(100vw - 116px);
-      }
-      .class-card-nav {
-        width: 42px;
-        height: 64px;
-      }
-      .class-card-nav.prev { left: 8px; }
-      .class-card-nav.next { right: 8px; }
-      .class-card-viewer-close { top: 10px; right: 10px; width: 38px; height: 38px; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .class-card-image.card-switch-next,
-      .class-card-image.card-switch-prev { animation: none; }
-    }
   </style>
 </head>
 <body>
@@ -506,6 +354,10 @@
     <div class="class-header-box">
       <div class="class-title-tag">SELECT YOUR CLASS</div>
       <div class="class-sub-title">請選擇您的職業：</div>
+      <div class="card-gender-switch" role="group" aria-label="職業卡牌性別預覽">
+        <button type="button" class="card-gender-btn active" id="previewMaleBtn" onclick="setClassPreviewGender('male')">男性卡牌</button>
+        <button type="button" class="card-gender-btn" id="previewFemaleBtn" onclick="setClassPreviewGender('female')">女性卡牌</button>
+      </div>
     </div>
 
     <div class="carousel-container">
@@ -521,12 +373,10 @@
         <div class="class-main-title" id="className">摸魚大隊長</div>
         <div class="evolution-box">
           <div class="evo-title">CAREER PATHWAYS</div>
-          <div class="evo-row">
-            <div class="thumb-frame"><img class="thumb-img" id="t2SpriteImg" src="" alt="Tier 2 Art"></div>
+          <div class="selection-tier-row">
             <div><div class="evo-label">二轉職業</div><div class="evo-path-title" id="tier2Text">國寶級薪水小偷</div></div>
           </div>
-          <div class="evo-row">
-            <div class="thumb-frame"><img class="thumb-img" id="t3SpriteImg" src="" alt="Tier 3 Art"></div>
+          <div class="selection-tier-row">
             <div><div class="evo-label">三轉職業</div><div class="evo-path-title" id="tier3Text">辦公室不動明王</div></div>
           </div>
         </div>
@@ -536,22 +386,6 @@
     </div>
 
     <button class="confirm-btn" id="confirmBtn" onclick="confirmClassSelection()">[ SELECT THIS CLASS ]</button>
-  </div>
-
-  <!-- ═══════════ 職業卡牌展示頁：純卡牌／左右切換／無職業文字 ═══════════ -->
-  <div class="class-card-viewer" id="classCardViewer" aria-hidden="true" onclick="handleClassCardViewerBackdrop(event)">
-    <button class="class-card-viewer-close" type="button" aria-label="關閉卡牌展示" onclick="closeClassCardViewer(event)">×</button>
-    <div class="class-card-stage">
-      <button class="class-card-nav prev" type="button" aria-label="上一張職業卡牌" onclick="changeClassCard(-1, event)">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 6 9 12 15 18"></polyline></svg>
-      </button>
-      <div class="class-card-image-wrap" id="classCardImageWrap">
-        <img class="class-card-image" id="classCardViewerImage" src="" alt="職業卡牌" draggable="false">
-      </div>
-      <button class="class-card-nav next" type="button" aria-label="下一張職業卡牌" onclick="changeClassCard(1, event)">
-        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
-      </button>
-    </div>
   </div>
 
   <div class="modal-overlay" id="customModal">
@@ -669,7 +503,7 @@
         <div class="layer-1">
           <div class="layer-1-top">
             <div class="user-id-box">帳號 (ID)<br><div class="user-id-name" id="displayUserId">--</div></div>
-            <div class="class-box"><span id="ui-class-tier-label">職業 (一轉)</span><br><div class="class-name class-name-clickable" id="userClassDisplay" role="button" tabindex="0" aria-label="查看職業卡牌" onclick="openClassCardViewer()">摸魚大隊長</div></div>
+            <div class="class-box"><span id="ui-class-tier-label">職業 (一轉)</span><br><div class="class-name" id="userClassDisplay">摸魚大隊長</div></div>
           </div>
           <div class="level-box" id="ui-score">Lv. --</div>
         </div>
@@ -855,37 +689,20 @@
     // 🟢 共用SVG圖示：純向量繪製，不依賴系統emoji字型，跨裝置渲染100%一致
     const ICON_WARN = '<svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 L21.5 20 H2.5 Z"/><line x1="12" y1="10" x2="12" y2="14"/><circle cx="12" cy="17.3" r="0.6" fill="currentColor" stroke="none"/></svg>';
     const ICON_CHAT = '<svg class="i-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v11H9l-4 4V5Z"/></svg>';
-    const CLASS_TREE_IMAGE = "uniform_class_cards.png";
+    const CLASS_CARD_BASE_URL = 'https://raw.githubusercontent.com/gemini82619-afk/inbody-status-window/main/';
+    const CLASS_CARD_CODE_MAP = {
+      "摸魚大隊長": 'defense',
+      "精神小伙": 'muscle',
+      "下午茶法師": 'fat-burn',
+      "甩鍋防禦者": 'agility',
+      "飄逸幽靈": 'speed'
+    };
+    let classPreviewGender = 'male';
 
     let radarChart, chartWeight, chartSMM, chartPBF;
     let currentChartType = 'muscle';
     let currentUser = '', currentPwd = '';
     let currentQuest = null;
-
-    // ═══════════ 職業卡牌展示設定 ═══════════
-    const CARD_BASE_URL = 'https://raw.githubusercontent.com/gemini82619-afk/inbody-status-window/main/';
-    const CLASS_CARD_CODES = {
-      '摸魚大隊長': 'defense',
-      '精神小伙': 'muscle',
-      '下午茶法師': 'fat-burn',
-      '甩鍋防禦者': 'agility',
-      '飄逸幽靈': 'speed'
-    };
-    const GENDER_CARD_CODES = {
-      '男性': 'male',
-      '女性': 'female'
-    };
-    const TIER_CARD_CODES = {
-      'Tier 1': 't1',
-      'Tier 2': 't2',
-      'Tier 3': 't3'
-    };
-
-    let currentPlayerClassName = '';
-    let currentPlayerGender = '';
-    let currentPlayerTier = 1;
-    let classCardViewerTier = 1;
-    let classCardTouchStartX = null;
 
     let chartData = { 
       labels: ['軀幹', '右臂', '右腿', '左腿', '左臂'], 
@@ -894,7 +711,7 @@
     };
 
     const classesData = [
-      { name: "摸魚大隊長", row: 0, badge: "DEFENSE", theme: "theme-blue", colorCode: "#00d2ff", tier2: "國寶級薪水小偷", tier3: "辦公室不動明王",
+      { name: "摸魚大隊長", row: 0, badge: "DEFENSE", theme: "theme-purple", colorCode: "#c084fc", tier2: "國寶級薪水小偷", tier3: "辦公室不動明王",
         desc: "肌肉才是王，重量才夠狂；別人拼線條較量，摸魚摸出真氣場。",
         tier2Desc: "護城河築牆，摸魚也稱王；薪水小偷坐上榜，穩坐辦公室之王。",
         tier3Desc: "肌肉煉成牆，穩如泰山藏；辦公室不動明王，誰也撼不動城牆。" },
@@ -906,7 +723,7 @@
         desc: "內臟先淨清，體態自然輕；看不出來也能行，糖分帝國我稱贏。",
         tier2Desc: "脂肪雙雙清，法力漸漸精；召喚師來顯神靈，喝了也能代謝清。",
         tier3Desc: "體內脂盡清，力量真正精；糖分帝國我稱贏，統治全靠自己明。" },
-      { name: "甩鍋防禦者", row: 3, badge: "AGILITY", theme: "theme-purple", colorCode: "#c084fc", tier2: "太極拳第 87 代傳人", tier3: "責任尊者",
+      { name: "甩鍋防禦者", row: 3, badge: "AGILITY", theme: "theme-blue", colorCode: "#00d2ff", tier2: "太極拳第 87 代傳人", tier3: "責任尊者",
         desc: "腰線甩得掉，責任也甩掉；體態練得剛剛好，甩鍋甩出新高潮。",
         tier2Desc: "腰臀降得妙，甩鍋甩得俏；太極勁道更加巧，借力使力甩得掉。",
         tier3Desc: "責任甩得俏，一身樂逍遙；責任尊者真本事，甩得乾淨甩得妙。" },
@@ -984,172 +801,45 @@
       }
     }
 
-    function resolveClassNameFromTitle(title) {
-      if (!title) return '';
-      for (const className of Object.keys(CLASS_CARD_CODES)) {
-        const data = classesData.find(c => c.name === className);
-        if (!data) continue;
-        if (title === data.name || title === data.tier2 || title === data.tier3) return className;
-      }
-      return '';
-    }
-
-    function getPlayerCardGenderCode(gender) {
-      return GENDER_CARD_CODES[gender] || 'male';
-    }
-
-    function getPlayerCardTierNumber(tier) {
-      if (tier === 'Tier 2' || tier === 2 || tier === '2') return 2;
-      if (tier === 'Tier 3' || tier === 3 || tier === '3') return 3;
-      return 1;
-    }
-
-    function getClassCardUrl(className, gender, tierNumber) {
-      const classCode = CLASS_CARD_CODES[className];
-      const genderCode = getPlayerCardGenderCode(gender);
-      const tierCode = TIER_CARD_CODES[`Tier ${tierNumber}`];
-      if (!classCode || !tierCode) return '';
-      return `${CARD_BASE_URL}class-${classCode}-${tierCode}-${genderCode}.png`;
-    }
-
-    function preloadClassCard(className, gender, tierNumber) {
-      const url = getClassCardUrl(className, gender, tierNumber);
-      if (!url) return;
-      const img = new Image();
-      img.decoding = 'async';
-      img.src = url;
-    }
-
-    function preloadClassCardRoute(className, gender) {
-      for (let tier = 1; tier <= 3; tier++) preloadClassCard(className, gender, tier);
-    }
-
-    function setClassCardViewerImage(tierNumber, direction) {
-      const image = document.getElementById('classCardViewerImage');
-      if (!image) return;
-      const url = getClassCardUrl(currentPlayerClassName, currentPlayerGender, tierNumber);
-      if (!url) return;
-
-      image.classList.remove('card-switch-next', 'card-switch-prev');
-      void image.offsetWidth;
-      image.src = url;
-      image.alt = '職業卡牌';
-      image.classList.add(direction === -1 ? 'card-switch-prev' : 'card-switch-next');
-      classCardViewerTier = tierNumber;
-    }
-
-    function openClassCardViewer() {
-      const viewer = document.getElementById('classCardViewer');
-      const image = document.getElementById('classCardViewerImage');
-      if (!viewer || !image) return;
-
-      const displayedTitle = document.getElementById('userClassDisplay')?.innerText?.trim() || '';
-      const resolvedClass = currentPlayerClassName || resolveClassNameFromTitle(displayedTitle);
-      if (!resolvedClass) {
-        showSystemModal('目前尚未取得有效的職業資料。', 'error');
-        return;
-      }
-
-      currentPlayerClassName = resolvedClass;
-      currentPlayerGender = currentPlayerGender || '男性';
-      classCardViewerTier = currentPlayerTier || 1;
-
-      const url = getClassCardUrl(currentPlayerClassName, currentPlayerGender, classCardViewerTier);
-      if (!url) {
-        showSystemModal('找不到對應的職業卡牌圖片。', 'error');
-        return;
-      }
-
-      image.src = url;
-      image.alt = '職業卡牌';
-      viewer.style.display = 'flex';
-      viewer.classList.add('active');
-      viewer.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-
-      // 只預載目前玩家的同職業／同性別三張卡牌，不載入其他 27 張。
-      preloadClassCardRoute(currentPlayerClassName, currentPlayerGender);
-    }
-
-    function closeClassCardViewer(event) {
-      if (event) event.stopPropagation();
-      const viewer = document.getElementById('classCardViewer');
-      if (!viewer) return;
-      viewer.classList.remove('active');
-      viewer.setAttribute('aria-hidden', 'true');
-      viewer.style.display = 'none';
-      document.body.style.overflow = '';
-      classCardTouchStartX = null;
-    }
-
-    function handleClassCardViewerBackdrop(event) {
-      if (event.target === event.currentTarget) closeClassCardViewer();
-    }
-
-    function changeClassCard(direction, event) {
-      if (event) event.stopPropagation();
-      let nextTier = classCardViewerTier + direction;
-      if (nextTier < 1) nextTier = 3;
-      if (nextTier > 3) nextTier = 1;
-      setClassCardViewerImage(nextTier, direction);
-    }
-
-    function handleClassCardTouchStart(event) {
-      if (!document.getElementById('classCardViewer')?.classList.contains('active')) return;
-      if (event.touches && event.touches.length === 1) classCardTouchStartX = event.touches[0].clientX;
-    }
-
-    function handleClassCardTouchEnd(event) {
-      if (classCardTouchStartX === null) return;
-      const endX = event.changedTouches?.[0]?.clientX;
-      if (typeof endX !== 'number') { classCardTouchStartX = null; return; }
-      const deltaX = endX - classCardTouchStartX;
-      classCardTouchStartX = null;
-      if (Math.abs(deltaX) < 45) return;
-      changeClassCard(deltaX < 0 ? 1 : -1);
-    }
-
-    function handleClassCardKeydown(event) {
-      const viewer = document.getElementById('classCardViewer');
-      if (!viewer?.classList.contains('active')) return;
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        changeClassCard(-1);
-      } else if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        changeClassCard(1);
-      } else if (event.key === 'Escape') {
-        event.preventDefault();
-        closeClassCardViewer();
-      }
-    }
-
     function openClassModal() {
+      classPreviewGender = 'male';
+      document.getElementById('previewMaleBtn').classList.add('active');
+      document.getElementById('previewFemaleBtn').classList.remove('active');
       document.getElementById('classSelectModal').style.display = 'flex';
+      preloadClassPreviewCards();
       renderCard();
     }
 
-    function applySpritePosition(elementId, row, col) {
-      const el = document.getElementById(elementId);
-      if (!el) return;
-      const parent = el.parentElement;
-      
-      const imgWidth = 2032, imgHeight = 2160, cardW = 640, cardH = 400, gapX = 24, gapY = 24, margin = 32;
-      const rawLeft = margin + col * (cardW + gapX);
-      const rawTop = margin + row * (cardH + gapY);
-      const scale = parent.clientWidth / cardW;
+    function getClassCardUrl(className, genderCode) {
+      const classCode = CLASS_CARD_CODE_MAP[className];
+      if (!classCode) return '';
+      return `${CLASS_CARD_BASE_URL}class-${classCode}-t1-${genderCode}.png`;
+    }
 
-      el.src = CLASS_TREE_IMAGE;
-      el.style.width = `${imgWidth * scale}px`;
-      el.style.height = `${imgHeight * scale}px`;
-      el.style.left = `-${rawLeft * scale}px`;
-      el.style.top = `-${rawTop * scale}px`;
+    function setClassPreviewGender(genderCode) {
+      if (genderCode !== 'male' && genderCode !== 'female') return;
+      classPreviewGender = genderCode;
+      document.getElementById('previewMaleBtn').classList.toggle('active', genderCode === 'male');
+      document.getElementById('previewFemaleBtn').classList.toggle('active', genderCode === 'female');
+      renderCard();
+    }
+
+    function preloadClassPreviewCards() {
+      classesData.forEach(data => {
+        ['male', 'female'].forEach(genderCode => {
+          const src = getClassCardUrl(data.name, genderCode);
+          if (!src) return;
+          const img = new Image();
+          img.src = src;
+        });
+      });
     }
 
     function renderCard() {
       const data = classesData[currentClassIndex];
       const card = document.getElementById('heroCard');
       const confirmBtn = document.getElementById('confirmBtn');
+      const mainImg = document.getElementById('mainSpriteImg');
 
       card.style.animation = 'none'; card.offsetHeight;
       card.style.animation = 'cardSwitch 0.3s ease-out';
@@ -1157,11 +847,11 @@
 
       document.getElementById('pageIndicator').innerText = `0${currentClassIndex + 1} / 0${classesData.length}`;
       document.getElementById('classBadge').innerText = data.badge;
-      
-      applySpritePosition('mainSpriteImg', data.row, 0); 
-      applySpritePosition('t2SpriteImg', data.row, 1);   
-      applySpritePosition('t3SpriteImg', data.row, 2);   
-      
+
+      mainImg.src = getClassCardUrl(data.name, classPreviewGender);
+      mainImg.className = 'selection-card-img';
+      mainImg.alt = `${data.name} Tier 1 ${classPreviewGender === 'male' ? '男性' : '女性'}卡牌`;
+
       document.getElementById('className').innerText = data.name;
       document.getElementById('tier2Text').innerText = data.tier2;
       document.getElementById('tier3Text').innerText = data.tier3;
@@ -1417,15 +1107,9 @@
 
       if (data.title) {
         document.getElementById('userClassDisplay').innerText = data.title;
-        currentPlayerClassName = resolveClassNameFromTitle(data.title) || currentPlayerClassName;
-      }
-
-      if (data.gender) {
-        currentPlayerGender = data.gender;
       }
 
       if (data.tier) {
-        currentPlayerTier = getPlayerCardTierNumber(data.tier);
         let tierLabel = "職業 (一轉)";
         if (data.tier === "Tier 2") tierLabel = "職業 (二轉)";
         else if (data.tier === "Tier 3") tierLabel = "職業 (三轉)";
@@ -1904,17 +1588,6 @@
     }
 
     window.addEventListener('resize', renderCard);
-    document.addEventListener('keydown', handleClassCardKeydown);
-    document.getElementById('classCardViewer')?.addEventListener('touchstart', handleClassCardTouchStart, { passive: true });
-    document.getElementById('classCardViewer')?.addEventListener('touchend', handleClassCardTouchEnd, { passive: true });
-
-    // 鍵盤操作也可直接從狀態頁職業稱號進入卡牌展示。
-    document.getElementById('userClassDisplay')?.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openClassCardViewer();
-      }
-    });
   </script>
 </body>
 </html>
