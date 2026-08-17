@@ -261,9 +261,62 @@
 
     /* ===== 底部導航與按鈕 ===== */
     .bottom-nav { display: flex; gap: 10px; padding: 15px 24px; background: rgba(2, 8, 16, 0.9); border-top: 1px solid rgba(0, 210, 255, 0.3); z-index: 12; }
-    .nav-btn { flex: 1; padding: 12px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
-    .btn-status { background: rgba(0, 150, 255, 0.2); border: 1px solid #00d2ff; color: #c3f0ff; }
-    .btn-quest { background: rgba(250, 204, 21, 0.1); border: 1px solid #facc15; color: #fef08a; }
+    .nav-btn {
+      flex: 1;
+      padding: 12px;
+      appearance: none;
+      -webkit-appearance: none;
+      border-radius: 0;
+      font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
+      font-size: 0.9rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.25s ease;
+      letter-spacing: 0.5px;
+    }
+
+    /* 冒險：與系統主視覺一致的 Cyan HUD */
+    .btn-adventure {
+      background: rgba(0, 210, 255, 0.10);
+      border: 1px solid #00d2ff;
+      color: #c3f0ff;
+      box-shadow: inset 0 0 12px rgba(0, 210, 255, 0.08), 0 0 8px rgba(0, 210, 255, 0.15);
+    }
+    .btn-adventure:hover,
+    .btn-adventure:focus-visible {
+      background: rgba(0, 210, 255, 0.20);
+      box-shadow: inset 0 0 16px rgba(0, 210, 255, 0.12), 0 0 14px rgba(0, 210, 255, 0.30);
+      text-shadow: 0 0 6px #00d2ff;
+      outline: none;
+    }
+    .btn-adventure:active {
+      background: rgba(0, 210, 255, 0.28);
+      transform: translateY(1px);
+    }
+
+    .btn-status {
+      background: rgba(0, 150, 255, 0.10);
+      border: 1px solid #00d2ff;
+      color: #c3f0ff;
+    }
+
+    .btn-quest {
+      background: rgba(250, 204, 21, 0.08);
+      border: 1px solid #facc15;
+      color: #fef08a;
+      box-shadow: inset 0 0 12px rgba(250, 204, 21, 0.05), 0 0 8px rgba(250, 204, 21, 0.10);
+    }
+    .btn-quest:hover,
+    .btn-quest:focus-visible {
+      background: rgba(250, 204, 21, 0.16);
+      box-shadow: inset 0 0 16px rgba(250, 204, 21, 0.08), 0 0 14px rgba(250, 204, 21, 0.25);
+      text-shadow: 0 0 6px #facc15;
+      outline: none;
+    }
+    .btn-quest:active {
+      background: rgba(250, 204, 21, 0.22);
+      transform: translateY(1px);
+    }
     #file-input { display: none; }
     .upload-action-btn { flex: 1; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
     .manual-action-btn { flex: 1; padding: 15px; background: rgba(74, 222, 128, 0.1); border: 1px solid #4ade80; color: #4ade80; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
