@@ -193,6 +193,25 @@
     .mq-task-desc { font-size: 0.75rem; color: #94a3b8; }
     .mq-maxed-box { text-align: center; padding: 24px 10px; color: #facc15; font-family: 'Orbitron'; font-weight: bold; }
 
+    /* ===== ADVENTURE ===== */
+    .adventure-card { background: rgba(0, 10, 20, 0.85); border: 1px solid #00d2ff; padding: 18px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.08); }
+    .adventure-title { color: #00d2ff; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 14px; }
+    .adventure-stage { text-align:center; font-family:'Orbitron'; color:#facc15; font-size:.85rem; margin-bottom:12px; }
+    .adventure-monster { border:1px solid rgba(255,51,102,.5); padding:14px; background:rgba(255,51,102,.05); margin-bottom:14px; }
+    .adventure-monster-head { display:flex; justify-content:space-between; font-family:'Orbitron'; font-size:.8rem; margin-bottom:8px; }
+    .adventure-hp-track { height:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,51,102,.3); }
+    .adventure-hp-fill { height:100%; background:linear-gradient(90deg,#ff3366,#facc15); transition:width .35s ease; }
+    .adventure-skill { border:1px solid rgba(0,210,255,.25); padding:12px; margin-bottom:9px; background:rgba(255,255,255,.03); }
+    .adventure-skill.completed { border-color:#4ade80; opacity:.72; }
+    .adventure-skill-head { display:flex; justify-content:space-between; gap:10px; align-items:center; }
+    .adventure-skill-name { color:#e2e8f0; font-size:.85rem; }
+    .adventure-skill-meta { color:#94a3b8; font-size:.68rem; }
+    .adventure-attack-row { display:flex; gap:8px; margin-top:10px; }
+    .adventure-input { flex:1; min-width:0; padding:9px; background:rgba(255,255,255,.05); border:1px solid #334155; color:#fff; font-size:16px; }
+    .adventure-attack-btn { padding:9px 12px; background:rgba(0,210,255,.12); border:1px solid #00d2ff; color:#c3f0ff; font-family:'Orbitron'; font-weight:bold; cursor:pointer; }
+    .adventure-attack-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .adventure-result { text-align:center; font-family:'Orbitron'; font-size:.75rem; color:#facc15; min-height:18px; margin-top:8px; }
+
     /* ===== DAILY QUEST ===== */
     .daily-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #4ade80; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(74, 222, 128, 0.08); }
     .daily-title { color: #4ade80; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 16px; }
@@ -642,17 +661,16 @@
           </div>
         </div>
 
-        <!-- ═══════════ DAILY QUEST ═══════════ -->
-        <div class="daily-card">
-          <div class="daily-title">[ DAILY QUEST ]</div>
-          <div id="daily-list"></div>
-          <div class="daily-footer">
-            <div>
-              <div class="daily-completion-label" id="daily-completion-label">Daily Completion 0%</div>
-              <div class="daily-bar-track"><div class="daily-bar-fill" id="daily-bar-fill" style="width:0%;"></div></div>
-            </div>
-            <div class="daily-streak" id="daily-streak">0 Days</div>
+        <!-- ═══════════ ADVENTURE ═══════════ -->
+        <div class="adventure-card">
+          <div class="adventure-title">[ ADVENTURE ]</div>
+          <div class="adventure-stage" id="adventure-stage">STAGE 1</div>
+          <div class="adventure-monster">
+            <div class="adventure-monster-head"><span id="adventure-monster-name">MONSTER 1</span><span id="adventure-hp-text">500 / 500 HP</span></div>
+            <div class="adventure-hp-track"><div class="adventure-hp-fill" id="adventure-hp-fill" style="width:100%"></div></div>
           </div>
+          <div id="adventure-skill-list"></div>
+          <div class="adventure-result" id="adventure-result"></div>
         </div>
 
         <!-- ═══════════ MISSION GUIDE ═══════════ -->
@@ -715,7 +733,7 @@
 
     <div class="bottom-nav">
       <button class="nav-btn btn-status" onclick="switchTab('status')">狀態 (STATUS)</button>
-      <button class="nav-btn btn-quest" onclick="switchTab('quest')">任務 (QUESTS)</button>
+      <button class="nav-btn btn-quest" onclick="switchTab('quest')">冒險 (ADVENTURE)</button>
     </div>
   </div>
 
@@ -1431,108 +1449,100 @@
       body.innerHTML = html;
     }
 
-    // ═══════════ 任務頁：DAILY QUEST（依職業＋MISSION GUIDE動態組合，存進 Google Sheet，同帳號跨裝置同步）═══════════
+    // ═══════════ 冒險頁：ADVENTURE ═══════════
+    let adventureCache = null;
+
     function todayKey() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
-    let dailyStoreCache = {};      // { "YYYY-MM-DD": { tasks:[{key,label,checked}], percent } }
-    let currentQuestSetCache = []; // 目前生效的任務組合 [{key,label}]，當「今天」還沒有任何紀錄時當預設模板用
+    function escapeAttr(str) { return escapeHtml(str).replace(/'/g, '&#39;'); }
 
-    // 取得「今天」要顯示的任務清單：已有紀錄就用紀錄本身；否則用目前生效的任務組合鋪出全部未勾選的預設狀態
-    function getTodayTasks() {
-      const today = todayKey();
-      if (dailyStoreCache[today] && dailyStoreCache[today].tasks && dailyStoreCache[today].tasks.length > 0) {
-        return dailyStoreCache[today].tasks;
-      }
-      return currentQuestSetCache.map(t => ({ key: t.key, label: t.label, checked: false }));
+    function renderAdventure() {
+      const a = adventureCache;
+      if (!a) return;
+      const b = a.battle || {};
+      const skills = a.skills || [];
+      const maxHp = Number(b.maxHp) || 1;
+      const hp = Math.max(0, Number(b.currentHp) || 0);
+      document.getElementById('adventure-stage').innerText = b.completed ? 'ADVENTURE COMPLETE' : `STAGE ${b.stage}`;
+      document.getElementById('adventure-monster-name').innerText = b.completed ? 'ALL MONSTERS DEFEATED' : `${String(b.monsterType || 'normal').toUpperCase()} MONSTER ${b.monsterIndex}`;
+      document.getElementById('adventure-hp-text').innerText = `${hp} / ${maxHp} HP`;
+      document.getElementById('adventure-hp-fill').style.width = `${Math.min(100, Math.max(0, hp / maxHp * 100))}%`;
+
+      document.getElementById('adventure-skill-list').innerHTML = skills.map((s, i) => {
+        const acc = s.type === 'accumulate';
+        const meta = acc ? `${s.progress} / ${s.target}` : (s.completed ? 'READY / COMPLETED' : 'READY');
+        return `<div class="adventure-skill ${s.completed ? 'completed' : ''}">
+          <div class="adventure-skill-head"><span class="adventure-skill-name">${i+1}. ${escapeHtml(s.label)}</span><span class="adventure-skill-meta">${escapeHtml(s.type)} · ${escapeHtml(meta)}</span></div>
+          <div class="adventure-attack-row">
+            ${acc ? `<input class="adventure-input" id="adventure-input-${i}" type="number" min="1" step="1" placeholder="輸入數值" ${s.completed || b.completed ? 'disabled' : ''}>` : ''}
+            <button class="adventure-attack-btn" onclick="attackAdventure(${i+1})" ${s.completed || b.completed ? 'disabled' : ''}>發動攻擊</button>
+          </div>
+        </div>`;
+      }).join('');
     }
 
     async function fetchDailyQuest() {
-      if (!currentUser) { renderDailyQuest(); return; }
+      if (!currentUser) { renderAdventure(); return; }
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
           body: JSON.stringify({ action: 'getDailyQuest', username: currentUser, password: currentPwd })
         });
         const result = await response.json();
-        if (result.status === 'success') {
-          dailyStoreCache = result.dailyStore || {};
-          currentQuestSetCache = result.currentQuestSet || [];
+        if (result.status === 'success') adventureCache = result.adventure || null;
+      } catch (e) { /* 網路異常時維持現有畫面 */ }
+      renderAdventure();
+    }
+
+    async function attackAdventure(slot) {
+      if (!adventureCache) return;
+      const skill = (adventureCache.skills || [])[slot - 1];
+      if (!skill || skill.completed) return;
+      const battle = adventureCache.battle || {};
+      if (battle.completed) return;
+
+      let input = null;
+      if (skill.type === 'accumulate') {
+        const inputEl = document.getElementById(`adventure-input-${slot - 1}`);
+        input = Number(inputEl && inputEl.value);
+        if (!Number.isInteger(input) || input <= 0) {
+          showSystemModal('累積型技能請輸入正整數。', 'error');
+          return;
         }
-      } catch (e) { /* 網路異常時維持現有畫面，不中斷使用 */ }
-      renderDailyQuest();
-    }
-
-    // 連續天數只看「當天任務是否全部完成」，不管任務內容本身是否跟前一天不同
-    function computeStreak(store) {
-      let streak = 0;
-      let d = new Date();
-      const today = todayKey();
-      const isAllDone = (dayRecord) => !!dayRecord && dayRecord.tasks && dayRecord.tasks.length > 0 && dayRecord.tasks.every(t => t.checked);
-      const todayDone = isAllDone(store[today]);
-      if (!todayDone) { d.setDate(d.getDate() - 1); }
-      while (true) {
-        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        if (!isAllDone(store[key])) break;
-        streak++;
-        d.setDate(d.getDate() - 1);
       }
-      return streak;
-    }
 
-    function renderDailyQuest() {
-      const tasks = getTodayTasks();
-
-      const listEl = document.getElementById('daily-list');
-      listEl.innerHTML = tasks.map(t => `
-          <div class="daily-item ${t.checked ? 'checked' : ''}" onclick="toggleDailyItem('${t.key}')">
-            <div class="daily-checkbox"></div>
-            <div class="daily-label">${t.label}</div>
-          </div>`).join('');
-
-      const doneCount = tasks.filter(t => t.checked).length;
-      const percent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
-      document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
-      document.getElementById('daily-bar-fill').style.width = `${percent}%`;
-      document.getElementById('daily-streak').innerText = `${computeStreak(dailyStoreCache)} Days`;
-    }
-
-    let dailyToggleQueue = Promise.resolve(); // 打卡佇列：把「讀取狀態→翻轉→顯示→送出→定案」整個流程都排進同一個序列，
-                                               // 確保上一次點擊完全處理完(含拿到伺服器回應)才開始下一次，避免中途被回應蓋掉造成畫面閃爍
-
-    function toggleDailyItem(key) {
-      const today = todayKey();
-      dailyToggleQueue = dailyToggleQueue.then(() => performDailyToggle(today, key));
-    }
-
-    async function performDailyToggle(today, key) {
-      if (!dailyStoreCache[today]) { dailyStoreCache[today] = { tasks: getTodayTasks(), percent: 0 }; }
-      const task = dailyStoreCache[today].tasks.filter(t => t.key === key)[0];
-      if (!task) return;
-
-      // 樂觀更新：立即反應畫面，但這個動作本身已經排在佇列裡，不會被更早的請求回應搶先蓋掉
-      task.checked = !task.checked;
-      renderDailyQuest();
+      const requestId = (crypto && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      const resultEl = document.getElementById('adventure-result');
+      resultEl.innerText = 'ATTACK PROCESSING...';
+      const buttonList = document.querySelectorAll('.adventure-attack-btn');
+      buttonList.forEach(btn => btn.disabled = true);
 
       try {
         const response = await fetch(GAS_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'toggleDailyQuest', username: currentUser, password: currentPwd, date: today, key: key })
+          body: JSON.stringify({ action: 'attackAdventure', username: currentUser, password: currentPwd, date: todayKey(), slot: slot, input: input, requestId: requestId })
         });
         const result = await response.json();
         if (result.status === 'success') {
-          dailyStoreCache = result.dailyStore || dailyStoreCache;
+          adventureCache = result.adventure || adventureCache;
+          if (result.duplicate) resultEl.innerText = 'REQUEST ALREADY PROCESSED';
+          else resultEl.innerText = `DAMAGE ${result.battle.actualDamage} / ${result.battle.damage}`;
+          const inputEl = document.getElementById(`adventure-input-${slot - 1}`);
+          if (inputEl) inputEl.value = '';
+          renderAdventure();
         } else {
-          task.checked = !task.checked; // 失敗則還原剛剛的樂觀更新
-          showSystemModal('每日任務更新失敗：' + result.message, 'error');
+          resultEl.innerText = '';
+          showSystemModal('攻擊失敗：' + result.message, 'error');
+          renderAdventure();
         }
       } catch (e) {
-        task.checked = !task.checked;
-        showSystemModal('連線發生錯誤，本次打卡未儲存，請重試。', 'error');
+        resultEl.innerText = '';
+        showSystemModal('連線發生錯誤，本次攻擊結果無法確認。請稍後重新載入冒險狀態。', 'error');
+        await fetchDailyQuest();
       }
-      renderDailyQuest();
     }
 
     function showSystemModal(message, type = 'info', isHtml = false) {
