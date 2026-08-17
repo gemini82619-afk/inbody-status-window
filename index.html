@@ -237,22 +237,6 @@
     .mq-task-desc { font-size: 0.75rem; color: #94a3b8; }
     .mq-maxed-box { text-align: center; padding: 24px 10px; color: #facc15; font-family: 'Orbitron'; font-weight: bold; }
 
-    /* ===== DAILY QUEST ===== */
-    .daily-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #4ade80; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(74, 222, 128, 0.08); }
-    .daily-title { color: #4ade80; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 16px; }
-    .daily-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.04); margin-bottom: 8px; cursor: pointer; border-left: 3px solid #334155; transition: 0.2s; }
-    .daily-item.checked { border-left-color: #4ade80; background: rgba(74, 222, 128, 0.08); }
-    .daily-checkbox { width: 18px; height: 18px; border: 2px solid #4ade80; flex-shrink: 0; box-sizing: border-box; position: relative; }
-    .daily-item.checked .daily-checkbox { background: #4ade80; }
-    .daily-item.checked .daily-checkbox::after { content: ""; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px; border: solid #030712; border-width: 0 2px 2px 0; transform: rotate(40deg); }
-    .daily-label { font-size: 0.85rem; color: #e2e8f0; }
-    .daily-item.checked .daily-label { color: #86efac; text-decoration: line-through; text-decoration-color: rgba(134,239,172,0.5); }
-    .daily-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; border-top: 1px dashed rgba(74,222,128,0.25); padding-top: 14px; }
-    .daily-completion-label { font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px; }
-    .daily-bar-track { width: 140px; height: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(74,222,128,0.3); }
-    .daily-bar-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #86efac); }
-    .daily-streak { font-family: 'Orbitron'; font-weight: bold; color: #facc15; font-size: 0.95rem; text-align: right; }
-
     /* ===== MISSION GUIDE (摺疊式，沿用 quest-item/quest-details 樣式) ===== */
     .guide-card { border-color: #00d2ff; box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.08); }
     .guide-card .quest-title { color: #00d2ff; }
@@ -785,20 +769,6 @@
             <div class="mq-subtitle">請先上傳一次 InBody 報告以載入轉職任務。</div>
           </div>
         </div>
-
-        <!-- ═══════════ DAILY QUEST ═══════════ -->
-        <div class="daily-card">
-          <div class="daily-title">[ DAILY QUEST ]</div>
-          <div id="daily-list"></div>
-          <div class="daily-footer">
-            <div>
-              <div class="daily-completion-label" id="daily-completion-label">Daily Completion 0%</div>
-              <div class="daily-bar-track"><div class="daily-bar-fill" id="daily-bar-fill" style="width:0%;"></div></div>
-            </div>
-            <div class="daily-streak" id="daily-streak">0 Days</div>
-          </div>
-        </div>
-
         <!-- ═══════════ MISSION GUIDE ═══════════ -->
         <div class="quest-card guide-card">
           <div class="quest-title">[ MISSION GUIDE ]</div>
@@ -921,7 +891,6 @@
     window.onload = () => { 
       initRadarChart(); 
       initTrendChart();
-      renderDailyQuest();
       renderBottomNav('status');
       checkAutoLogin();
     };
@@ -955,7 +924,6 @@
         if (result.status === 'success') {
           currentUser = user; currentPwd = pwd;
           if (remember) { localStorage.setItem('inbody_user', user); localStorage.setItem('inbody_pwd', pwd); }
-          fetchDailyQuest();
           
           // 🟢 呈現玩家帳號名稱至 Layer 1 的 ID 區塊
           document.getElementById('displayUserId').innerText = user;
@@ -1071,7 +1039,6 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
-          fetchDailyQuest(); // 🟢 換職業會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
           // 🟢 新帳號職業選好後緊接著要求補填生日(生日永遠是空的)，直接進強制彈窗，不疊加另一個成功提示彈窗
           openForceBirthdateModal();
         } else {
@@ -1112,7 +1079,6 @@
           const oldTitle = document.getElementById('userClassDisplay').innerText; // 🟢 updateUIWithData會覆寫成新稱號,要先記下來
           updateUIWithData(result.latest, result.history, result.quest);
           if (result.adventure) setAdventureState(result.adventure);
-          fetchDailyQuest(); // 🟢 上傳會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
           
           if (result.rpg) {
             const rpg = result.rpg;
@@ -1132,7 +1098,6 @@
         if (recovered) {
           updateUIWithData(recovered.latest, recovered.history, recovered.quest);
           if (recovered.adventure) setAdventureState(recovered.adventure);
-          fetchDailyQuest();
           showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複上傳同一張照片。', 'info');
         } else {
           showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新上傳，避免產生重複紀錄。', 'error');
@@ -1237,7 +1202,6 @@
           const oldTitle = document.getElementById('userClassDisplay').innerText;
           updateUIWithData(result.latest, result.history, result.quest);
           if (result.adventure) setAdventureState(result.adventure);
-          fetchDailyQuest();
 
           if (result.rpg) {
             const rpg = result.rpg;
@@ -1257,7 +1221,6 @@
         if (recovered) {
           updateUIWithData(recovered.latest, recovered.history, recovered.quest);
           if (recovered.adventure) setAdventureState(recovered.adventure);
-          fetchDailyQuest();
           showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複送出同一筆資料。', 'info');
         } else {
           showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新送出，避免產生重複紀錄。', 'error');
@@ -1704,104 +1667,6 @@
     function todayKey() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-    }
-
-    let dailyStoreCache = {};      // { "YYYY-MM-DD": { tasks:[{key,label,checked}], percent } }
-    let currentQuestSetCache = []; // 目前生效的任務組合 [{key,label}]，當「今天」還沒有任何紀錄時當預設模板用
-
-    // 取得「今天」要顯示的任務清單：已有紀錄就用紀錄本身；否則用目前生效的任務組合鋪出全部未勾選的預設狀態
-    function getTodayTasks() {
-      const today = todayKey();
-      if (dailyStoreCache[today] && dailyStoreCache[today].tasks && dailyStoreCache[today].tasks.length > 0) {
-        return dailyStoreCache[today].tasks;
-      }
-      return currentQuestSetCache.map(t => ({ key: t.key, label: t.label, checked: false }));
-    }
-
-    async function fetchDailyQuest() {
-      if (!currentUser) { renderDailyQuest(); return; }
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'getDailyQuest', username: currentUser, password: currentPwd })
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-          dailyStoreCache = result.dailyStore || {};
-          currentQuestSetCache = result.currentQuestSet || [];
-        }
-      } catch (e) { /* 網路異常時維持現有畫面，不中斷使用 */ }
-      renderDailyQuest();
-    }
-
-    // 連續天數只看「當天任務是否全部完成」，不管任務內容本身是否跟前一天不同
-    function computeStreak(store) {
-      let streak = 0;
-      let d = new Date();
-      const today = todayKey();
-      const isAllDone = (dayRecord) => !!dayRecord && dayRecord.tasks && dayRecord.tasks.length > 0 && dayRecord.tasks.every(t => t.checked);
-      const todayDone = isAllDone(store[today]);
-      if (!todayDone) { d.setDate(d.getDate() - 1); }
-      while (true) {
-        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-        if (!isAllDone(store[key])) break;
-        streak++;
-        d.setDate(d.getDate() - 1);
-      }
-      return streak;
-    }
-
-    function renderDailyQuest() {
-      const tasks = getTodayTasks();
-
-      const listEl = document.getElementById('daily-list');
-      listEl.innerHTML = tasks.map(t => `
-          <div class="daily-item ${t.checked ? 'checked' : ''}" onclick="toggleDailyItem('${t.key}')">
-            <div class="daily-checkbox"></div>
-            <div class="daily-label">${t.label}</div>
-          </div>`).join('');
-
-      const doneCount = tasks.filter(t => t.checked).length;
-      const percent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
-      document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
-      document.getElementById('daily-bar-fill').style.width = `${percent}%`;
-      document.getElementById('daily-streak').innerText = `${computeStreak(dailyStoreCache)} Days`;
-    }
-
-    let dailyToggleQueue = Promise.resolve(); // 打卡佇列：把「讀取狀態→翻轉→顯示→送出→定案」整個流程都排進同一個序列，
-                                               // 確保上一次點擊完全處理完(含拿到伺服器回應)才開始下一次，避免中途被回應蓋掉造成畫面閃爍
-
-    function toggleDailyItem(key) {
-      const today = todayKey();
-      dailyToggleQueue = dailyToggleQueue.then(() => performDailyToggle(today, key));
-    }
-
-    async function performDailyToggle(today, key) {
-      if (!dailyStoreCache[today]) { dailyStoreCache[today] = { tasks: getTodayTasks(), percent: 0 }; }
-      const task = dailyStoreCache[today].tasks.filter(t => t.key === key)[0];
-      if (!task) return;
-
-      // 樂觀更新：立即反應畫面，但這個動作本身已經排在佇列裡，不會被更早的請求回應搶先蓋掉
-      task.checked = !task.checked;
-      renderDailyQuest();
-
-      try {
-        const response = await fetch(GAS_URL, {
-          method: 'POST',
-          body: JSON.stringify({ action: 'toggleDailyQuest', username: currentUser, password: currentPwd, date: today, key: key })
-        });
-        const result = await response.json();
-        if (result.status === 'success') {
-          dailyStoreCache = result.dailyStore || dailyStoreCache;
-        } else {
-          task.checked = !task.checked; // 失敗則還原剛剛的樂觀更新
-          showSystemModal('每日任務更新失敗：' + result.message, 'error');
-        }
-      } catch (e) {
-        task.checked = !task.checked;
-        showSystemModal('連線發生錯誤，本次打卡未儲存，請重試。', 'error');
-      }
-      renderDailyQuest();
     }
 
     function showSystemModal(message, type = 'info', isHtml = false) {
