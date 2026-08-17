@@ -748,7 +748,6 @@
           <div class="monster-hp-value" id="adventure-hp">0 / 0</div>
           <div class="hp-track"><div class="hp-fill" id="adventure-hp-fill" style="width:0%"></div></div>
         </div>
-        <div class="skills-title-row"><div><div class="skills-title">今日攻擊技能</div><div class="skills-subtitle">每個技能獨立計算攻擊</div></div><div class="skills-subtitle" id="adventure-completion">完成度 0 / 4</div></div>
         <div class="battle-result" id="adventure-result"></div>
         <div class="skill-grid" id="adventure-skills"></div>
         <div class="adventure-note">完成型點擊後直接攻擊；累積型輸入數值後依比例計算攻擊。</div>
@@ -1575,8 +1574,6 @@
       document.getElementById('adventure-monster-tag').innerText = b.monsterType === 'boss' ? 'BOSS' : '一般';
       document.getElementById('adventure-hp').innerText = `${hp.toLocaleString()} / ${maxHp.toLocaleString()} HP`;
       document.getElementById('adventure-hp-fill').style.width = `${pct}%`;
-      const completed = skills.filter(s => s.completed).length;
-      document.getElementById('adventure-completion').innerText = `完成度 ${completed} / ${skills.length}`;
       const list = document.getElementById('adventure-skills');
       list.innerHTML = skills.map((s,i) => {
         const target = Number(s.target)||1;
@@ -1589,9 +1586,9 @@
         const typeLabel = s.type === 'complete' ? '完成型' : '累積型';
         const progressText = s.type === 'complete' ? (s.completed ? '已完成' : '尚未完成') : `${progress.toLocaleString()} / ${target.toLocaleString()} ${unit}`;
         return `<div class="skill-card ${s.completed?'done':''}">
-          <div class="skill-top"><div class="skill-slot">${i+1}</div><div class="skill-type">${typeLabel}</div></div>
+          <div class="skill-top"><div class="skill-type">${typeLabel}</div></div>
           <div class="skill-name">${escapeHtml(s.label || s.key)}</div>
-          <div class="skill-desc">${s.type === 'complete' ? '完成今日條件後發動攻擊' : '點擊發動攻擊後輸入本次數值'}</div>
+          <div class="skill-desc">${s.type === 'complete' ? '完成今日條件後發動攻擊' : ''}</div>
           <div class="skill-progress"><div class="skill-progress-head"><span>${progressText}</span><span>${progressPct}%</span></div><div class="skill-progress-track"><div class="skill-progress-fill" style="width:${progressPct}%"></div></div></div>
           <div class="skill-damage">攻擊力 ${scaledDamage}</div>
           <button class="skill-attack" ${s.completed?'disabled':''} onclick="attackAdventureSkill(${i+1})">${s.completed ? '已完成' : '發動攻擊'}</button>
@@ -1653,6 +1650,8 @@
       const requestId = `${Date.now()}-${crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
       const resultEl = document.getElementById('adventure-result');
       resultEl.innerText = '攻擊處理中...';
+      const buttons = document.querySelectorAll('.skill-attack');
+      buttons.forEach(btn => btn.disabled = true);
       try {
         const response = await fetch(GAS_URL, { method:'POST', body:JSON.stringify({ action:'attackAdventure', username:currentUser, password:currentPwd, date:currentAdventure.date, slot, input, requestId }) });
         const result = await response.json();
@@ -1661,7 +1660,11 @@
           if (result.duplicate) resultEl.innerText = '本次攻擊已處理，已同步目前戰況。';
           else resultEl.innerText = `造成 ${result.battle.actualDamage} 傷害${result.battle.defeated ? ' · 怪物已擊敗' : ''}`;
         } else { resultEl.innerText = ''; showSystemModal('攻擊失敗：' + (result.message || '未知錯誤'), 'error'); }
-      } catch (e) { resultEl.innerText = ''; showSystemModal('攻擊連線失敗，請稍後重試。', 'error'); }
+      } catch (e) { 
+        resultEl.innerText = ''; 
+        buttons.forEach(btn => btn.disabled = false);
+        showSystemModal('攻擊連線失敗，請稍後重試。', 'error'); 
+      }
     }
 
     function todayKey() {
