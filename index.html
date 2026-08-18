@@ -668,7 +668,7 @@
   <div class="adventure-map-overlay" id="adventureStageListModal" role="dialog" aria-modal="true" aria-label="冒險關卡列表">
     <div class="adventure-map-modal">
       <div class="adventure-map-header">
-        <div class="adventure-map-title">[ ADVENTURE MAP ]</div>
+        <div class="adventure-map-title">[ MAP ]</div>
         <button class="adventure-map-close" type="button" aria-label="關閉關卡列表" onclick="closeAdventureStageList()">×</button>
       </div>
       <div class="adventure-map-body" id="adventureStageListBody"></div>
@@ -1953,7 +1953,7 @@
         const cardClass = isLocked ? 'stage-locked' : isCurrent ? 'stage-current' : 'stage-complete';
         const toggle = !isLocked && isCompletedStage ? ` onclick="toggleAdventureStage(${stage})"` : '';
         const chevron = !isLocked && isCompletedStage ? `<span class="adventure-stage-chevron">▼</span>` : '';
-        const rightStatus = isLocked ? `<span class="adventure-stage-lock" style="color:#facc15">${adventureStatusIcon('locked')}</span>` : `<span class="adventure-stage-progress">${completedCount} / 4</span>${chevron}`;
+        const rightStatus = isLocked ? `<span class="adventure-stage-lock" style="color:#facc15">${adventureStatusIcon('locked')}</span>` : `<span class="adventure-stage-progress">${isCompletedStage ? 'COMPLETE' : `${completedCount} / 4`}</span>${chevron}`;
 
         html += `<div class="adventure-stage-card ${cardClass}${expanded ? ' expanded' : ''}" id="adventure-stage-card-${stage}">
           <div class="adventure-stage-head"${toggle}>
