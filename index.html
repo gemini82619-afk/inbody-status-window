@@ -158,10 +158,12 @@
     .adventure-stage { color:#00d2ff; font-family:'Orbitron'; font-weight:700; font-size:.82rem; }
     .adventure-tools { display:flex; gap:6px; }
     .adventure-tool { border:1px solid rgba(0,210,255,.35); background:rgba(0,210,255,.06); color:#9bdcf0; padding:6px 9px; font-size:.68rem; cursor:pointer; }
-    .monster-panel { background:transparent; border:none; padding:16px 24px; margin:0 -24px 16px; width:calc(100% + 48px); text-align:center; box-shadow:none; }
+    .monster-panel { background:transparent; border:0; padding:16px 24px; margin:0 -24px 16px; text-align:center; box-shadow:none; }
     .monster-name { font-family:'Orbitron','Noto Sans TC'; font-size:1.05rem; font-weight:800; color:#f8fafc; }
     .monster-tag { display:inline-block; margin-top:5px; padding:2px 7px; border:1px solid rgba(255,255,255,.2); color:#94a3b8; font-size:.65rem; }
-    .monster-art { height:150px; display:flex; align-items:center; justify-content:center; margin:4px 0 10px; color:#00d2ff; font-size:4.2rem; text-shadow:0 0 22px rgba(0,210,255,.45); }
+    .monster-art { width:calc(100% + 48px); height:250px; margin:4px -24px 10px; display:flex; align-items:center; justify-content:center; overflow:hidden; color:#00d2ff; font-size:4.2rem; text-shadow:0 0 22px rgba(0,210,255,.45); }
+    .monster-art img { display:block; width:100%; height:100%; object-fit:contain; object-position:center; filter:drop-shadow(0 0 18px rgba(0,210,255,.22)); }
+    .monster-art img.boss { filter:drop-shadow(0 0 22px rgba(250,204,21,.25)); }
     .monster-hp-label { color:#94a3b8; font-size:.72rem; margin-bottom:4px; }
     .monster-hp-value { font-family:'Orbitron'; font-size:1.1rem; font-weight:800; }
     .hp-track { height:11px; background:rgba(255,255,255,.08); border:1px solid rgba(255,80,120,.35); margin:8px 0 4px; }
@@ -171,21 +173,16 @@
     .battle-stat { background:rgba(255,255,255,.035); padding:8px; border:1px solid rgba(255,255,255,.07); }
     .battle-stat-label { color:#64748b; font-size:.62rem; }
     .battle-stat-value { font-family:'Orbitron'; color:#e2e8f0; font-size:.86rem; margin-top:3px; }
-    .skills-title-row { display:flex; justify-content:space-between; align-items:end; margin:12px 0 9px; }
-    .skills-title { color:#00d2ff; font-family:'Orbitron'; font-weight:800; letter-spacing:1px; font-size:.82rem; }
-    .skills-subtitle { color:#64748b; font-size:.62rem; }
-    .skill-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+        .skill-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
     .skill-card { background:rgba(0,10,20,.8); border:1px solid rgba(0,210,255,.22); padding:12px; min-height:190px; display:flex; flex-direction:column; position:relative; }
     .skill-card:nth-child(2n) { border-color:rgba(74,222,128,.28); }
     .skill-card:nth-child(3n) { border-color:rgba(250,166,45,.28); }
     .skill-card.done { opacity:.72; }
     .skill-top { display:flex; justify-content:space-between; align-items:center; gap:5px; }
-    .skill-slot { width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid #00d2ff; color:#00d2ff; font-family:'Orbitron'; font-size:.72rem; flex-shrink:0; }
-    .skill-type { color:#64748b; font-size:.58rem; text-align:right; }
-    .skill-icon { display:none; }
+        .skill-type { color:#64748b; font-size:.58rem; text-align:right; }
+    .skill-icon { height:42px; display:flex; align-items:center; justify-content:center; font-size:1.8rem; margin:4px 0; }
     .skill-name { font-size:.92rem; font-weight:800; color:#f8fafc; text-align:center; }
-    .skill-desc { display:none; }
-    .skill-progress { margin-top:8px; }
+        .skill-progress { margin-top:8px; }
     .skill-progress-head { display:flex; justify-content:space-between; color:#cbd5e1; font-family:'Orbitron'; font-size:.62rem; }
     .skill-progress-track { height:6px; background:rgba(255,255,255,.07); margin-top:4px; }
     .skill-progress-fill { height:100%; background:#00d2ff; transition:width .25s ease; }
@@ -193,9 +190,8 @@
     .skill-input { width:100%; margin-top:7px; padding:7px 6px; background:rgba(0,0,0,.35); color:#fff; border:1px solid rgba(0,210,255,.3); text-align:center; font-family:'Orbitron'; font-size:.75rem; }
     .skill-attack { margin-top:auto; width:100%; padding:8px; border:1px solid #00d2ff; background:rgba(0,210,255,.12); color:#dff8ff; font-weight:800; cursor:pointer; }
     .skill-attack:disabled { opacity:.45; cursor:not-allowed; }
-    .adventure-note { text-align:center; color:#64748b; font-size:.62rem; margin:10px 0 3px; }
-    .battle-result { min-height:18px; text-align:center; font-family:'Orbitron'; font-size:.72rem; color:#facc15; margin:4px 0 10px; }
-    @media (max-width:380px) { .skill-card { min-height:180px; padding:9px; } .monster-art { height:125px; } }
+        .battle-result { min-height:18px; text-align:center; font-family:'Orbitron'; font-size:.72rem; color:#facc15; margin:4px 0 10px; }
+    @media (max-width:380px) { .skill-card { min-height:180px; padding:9px; } .monster-art { height:210px; } }
     .quest-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #facc15; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(250, 204, 21, 0.1); }
     .quest-title { color: #facc15; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 20px; }
     .quest-group { margin-bottom: 12px; }
@@ -237,6 +233,22 @@
     .mq-task-desc { font-size: 0.75rem; color: #94a3b8; }
     .mq-maxed-box { text-align: center; padding: 24px 10px; color: #facc15; font-family: 'Orbitron'; font-weight: bold; }
 
+    /* ===== DAILY QUEST ===== */
+    .daily-card { background: rgba(0, 10, 20, 0.8); border: 1px solid #4ade80; padding: 20px; margin-top: 20px; box-shadow: inset 0 0 20px rgba(74, 222, 128, 0.08); }
+    .daily-title { color: #4ade80; font-size: 1.1rem; font-weight: bold; text-align: center; margin-bottom: 16px; }
+    .daily-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.04); margin-bottom: 8px; cursor: pointer; border-left: 3px solid #334155; transition: 0.2s; }
+    .daily-item.checked { border-left-color: #4ade80; background: rgba(74, 222, 128, 0.08); }
+    .daily-checkbox { width: 18px; height: 18px; border: 2px solid #4ade80; flex-shrink: 0; box-sizing: border-box; position: relative; }
+    .daily-item.checked .daily-checkbox { background: #4ade80; }
+    .daily-item.checked .daily-checkbox::after { content: ""; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px; border: solid #030712; border-width: 0 2px 2px 0; transform: rotate(40deg); }
+    .daily-label { font-size: 0.85rem; color: #e2e8f0; }
+    .daily-item.checked .daily-label { color: #86efac; text-decoration: line-through; text-decoration-color: rgba(134,239,172,0.5); }
+    .daily-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 14px; border-top: 1px dashed rgba(74,222,128,0.25); padding-top: 14px; }
+    .daily-completion-label { font-size: 0.75rem; color: #94a3b8; margin-bottom: 4px; }
+    .daily-bar-track { width: 140px; height: 8px; background: rgba(255,255,255,0.08); border: 1px solid rgba(74,222,128,0.3); }
+    .daily-bar-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #86efac); }
+    .daily-streak { font-family: 'Orbitron'; font-weight: bold; color: #facc15; font-size: 0.95rem; text-align: right; }
+
     /* ===== MISSION GUIDE (摺疊式，沿用 quest-item/quest-details 樣式) ===== */
     .guide-card { border-color: #00d2ff; box-shadow: inset 0 0 20px rgba(0, 210, 255, 0.08); }
     .guide-card .quest-title { color: #00d2ff; }
@@ -245,62 +257,9 @@
 
     /* ===== 底部導航與按鈕 ===== */
     .bottom-nav { display: flex; gap: 10px; padding: 15px 24px; background: rgba(2, 8, 16, 0.9); border-top: 1px solid rgba(0, 210, 255, 0.3); z-index: 12; }
-    .nav-btn {
-      flex: 1;
-      padding: 12px;
-      appearance: none;
-      -webkit-appearance: none;
-      border-radius: 0;
-      font-family: 'Orbitron', 'Noto Sans TC', sans-serif;
-      font-size: 0.9rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: 0.25s ease;
-      letter-spacing: 0.5px;
-    }
-
-    /* 冒險：與系統主視覺一致的 Cyan HUD */
-    .btn-adventure {
-      background: rgba(0, 210, 255, 0.10);
-      border: 1px solid #00d2ff;
-      color: #c3f0ff;
-      box-shadow: inset 0 0 12px rgba(0, 210, 255, 0.08), 0 0 8px rgba(0, 210, 255, 0.15);
-    }
-    .btn-adventure:hover,
-    .btn-adventure:focus-visible {
-      background: rgba(0, 210, 255, 0.20);
-      box-shadow: inset 0 0 16px rgba(0, 210, 255, 0.12), 0 0 14px rgba(0, 210, 255, 0.30);
-      text-shadow: 0 0 6px #00d2ff;
-      outline: none;
-    }
-    .btn-adventure:active {
-      background: rgba(0, 210, 255, 0.28);
-      transform: translateY(1px);
-    }
-
-    .btn-status {
-      background: rgba(0, 150, 255, 0.10);
-      border: 1px solid #00d2ff;
-      color: #c3f0ff;
-    }
-
-    .btn-quest {
-      background: rgba(250, 204, 21, 0.08);
-      border: 1px solid #facc15;
-      color: #fef08a;
-      box-shadow: inset 0 0 12px rgba(250, 204, 21, 0.05), 0 0 8px rgba(250, 204, 21, 0.10);
-    }
-    .btn-quest:hover,
-    .btn-quest:focus-visible {
-      background: rgba(250, 204, 21, 0.16);
-      box-shadow: inset 0 0 16px rgba(250, 204, 21, 0.08), 0 0 14px rgba(250, 204, 21, 0.25);
-      text-shadow: 0 0 6px #facc15;
-      outline: none;
-    }
-    .btn-quest:active {
-      background: rgba(250, 204, 21, 0.22);
-      transform: translateY(1px);
-    }
+    .nav-btn { flex: 1; padding: 12px; font-family: 'Orbitron'; font-size: 0.9rem; font-weight: bold; cursor: pointer; transition: 0.3s; }
+    .btn-status { background: rgba(0, 150, 255, 0.2); border: 1px solid #00d2ff; color: #c3f0ff; }
+    .btn-quest { background: rgba(250, 204, 21, 0.1); border: 1px solid #facc15; color: #fef08a; }
     #file-input { display: none; }
     .upload-action-btn { flex: 1; padding: 15px; background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
     .manual-action-btn { flex: 1; padding: 15px; background: rgba(74, 222, 128, 0.1); border: 1px solid #4ade80; color: #4ade80; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
@@ -349,20 +308,6 @@
     .transform-arrow { font-family: 'Orbitron'; font-size: 1.2rem; margin: 8px 0; color: #00d2ff; text-align: center; }
     .transform-detail { margin-top: 16px; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,0.15); font-size: 0.8rem; color: #94a3b8; line-height: 1.7; text-align: left; }
     .modal-btn { width: 100%; padding: 10px; background: rgba(0, 210, 255, 0.15); border: 1px solid #00d2ff; color: #fff; font-family: 'Orbitron'; font-weight: bold; cursor: pointer; }
-
-    /* ===== 冒險累積型技能輸入彈窗 ===== */
-    .adventure-input-overlay { position: fixed; inset: 0; background: rgba(2, 8, 16, 0.88); backdrop-filter: blur(9px); display: none; justify-content: center; align-items: center; z-index: 1004; }
-    .adventure-input-box { width: 88%; max-width: 360px; box-sizing: border-box; padding: 22px; background: linear-gradient(180deg, rgba(6, 17, 33, 0.99) 0%, rgba(2, 8, 16, 0.99) 100%); border: 1px solid #00d2ff; box-shadow: inset 0 0 25px rgba(0, 210, 255, 0.08), 0 0 24px rgba(0, 210, 255, 0.18); text-align: center; }
-    .adventure-input-title { color: #00d2ff; font-family: 'Orbitron'; font-size: .86rem; letter-spacing: 2px; margin-bottom: 16px; }
-    .adventure-input-name { color: #f8fafc; font-size: 1rem; font-weight: 800; margin-bottom: 6px; }
-    .adventure-input-hint { color: #64748b; font-size: .68rem; line-height: 1.5; margin-bottom: 14px; }
-    .adventure-input-field { width: 100%; box-sizing: border-box; padding: 12px 10px; background: rgba(0, 210, 255, 0.04); border: 1px solid rgba(0, 210, 255, 0.45); color: #fff; outline: none; font-family: 'Orbitron'; font-size: 1rem; text-align: center; border-radius: 0; -webkit-appearance: none; appearance: none; }
-    .adventure-input-field:focus { border-color: #00d2ff; box-shadow: 0 0 12px rgba(0, 210, 255, 0.22); }
-    .adventure-input-actions { display: flex; gap: 8px; margin-top: 14px; }
-    .adventure-input-cancel, .adventure-input-confirm { flex: 1; padding: 10px; font-family: 'Orbitron'; font-weight: 800; cursor: pointer; border-radius: 0; }
-    .adventure-input-cancel { background: rgba(255,255,255,.04); border: 1px solid rgba(148,163,184,.35); color: #94a3b8; }
-    .adventure-input-confirm { background: rgba(0,210,255,.12); border: 1px solid #00d2ff; color: #dff8ff; }
-
 
     /* ===== 狀態頁職業卡牌展示 Modal ===== */
     .class-card-viewer-overlay { position: fixed; inset: 0; z-index: 1010; display: none; align-items: center; justify-content: center; background: rgba(2, 8, 16, 0.82); backdrop-filter: blur(12px); padding: 12px 8px; box-sizing: border-box; }
@@ -516,19 +461,6 @@
       <button class="class-card-viewer-arrow right" type="button" onclick="changeClassCard(1)" aria-label="下一轉">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
       </button>
-    </div>
-  </div>
-
-  <div class="adventure-input-overlay" id="adventureInputModal">
-    <div class="adventure-input-box">
-      <div class="adventure-input-title">ADVENTURE ATTACK</div>
-      <div class="adventure-input-name" id="adventureInputName">輸入本次數值</div>
-      <div class="adventure-input-hint" id="adventureInputHint">輸入本次完成的數值，系統將依比例計算本次攻擊傷害。</div>
-      <input class="adventure-input-field" id="adventureInputField" type="number" min="1" step="1" inputmode="numeric" autocomplete="off">
-      <div class="adventure-input-actions">
-        <button class="adventure-input-cancel" type="button" onclick="closeAdventureInputModal()">取消</button>
-        <button class="adventure-input-confirm" type="button" onclick="confirmAdventureInput()">發動攻擊</button>
-      </div>
     </div>
   </div>
 
@@ -738,15 +670,22 @@
         <div class="header" style="justify-content:center;">
           <div class="title-box"><span class="title-text">ADVENTURE</span></div>
         </div>
-        <div class="adventure-header" style="justify-content:flex-end;">
+        <div class="adventure-header">
+          <div class="adventure-stage" id="adventure-stage">第 1 階段</div>
           <div class="adventure-tools"><button class="adventure-tool" type="button" onclick="showSystemModal('關卡列表功能將依既定冒險關卡資料顯示。','info')">關卡列表</button><button class="adventure-tool" type="button" onclick="showSystemModal('戰鬥記錄將顯示本次冒險攻擊結果。','info')">戰鬥記錄</button></div>
         </div>
         <div class="monster-panel">
           <div class="monster-name" id="adventure-monster-name">怪物</div>
           <div class="monster-tag" id="adventure-monster-tag">一般</div>
-          <div class="monster-art" id="adventure-monster-art">👹</div>
+          <div class="monster-art" id="adventure-monster-art"></div>
+          <div class="monster-hp-label">剩餘 HP</div>
           <div class="monster-hp-value" id="adventure-hp">0 / 0</div>
           <div class="hp-track"><div class="hp-fill" id="adventure-hp-fill" style="width:0%"></div></div>
+          <div class="monster-hp-percent" id="adventure-hp-percent">0%</div>
+          <div class="battle-summary">
+            <div class="battle-stat"><div class="battle-stat-label">今日總傷害</div><div class="battle-stat-value" id="adventure-today-damage">0 DMG</div></div>
+            <div class="battle-stat"><div class="battle-stat-label">本關剩餘</div><div class="battle-stat-value" id="adventure-remaining">0 HP</div></div>
+          </div>
         </div>
         <div class="battle-result" id="adventure-result"></div>
         <div class="skill-grid" id="adventure-skills"></div>
@@ -767,6 +706,20 @@
             <div class="mq-subtitle">請先上傳一次 InBody 報告以載入轉職任務。</div>
           </div>
         </div>
+
+        <!-- ═══════════ DAILY QUEST ═══════════ -->
+        <div class="daily-card">
+          <div class="daily-title">[ DAILY QUEST ]</div>
+          <div id="daily-list"></div>
+          <div class="daily-footer">
+            <div>
+              <div class="daily-completion-label" id="daily-completion-label">Daily Completion 0%</div>
+              <div class="daily-bar-track"><div class="daily-bar-fill" id="daily-bar-fill" style="width:0%;"></div></div>
+            </div>
+            <div class="daily-streak" id="daily-streak">0 Days</div>
+          </div>
+        </div>
+
         <!-- ═══════════ MISSION GUIDE ═══════════ -->
         <div class="quest-card guide-card">
           <div class="quest-title">[ MISSION GUIDE ]</div>
@@ -889,6 +842,7 @@
     window.onload = () => { 
       initRadarChart(); 
       initTrendChart();
+      renderDailyQuest();
       renderBottomNav('status');
       checkAutoLogin();
     };
@@ -922,6 +876,7 @@
         if (result.status === 'success') {
           currentUser = user; currentPwd = pwd;
           if (remember) { localStorage.setItem('inbody_user', user); localStorage.setItem('inbody_pwd', pwd); }
+          fetchDailyQuest();
           
           // 🟢 呈現玩家帳號名稱至 Layer 1 的 ID 區塊
           document.getElementById('displayUserId').innerText = user;
@@ -1037,6 +992,7 @@
         });
         const result = await response.json();
         if (result.status === 'success') {
+          fetchDailyQuest(); // 🟢 換職業會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
           // 🟢 新帳號職業選好後緊接著要求補填生日(生日永遠是空的)，直接進強制彈窗，不疊加另一個成功提示彈窗
           openForceBirthdateModal();
         } else {
@@ -1077,6 +1033,7 @@
           const oldTitle = document.getElementById('userClassDisplay').innerText; // 🟢 updateUIWithData會覆寫成新稱號,要先記下來
           updateUIWithData(result.latest, result.history, result.quest);
           if (result.adventure) setAdventureState(result.adventure);
+          fetchDailyQuest(); // 🟢 上傳會讓後端重組每日任務(K2)，前端快取要跟著刷新，避免打卡時key對不上
           
           if (result.rpg) {
             const rpg = result.rpg;
@@ -1096,6 +1053,7 @@
         if (recovered) {
           updateUIWithData(recovered.latest, recovered.history, recovered.quest);
           if (recovered.adventure) setAdventureState(recovered.adventure);
+          fetchDailyQuest();
           showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複上傳同一張照片。', 'info');
         } else {
           showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新上傳，避免產生重複紀錄。', 'error');
@@ -1200,6 +1158,7 @@
           const oldTitle = document.getElementById('userClassDisplay').innerText;
           updateUIWithData(result.latest, result.history, result.quest);
           if (result.adventure) setAdventureState(result.adventure);
+          fetchDailyQuest();
 
           if (result.rpg) {
             const rpg = result.rpg;
@@ -1219,6 +1178,7 @@
         if (recovered) {
           updateUIWithData(recovered.latest, recovered.history, recovered.quest);
           if (recovered.adventure) setAdventureState(recovered.adventure);
+          fetchDailyQuest();
           showSystemModal('剛剛連線中斷了一下，但重新確認後發現數據其實已經處理成功，紀錄已同步更新，請不要重複送出同一筆資料。', 'info');
         } else {
           showSystemModal('連線中斷，無法確認本次是否已處理成功。請稍後查看最新紀錄，確認尚未更新才重新送出，避免產生重複紀錄。', 'error');
@@ -1557,8 +1517,13 @@
       } catch (e) { showSystemModal('冒險資料載入失敗，請稍後再試。', 'error'); }
     }
 
+    function skillIcon(key) {
+      const icons = { workout:'🏋️', protein:'🥤', water:'💧', cardio:'🏃', steps:'👟', core_training:'💪', stretch:'🧘', squat:'🦵', less_sugar:'🍬', no_sugar_drink:'🧋' };
+      return icons[key] || '⚔️';
+    }
+
     function skillUnit(skill) {
-      const units = { protein:'g', water:'ml', cardio:'分鐘', steps:'步', core_training:'組', stretch:'組', squat:'組' };
+      const units = { protein:'g', water:'ml', cardio:'分鐘', steps:'步', core_training:'組', stretch:'分鐘', squat:'組' };
       return units[skill.key] || '';
     }
 
@@ -1569,87 +1534,54 @@
       const skills = a.skills || [];
       const hp = Math.max(0, Number(b.currentHp)||0), maxHp = Math.max(1, Number(b.maxHp)||1);
       const pct = Math.max(0, Math.min(100, Math.round(hp/maxHp*100)));
-      document.getElementById('adventure-monster-name').innerText = `冒險怪物 #${b.monsterIndex || 1}`;
-      document.getElementById('adventure-monster-tag').innerText = b.monsterType === 'boss' ? 'BOSS' : '一般';
+      document.getElementById('adventure-stage').innerText = b.completed ? 'ADVENTURE COMPLETE' : (b.stage ? `STAGE ${b.stage}` : 'STAGE 1');
+      document.getElementById('adventure-monster-name').innerText = b.monsterName || `MONSTER ${b.monsterIndex || 1}`;
+      document.getElementById('adventure-monster-tag').innerText = b.monsterType === 'boss' ? 'BOSS' : 'NORMAL';
+      const art = document.getElementById('adventure-monster-art');
+      if (art) {
+        art.innerHTML = b.image ? `<img src="${escapeAttr(b.image)}" alt="${escapeAttr(b.monsterName || 'Monster')}" class="${b.monsterType === 'boss' ? 'boss' : ''}">` : '';
+      }
       document.getElementById('adventure-hp').innerText = `${hp.toLocaleString()} / ${maxHp.toLocaleString()} HP`;
       document.getElementById('adventure-hp-fill').style.width = `${pct}%`;
+      document.getElementById('adventure-hp-percent').innerText = `${pct}%`;
+      document.getElementById('adventure-remaining').innerText = `${hp.toLocaleString()} HP`;
       const list = document.getElementById('adventure-skills');
       list.innerHTML = skills.map((s,i) => {
-        const target = Number(s.target)||1;
-        const progress = Math.max(0,Number(s.progress)||0);
-        const progressPct = s.type === 'complete' ? (s.completed ? 100 : 0) : Math.max(0,Math.min(100,Math.round(progress/target*100)));
+        const target = Number(s.target)||1, progress = Math.max(0,Number(s.progress)||0), progressPct = s.type === 'complete' ? (s.completed ? 100 : 0) : Math.max(0,Math.min(100,Math.round(progress/target*100)));
         const unit = skillUnit(s);
-        const baseDamage = Number(s.baseDamage)||0;
+        const damage = Number(s.baseDamage)||0;
         const tierMultiplier = Number(a.damageMultiplier)||1;
-        const scaledDamage = Math.floor(baseDamage * tierMultiplier);
+        const scaledDamage = Math.floor(damage*tierMultiplier);
         const typeLabel = s.type === 'complete' ? '完成型' : '累積型';
+        const action = s.type === 'complete' ? '' : `<input class="skill-input" id="skill-input-${i}" type="number" min="1" step="1" placeholder="${unit || '數值'}">`;
         const progressText = s.type === 'complete' ? (s.completed ? '已完成' : '尚未完成') : `${progress.toLocaleString()} / ${target.toLocaleString()} ${unit}`;
         return `<div class="skill-card ${s.completed?'done':''}">
-          <div class="skill-top"><div class="skill-type">${typeLabel}</div></div>
+          <div class="skill-top"><div></div><div class="skill-type">${typeLabel}</div></div>
+          <div class="skill-icon">${skillIcon(s.key)}</div>
           <div class="skill-name">${escapeHtml(s.label || s.key)}</div>
           <div class="skill-progress"><div class="skill-progress-head"><span>${progressText}</span><span>${progressPct}%</span></div><div class="skill-progress-track"><div class="skill-progress-fill" style="width:${progressPct}%"></div></div></div>
-          <div class="skill-damage">攻擊力 ${scaledDamage}</div>
+          <div class="skill-damage">${s.type === 'accumulate' ? `完整傷害 ${damage} · 本階段係數 ×${tierMultiplier}` : `攻擊力 ${scaledDamage}`}</div>
+          ${action}
           <button class="skill-attack" ${s.completed?'disabled':''} onclick="attackAdventureSkill(${i+1})">${s.completed ? '已完成' : '發動攻擊'}</button>
         </div>`;
       }).join('');
-    }
-
-    let pendingAdventureAttackSlot = null;
-
-    function openAdventureInputModal(slot) {
-      if (!currentAdventure) return;
-      const skill = (currentAdventure.skills || [])[slot-1];
-      if (!skill || skill.completed || skill.type !== 'accumulate') return;
-      pendingAdventureAttackSlot = slot;
-      const unit = skillUnit(skill);
-      document.getElementById('adventureInputName').innerText = `「${skill.label || skill.key}」`;
-      document.getElementById('adventureInputHint').innerText = `請輸入本次${unit || '數值'}，系統將依比例計算本次攻擊傷害。`;
-      const field = document.getElementById('adventureInputField');
-      field.value = '';
-      field.placeholder = `本次${unit || '數值'}`;
-      document.getElementById('adventureInputModal').style.display = 'flex';
-      setTimeout(() => field.focus(), 80);
-    }
-
-    function closeAdventureInputModal() {
-      pendingAdventureAttackSlot = null;
-      document.getElementById('adventureInputModal').style.display = 'none';
-    }
-
-    function confirmAdventureInput() {
-      const slot = pendingAdventureAttackSlot;
-      if (!slot) return;
-      const field = document.getElementById('adventureInputField');
-      const input = Number(field.value);
-      if (!Number.isInteger(input) || input <= 0) {
-        field.focus();
-        showSystemModal('請輸入正整數後再發動攻擊。', 'error');
-        return;
-      }
-      closeAdventureInputModal();
-      submitAdventureAttack(slot, input);
     }
 
     async function attackAdventureSkill(slot) {
       if (!currentAdventure || !currentUser) return;
       const skill = (currentAdventure.skills || [])[slot-1];
       if (!skill || skill.completed) return;
+      let input = null;
       if (skill.type === 'accumulate') {
-        openAdventureInputModal(slot);
-        return;
+        const el = document.getElementById(`skill-input-${slot-1}`);
+        input = Number(el && el.value);
+        if (!Number.isInteger(input) || input <= 0) { showSystemModal('累積型技能請先輸入正整數。', 'error'); return; }
       }
-      submitAdventureAttack(slot, null);
-    }
-
-    async function submitAdventureAttack(slot, input) {
-      if (!currentAdventure || !currentUser) return;
-      const skill = (currentAdventure.skills || [])[slot-1];
-      if (!skill || skill.completed) return;
       const requestId = `${Date.now()}-${crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
       const resultEl = document.getElementById('adventure-result');
-      resultEl.innerText = '攻擊處理中...';
-      const buttons = document.querySelectorAll('.skill-attack');
-      buttons.forEach(btn => btn.disabled = true);
+      resultEl.innerText = '';
+      const attackButtons = document.querySelectorAll('.skill-attack');
+      attackButtons.forEach(btn => btn.disabled = true);
       try {
         const response = await fetch(GAS_URL, { method:'POST', body:JSON.stringify({ action:'attackAdventure', username:currentUser, password:currentPwd, date:currentAdventure.date, slot, input, requestId }) });
         const result = await response.json();
@@ -1658,16 +1590,110 @@
           if (result.duplicate) resultEl.innerText = '本次攻擊已處理，已同步目前戰況。';
           else resultEl.innerText = `造成 ${result.battle.actualDamage} 傷害${result.battle.defeated ? ' · 怪物已擊敗' : ''}`;
         } else { resultEl.innerText = ''; showSystemModal('攻擊失敗：' + (result.message || '未知錯誤'), 'error'); }
-      } catch (e) { 
-        resultEl.innerText = ''; 
-        buttons.forEach(btn => btn.disabled = false);
-        showSystemModal('攻擊連線失敗，請稍後重試。', 'error'); 
-      }
+      } catch (e) { resultEl.innerText = ''; showSystemModal('攻擊連線失敗，請稍後重試。', 'error'); }
     }
 
     function todayKey() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    let dailyStoreCache = {};      // { "YYYY-MM-DD": { tasks:[{key,label,checked}], percent } }
+    let currentQuestSetCache = []; // 目前生效的任務組合 [{key,label}]，當「今天」還沒有任何紀錄時當預設模板用
+
+    // 取得「今天」要顯示的任務清單：已有紀錄就用紀錄本身；否則用目前生效的任務組合鋪出全部未勾選的預設狀態
+    function getTodayTasks() {
+      const today = todayKey();
+      if (dailyStoreCache[today] && dailyStoreCache[today].tasks && dailyStoreCache[today].tasks.length > 0) {
+        return dailyStoreCache[today].tasks;
+      }
+      return currentQuestSetCache.map(t => ({ key: t.key, label: t.label, checked: false }));
+    }
+
+    async function fetchDailyQuest() {
+      if (!currentUser) { renderDailyQuest(); return; }
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'getDailyQuest', username: currentUser, password: currentPwd })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          dailyStoreCache = result.dailyStore || {};
+          currentQuestSetCache = result.currentQuestSet || [];
+        }
+      } catch (e) { /* 網路異常時維持現有畫面，不中斷使用 */ }
+      renderDailyQuest();
+    }
+
+    // 連續天數只看「當天任務是否全部完成」，不管任務內容本身是否跟前一天不同
+    function computeStreak(store) {
+      let streak = 0;
+      let d = new Date();
+      const today = todayKey();
+      const isAllDone = (dayRecord) => !!dayRecord && dayRecord.tasks && dayRecord.tasks.length > 0 && dayRecord.tasks.every(t => t.checked);
+      const todayDone = isAllDone(store[today]);
+      if (!todayDone) { d.setDate(d.getDate() - 1); }
+      while (true) {
+        const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+        if (!isAllDone(store[key])) break;
+        streak++;
+        d.setDate(d.getDate() - 1);
+      }
+      return streak;
+    }
+
+    function renderDailyQuest() {
+      const tasks = getTodayTasks();
+
+      const listEl = document.getElementById('daily-list');
+      listEl.innerHTML = tasks.map(t => `
+          <div class="daily-item ${t.checked ? 'checked' : ''}" onclick="toggleDailyItem('${t.key}')">
+            <div class="daily-checkbox"></div>
+            <div class="daily-label">${t.label}</div>
+          </div>`).join('');
+
+      const doneCount = tasks.filter(t => t.checked).length;
+      const percent = tasks.length > 0 ? Math.round((doneCount / tasks.length) * 100) : 0;
+      document.getElementById('daily-completion-label').innerText = `Daily Completion ${percent}%`;
+      document.getElementById('daily-bar-fill').style.width = `${percent}%`;
+      document.getElementById('daily-streak').innerText = `${computeStreak(dailyStoreCache)} Days`;
+    }
+
+    let dailyToggleQueue = Promise.resolve(); // 打卡佇列：把「讀取狀態→翻轉→顯示→送出→定案」整個流程都排進同一個序列，
+                                               // 確保上一次點擊完全處理完(含拿到伺服器回應)才開始下一次，避免中途被回應蓋掉造成畫面閃爍
+
+    function toggleDailyItem(key) {
+      const today = todayKey();
+      dailyToggleQueue = dailyToggleQueue.then(() => performDailyToggle(today, key));
+    }
+
+    async function performDailyToggle(today, key) {
+      if (!dailyStoreCache[today]) { dailyStoreCache[today] = { tasks: getTodayTasks(), percent: 0 }; }
+      const task = dailyStoreCache[today].tasks.filter(t => t.key === key)[0];
+      if (!task) return;
+
+      // 樂觀更新：立即反應畫面，但這個動作本身已經排在佇列裡，不會被更早的請求回應搶先蓋掉
+      task.checked = !task.checked;
+      renderDailyQuest();
+
+      try {
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'toggleDailyQuest', username: currentUser, password: currentPwd, date: today, key: key })
+        });
+        const result = await response.json();
+        if (result.status === 'success') {
+          dailyStoreCache = result.dailyStore || dailyStoreCache;
+        } else {
+          task.checked = !task.checked; // 失敗則還原剛剛的樂觀更新
+          showSystemModal('每日任務更新失敗：' + result.message, 'error');
+        }
+      } catch (e) {
+        task.checked = !task.checked;
+        showSystemModal('連線發生錯誤，本次打卡未儲存，請重試。', 'error');
+      }
+      renderDailyQuest();
     }
 
     function showSystemModal(message, type = 'info', isHtml = false) {
