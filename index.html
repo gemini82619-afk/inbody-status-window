@@ -542,6 +542,17 @@
     </div>
   </div>
 
+
+  <div class="adventure-map-overlay" id="adventureStageListModal" role="dialog" aria-modal="true" aria-label="冒險關卡列表">
+    <div class="adventure-map-modal">
+      <div class="adventure-map-header">
+        <div class="adventure-map-title">[ ADVENTURE MAP ]</div>
+        <button class="adventure-map-close" type="button" aria-label="關閉關卡列表" onclick="closeAdventureStageList()">×</button>
+      </div>
+      <div class="adventure-map-body" id="adventureStageListBody"></div>
+    </div>
+  </div>
+
   <div class="modal-overlay" id="customModal">
     <div class="modal-box" id="modalBox">
       <div class="title-box" style="margin-bottom: 15px;"><span class="title-text" id="modalTitle" style="font-size: 0.85rem;">NOTIFICATION</span></div>
@@ -749,7 +760,7 @@
           <div class="title-box"><span class="title-text">ADVENTURE</span></div>
         </div>
         <div class="adventure-header" style="justify-content:flex-end;">
-          <div class="adventure-tools"><button class="adventure-tool" type="button" onclick="showSystemModal('關卡列表功能將依既定冒險關卡資料顯示。','info')">關卡列表</button><button class="adventure-tool" type="button" onclick="showSystemModal('戰鬥記錄將顯示本次冒險攻擊結果。','info')">戰鬥記錄</button></div>
+          <div class="adventure-tools"><button class="adventure-tool" type="button" onclick="openAdventureStageList()">關卡列表</button><button class="adventure-tool" type="button" onclick="showSystemModal('戰鬥記錄將顯示本次冒險攻擊結果。','info')">戰鬥記錄</button></div>
         </div>
         <div class="monster-panel">
           <div class="monster-art" id="adventure-monster-art" aria-label="冒險怪物圖片">👹</div>
@@ -1771,6 +1782,110 @@
     function todayKey() {
       const d = new Date();
       return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+
+    // ═══════════ ADVENTURE：關卡列表（唯讀；僅已通關 Stage 可展開/收合）═══════════
+    const ADVENTURE_STAGE_META = {
+      1: { name:'史萊姆草原', monsters:['綠色史萊姆','紅色史萊姆','巨型史萊姆','史萊姆王'] },
+      2: { name:'骷髏墓地', monsters:['骷髏兵','骷髏弓箭手','骷髏騎士','骷髏王'] },
+      3: { name:'狼人森林', monsters:['小狼人','狼人戰士','狂暴狼人','狼人王'] },
+      4: { name:'獸人要塞', monsters:['獸人','獸人戰士','獸人薩滿','獸人酋長'] }
+    };
+
+    function adventureStatusIcon(status) {
+      if (status === 'completed') {
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 5.5 9 3l3 2 3-2 2 2.5 3 .8-.4 3.6 1.4 2.7-2.4 2.7.2 3.4-3.5.8-2.3 2.5-2.8-2.1-3.2 1-1.8-2.9-3-.9.5-3.4L3.2 9.1l2.2-2.8L7 5.5Z"/><circle cx="9" cy="11" r="1"/><circle cx="15" cy="11" r="1"/><path d="M9 16c1.8 1.1 4.2 1.1 6 0"/></svg>`;
+      }
+      if (status === 'battle') {
+        return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 5 14 14"/><path d="m19 5-14 14"/><path d="M4 4l2-2 2 2-2 2z"/><path d="M20 4l-2-2-2 2 2 2z"/><path d="M4 20l2 2 2-2-2-2z"/><path d="M20 20l-2 2-2-2 2-2z"/></svg>`;
+      }
+      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/><circle cx="12" cy="15" r="1"/></svg>`;
+    }
+
+    function getAdventureStageListState() {
+      const b = (currentAdventure && currentAdventure.battle) || {};
+      const currentStage = Math.max(1, Math.min(4, Number(b.stage) || 1));
+      const currentMonster = Math.max(1, Math.min(4, Number(b.monsterIndex) || 1));
+      const currentHp = Number(b.currentHp);
+      return { currentStage, currentMonster, currentHp };
+    }
+
+    function renderAdventureStageList() {
+      const body = document.getElementById('adventureStageListBody');
+      if (!body) return;
+      const { currentStage, currentMonster, currentHp } = getAdventureStageListState();
+      let html = '';
+
+      Object.keys(ADVENTURE_STAGE_META).map(Number).forEach(stage => {
+        const meta = ADVENTURE_STAGE_META[stage];
+        const isLocked = stage > currentStage;
+        const isCurrent = stage === currentStage;
+        const isCompletedStage = stage < currentStage || (isCurrent && currentMonster === 4 && currentHp <= 0);
+        const completedCount = isLocked ? 0 : isCompletedStage ? 4 : isCurrent ? Math.max(0, currentMonster - 1) : 0;
+        const expanded = isCurrent && !isCompletedStage;
+        const cardClass = isLocked ? 'stage-locked' : isCurrent ? 'stage-current' : 'stage-complete';
+        const toggle = !isLocked && isCompletedStage ? ` onclick="toggleAdventureStage(${stage})"` : '';
+        const chevron = !isLocked && isCompletedStage ? `<span class="adventure-stage-chevron">▼</span>` : '';
+        const rightStatus = isLocked ? `<span class="adventure-stage-lock" style="color:#facc15">${adventureStatusIcon('locked')}</span>` : `<span class="adventure-stage-progress">${completedCount} / 4</span>${chevron}`;
+
+        html += `<div class="adventure-stage-card ${cardClass}${expanded ? ' expanded' : ''}" id="adventure-stage-card-${stage}">
+          <div class="adventure-stage-head"${toggle}>
+            <div class="adventure-stage-main">
+              <div class="adventure-stage-code">STAGE ${String(stage).padStart(2,'0')}</div>
+              <div class="adventure-stage-name">${meta.name}</div>
+            </div>
+            <div class="adventure-stage-right">${rightStatus}</div>
+          </div>`;
+
+        if (!isLocked) {
+          html += `<div class="adventure-stage-monsters">`;
+          meta.monsters.forEach((name, idx) => {
+            const monsterNo = idx + 1;
+            let status = 'locked';
+            if (stage < currentStage) status = 'completed';
+            else if (stage === currentStage) {
+              if (monsterNo < currentMonster) status = 'completed';
+              else if (monsterNo === currentMonster && !(currentMonster === 4 && currentHp <= 0)) status = 'battle';
+              else if (monsterNo === currentMonster && currentHp <= 0) status = 'completed';
+            }
+            const tier = monsterNo === 1 ? '一般' : monsterNo === 2 ? '中階' : monsterNo === 3 ? '精英' : 'BOSS';
+            const tierClass = monsterNo === 2 ? 'mid' : monsterNo === 3 ? 'elite' : monsterNo === 4 ? 'boss' : '';
+            const iconClass = status === 'battle' ? 'battle' : status === 'completed' ? 'completed' : 'locked';
+            const iconColor = status === 'battle' ? '#ef4444' : status === 'completed' ? '#64748b' : '#facc15';
+            html += `<div class="adventure-monster-row">
+              <span class="adventure-monster-status ${iconClass}" style="color:${iconColor}">${adventureStatusIcon(status)}</span>
+              <span class="adventure-monster-name">${name}</span>
+              <span class="adventure-monster-tier ${tierClass}">${tier}</span>
+            </div>`;
+          });
+          html += `</div>`;
+        }
+        html += `</div>`;
+      });
+
+      html += `<div class="adventure-map-legend">
+        <span class="adventure-map-legend-item" style="color:#64748b">${adventureStatusIcon('completed')} 已完成</span>
+        <span class="adventure-map-legend-item" style="color:#ef4444">${adventureStatusIcon('battle')} 戰鬥中</span>
+        <span class="adventure-map-legend-item" style="color:#facc15">${adventureStatusIcon('locked')} 未解鎖</span>
+      </div>`;
+      body.innerHTML = html;
+    }
+
+    function openAdventureStageList() {
+      renderAdventureStageList();
+      const modal = document.getElementById('adventureStageListModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeAdventureStageList() {
+      const modal = document.getElementById('adventureStageListModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function toggleAdventureStage(stage) {
+      const card = document.getElementById(`adventure-stage-card-${stage}`);
+      if (card && card.classList.contains('stage-complete')) card.classList.toggle('expanded');
     }
 
     function showSystemModal(message, type = 'info', isHtml = false) {
