@@ -1904,6 +1904,52 @@
       }
     }
 
+    async function focusAdventureMonsterView() {
+      const art = getAdventureMonsterArt();
+      if (!art) return;
+
+      const rect = art.getBoundingClientRect();
+      const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+
+      // 攻擊開始時，無論玩家目前位於哪個技能位置，
+      // 都把「怪物圖片區」完整拉到畫面中央，作為接下來 DANGER / HIT 的主視覺焦點。
+      const artCenter = rect.top + rect.height / 2;
+      const viewportCenter = vh / 2;
+      const targetTop = Math.max(
+        0,
+        Math.min(
+          document.documentElement.scrollHeight - vh,
+          window.scrollY + artCenter - viewportCenter
+        )
+      );
+
+      const distance = Math.abs(targetTop - window.scrollY);
+      if (distance < 8) return;
+
+      window.scrollTo({
+        top: targetTop,
+        behavior: 'smooth'
+      });
+
+      // 等待 smooth scroll 接近目標位置，最長約 700ms。
+      // 若瀏覽器未提供 scrollend，也不會卡住攻擊流程。
+      const deadline = performance.now() + Math.min(700, Math.max(320, distance * 0.9));
+      await new Promise(resolve => {
+        const check = () => {
+          if (
+            performance.now() >= deadline ||
+            Math.abs(window.scrollY - targetTop) < 8
+          ) {
+            resolve();
+            return;
+          }
+          requestAnimationFrame(check);
+        };
+        requestAnimationFrame(check);
+      });
+    }
+
+
     function beginAdventureHitVisual(slot) {
       const art = getAdventureMonsterArt();
       const buttons = document.querySelectorAll('.skill-attack');
@@ -2039,16 +2085,33 @@
 
       clearAdventureBattleVisuals();
       if (resultEl) resultEl.innerText = '';
-      beginAdventureHitVisual(slot);
 
-      // DANGER 立即開始，持續至少 MIN_DANGER_MS；真正 HIT 必須等後端
-      // 回傳 actualDamage，避免前端先猜傷害。若後端較慢，DANGER 會自然延展，
-      // 不會出現「DANGER 結束後空白等待」。
-      const dangerReadyAt = startedAt + MIN_DANGER_MS;
-
-      // 網路請求與 DANGER 演出並行，避免把「伺服器等待」直接暴露給玩家。
       try {
-        const response = await fetch(GAS_URL, { method:'POST', body:JSON.stringify({ action:'attackAdventure', username:currentUser, password:currentPwd, date:currentAdventure.date, slot, input, requestId }) });
+        // 後端請求立即送出；同時把玩家視線拉回怪物，兩者並行。
+        // 因此捲動畫不會額外增加 GAS 的實際等待時間。
+        const attackRequest = fetch(GAS_URL, {
+          method:'POST',
+          body:JSON.stringify({
+            action:'attackAdventure',
+            username:currentUser,
+            password:currentPwd,
+            date:currentAdventure.date,
+            slot,
+            input,
+            requestId
+          })
+        });
+
+        // 只有當怪物不在主要視區時才 smooth scroll。
+        // 捲到位置後才開始 DANGER，讓「視線回到怪物 → DANGER」成為完整的連續演出。
+        await focusAdventureMonsterView();
+        beginAdventureHitVisual(slot);
+
+        // DANGER 從真正進入怪物視區的時刻開始，至少維持 MIN_DANGER_MS。
+        // 如果後端較慢，DANGER 自動延展，不會出現空白等待。
+        const dangerReadyAt = performance.now() + MIN_DANGER_MS;
+
+        const response = await attackRequest;
         const result = await response.json();
 
         const elapsed = performance.now() - startedAt;
@@ -2059,10 +2122,12 @@
         if (result.status === 'success' && result.adventure) {
           const oldBattle = currentAdventure.battle || {};
           const newBattle = result.adventure.battle || {};
-          const monsterChanged = Number(oldBattle.stage) !== Number(newBattle.stage) || Number(oldBattle.monsterIndex) !== Number(newBattle.monsterIndex);
+          const monsterChanged =
+            Number(oldBattle.stage) !== Number(newBattle.stage) ||
+            Number(oldBattle.monsterIndex) !== Number(newBattle.monsterIndex);
 
           if (!result.duplicate && result.battle) {
-            // 後端已確認 actualDamage：先確保 DANGER 至少完整演出，再無縫切入 HIT。
+            // 後端已確認 actualDamage：先完成最低 DANGER 時間，再無縫切入 HIT。
             const remainingDanger = Math.max(0, dangerReadyAt - performance.now());
             if (remainingDanger > 0) {
               await new Promise(resolve => setTimeout(resolve, remainingDanger));
@@ -2078,18 +2143,18 @@
           }
 
           // 讓 HIT、傷害浮字與短暫受擊反應先完成，再同步後端狀態。
-          await new Promise(resolve => setTimeout(resolve, result.battle && result.battle.defeated ? 280 : 420));
+          await new Promise(resolve =>
+            setTimeout(resolve, result.battle && result.battle.defeated ? 280 : 420)
+          );
           finishAdventureAttackVisual(result);
 
           if (result.battle && result.battle.defeated) {
             await new Promise(resolve => setTimeout(resolve, 600));
           }
 
-          const nextBattle = result.adventure.battle || {};
-          const willEnterNextMonster = result.battle && result.battle.defeated && monsterChanged;
           setAdventureState(result.adventure);
 
-          if (willEnterNextMonster) {
+          if (result.battle && result.battle.defeated && monsterChanged) {
             await new Promise(resolve => setTimeout(resolve, 30));
             renderAdventureEntryVisual();
           }
