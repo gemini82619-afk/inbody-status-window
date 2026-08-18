@@ -166,8 +166,27 @@
     .monster-tag.tag-elite { color:#facc15; border-color:rgba(250,204,21,.4); }
     .monster-tag.tag-boss { color:#fb7185; border-color:rgba(251,113,133,.45); }
     /* 怪物圖片區：底部固定，四階級由底部向上逐級放大。 */
-    .monster-art { height:215px; display:flex; align-items:flex-end; justify-content:center; margin:4px 0 4px; padding:0; box-sizing:border-box; color:#00d2ff; font-size:4.2rem; text-shadow:0 0 22px rgba(0,210,255,.45); overflow:hidden; }
-    .monster-art img { display:block; width:auto; height:140px; max-width:88%; object-fit:contain; object-position:center bottom; flex:0 0 auto; filter:drop-shadow(0 0 14px rgba(0,210,255,.28)); }
+    .monster-art { position:relative; height:215px; display:flex; align-items:flex-end; justify-content:center; margin:4px 0 4px; padding:0; box-sizing:border-box; color:#00d2ff; font-size:4.2rem; text-shadow:0 0 22px rgba(0,210,255,.45); overflow:hidden; isolation:isolate; }
+    .monster-art::before { content:''; position:absolute; inset:18% 22% 4%; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.22) 0%,rgba(0,210,255,.12) 32%,transparent 68%); opacity:0; transform:scale(.7); pointer-events:none; z-index:0; }
+    .monster-art::after { content:'✦'; position:absolute; left:50%; top:38%; transform:translate(-50%,-50%) scale(.25); font-size:5rem; line-height:1; color:#fff; text-shadow:0 0 12px #fff,0 0 30px #00d2ff,0 0 55px #00d2ff; opacity:0; pointer-events:none; z-index:3; }
+    .monster-art img { position:relative; z-index:1; display:block; width:auto; height:140px; max-width:88%; object-fit:contain; object-position:center bottom; flex:0 0 auto; filter:drop-shadow(0 0 14px rgba(0,210,255,.28)); transform-origin:center bottom; }
+    .monster-art.attack-prep::before { animation:monsterImpactGlow .22s ease-out forwards; }
+    .monster-art.attack-hit::before { animation:monsterImpactGlow .32s ease-out forwards; }
+    .monster-art.attack-hit::after { animation:monsterImpactFlash .28s ease-out forwards; }
+    .monster-art.attack-hit img { animation:monsterHitShake .34s ease-out; filter:brightness(1.75) drop-shadow(0 0 22px rgba(255,255,255,.72)); }
+    .monster-art.attack-dead img { animation:monsterDeath .58s ease-in forwards; }
+    .monster-art.entering img { animation:monsterEnter .48s cubic-bezier(.2,.8,.2,1) both; }
+    .battle-damage-float { position:absolute; left:50%; top:27%; z-index:5; transform:translate(-50%,0); pointer-events:none; font-family:'Orbitron','Noto Sans TC'; font-size:1.55rem; font-weight:900; color:#fff; text-shadow:0 0 6px #ff3366,0 0 16px rgba(255,51,102,.75); opacity:0; white-space:nowrap; }
+    .battle-damage-float.show { animation:damageFloat .72s cubic-bezier(.2,.75,.25,1) forwards; }
+    .battle-result.battle-result-show { min-height:1.1em; animation:battleResultIn .25s ease-out both; }
+    .skill-attack.is-attacking { border-color:#facc15; background:rgba(250,204,21,.12); color:#fff; }
+    @keyframes monsterImpactGlow { 0%{opacity:0;transform:scale(.7)} 35%{opacity:1;transform:scale(1.08)} 100%{opacity:0;transform:scale(1.28)} }
+    @keyframes monsterImpactFlash { 0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-8deg)} 35%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(4deg)} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.55) rotate(12deg)} }
+    @keyframes monsterHitShake { 0%{transform:translateX(0) scale(1)} 18%{transform:translateX(-7px) scale(1.025)} 36%{transform:translateX(7px) scale(1.02)} 54%{transform:translateX(-4px) scale(1.01)} 72%{transform:translateX(3px) scale(1)} 100%{transform:translateX(0) scale(1)} }
+    @keyframes monsterDeath { 0%{opacity:1;transform:scale(1);filter:brightness(1.7) drop-shadow(0 0 24px rgba(255,255,255,.7))} 45%{opacity:1;transform:scale(1.04)} 100%{opacity:0;transform:scale(.72) translateY(12px);filter:brightness(.2) drop-shadow(0 0 0 transparent)} }
+    @keyframes monsterEnter { 0%{opacity:0;transform:scale(.72) translateY(16px)} 65%{opacity:1;transform:scale(1.035) translateY(0)} 100%{opacity:1;transform:scale(1)} }
+    @keyframes damageFloat { 0%{opacity:0;transform:translate(-50%,10px) scale(.72)} 18%{opacity:1;transform:translate(-50%,0) scale(1.08)} 100%{opacity:0;transform:translate(-50%,-48px) scale(1)} }
+    @keyframes battleResultIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
     .monster-art img.monster-tier-general { height:140px; }
     .monster-art img.monster-tier-mid { height:160px; }
     .monster-art img.monster-tier-elite { height:185px; }
@@ -885,7 +904,7 @@
           <div class="adventure-tools"><button class="adventure-tool" type="button" onclick="openAdventureStageList()">關卡列表</button><button class="adventure-tool" type="button" onclick="showSystemModal('戰鬥記錄將顯示本次冒險攻擊結果。','info')">戰鬥記錄</button></div>
         </div>
         <div class="monster-panel">
-          <div class="monster-art" id="adventure-monster-art" aria-label="冒險怪物圖片">👹</div>
+          <div class="monster-art" id="adventure-monster-art" aria-label="冒險怪物圖片"><span class="battle-damage-float" id="adventure-damage-float" aria-hidden="true"></span>👹</div>
           <div class="monster-name-row">
             <div class="monster-tag" id="adventure-monster-tag">一般</div>
             <div class="monster-name" id="adventure-monster-name">怪物</div>
@@ -1780,14 +1799,79 @@
       const isBoss = battle.monsterType === 'boss' || monsterIndex === 4;
       const tierClass = monsterIndex === 4 ? 'monster-tier-boss' : monsterIndex === 3 ? 'monster-tier-elite' : monsterIndex === 2 ? 'monster-tier-mid' : 'monster-tier-general';
 
+      const damageFloat = art.querySelector('#adventure-damage-float');
       if (!imageUrl) {
-        art.innerText = '👹';
+        art.innerHTML = '';
+        if (damageFloat) art.appendChild(damageFloat);
+        art.appendChild(document.createTextNode('👹'));
         return;
       }
 
       // 圖片統一以底部為基準，依一般→中階→精英→BOSS逐級放大。
       // 圖片載入失敗時保留原本的 Emoji 作為備援，不影響戰鬥功能。
-      art.innerHTML = `<img src="${imageUrl}" class="${tierClass}${isBoss ? ' monster-art-boss' : ''}" alt="冒險怪物" onerror="this.style.display='none'; this.parentElement.innerText='👹';">`;
+      art.innerHTML = '';
+      if (damageFloat) art.appendChild(damageFloat);
+      const img = document.createElement('img');
+      img.src = imageUrl;
+      img.className = `${tierClass}${isBoss ? ' monster-art-boss' : ''}`;
+      img.alt = '冒險怪物';
+      img.onerror = function() { this.style.display = 'none'; if (!art.querySelector('.monster-fallback')) { const fallback = document.createElement('span'); fallback.className = 'monster-fallback'; fallback.textContent = '👹'; art.appendChild(fallback); } };
+      art.appendChild(img);
+    }
+
+    function getAdventureMonsterArt() {
+      return document.getElementById('adventure-monster-art');
+    }
+
+    function clearAdventureBattleVisuals() {
+      const art = getAdventureMonsterArt();
+      const resultEl = document.getElementById('adventure-result');
+      const damageEl = document.getElementById('adventure-damage-float');
+      if (art) art.classList.remove('attack-prep','attack-hit','attack-dead','entering');
+      if (damageEl) { damageEl.classList.remove('show'); damageEl.textContent = ''; }
+      if (resultEl) resultEl.classList.remove('battle-result-show');
+    }
+
+    function showAdventureDamage(actualDamage) {
+      const damageEl = document.getElementById('adventure-damage-float');
+      if (!damageEl) return;
+      damageEl.textContent = `-${Number(actualDamage || 0).toLocaleString()}`;
+      damageEl.classList.remove('show');
+      void damageEl.offsetWidth;
+      damageEl.classList.add('show');
+    }
+
+    function beginAdventureHitVisual(slot) {
+      const art = getAdventureMonsterArt();
+      const buttons = document.querySelectorAll('.skill-attack');
+      buttons.forEach(btn => btn.disabled = true);
+      const active = document.querySelector(`.skill-card:nth-child(${slot}) .skill-attack`);
+      if (active) active.classList.add('is-attacking');
+      if (!art) return;
+      art.classList.remove('attack-prep','attack-hit','attack-dead','entering');
+      void art.offsetWidth;
+      art.classList.add('attack-prep');
+      window.setTimeout(() => {
+        art.classList.remove('attack-prep');
+        art.classList.add('attack-hit');
+      }, 180);
+    }
+
+    function finishAdventureAttackVisual(result) {
+      const art = getAdventureMonsterArt();
+      if (!art) return;
+      art.classList.remove('attack-prep','attack-hit');
+      if (result && result.battle && result.battle.defeated) {
+        art.classList.add('attack-dead');
+      }
+    }
+
+    function renderAdventureEntryVisual() {
+      const art = getAdventureMonsterArt();
+      if (!art) return;
+      art.classList.remove('attack-prep','attack-hit','attack-dead','entering');
+      void art.offsetWidth;
+      art.classList.add('entering');
     }
 
     function renderAdventure() {
@@ -1881,23 +1965,69 @@
       if (!currentAdventure || !currentUser) return;
       const skill = (currentAdventure.skills || [])[slot-1];
       if (!skill || skill.completed) return;
+
       const requestId = `${Date.now()}-${crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
       const resultEl = document.getElementById('adventure-result');
-      resultEl.innerText = '攻擊處理中...';
-      const buttons = document.querySelectorAll('.skill-attack');
-      buttons.forEach(btn => btn.disabled = true);
+      const startedAt = performance.now();
+      const MIN_ATTACK_PRESENTATION_MS = 720;
+
+      clearAdventureBattleVisuals();
+      if (resultEl) resultEl.innerText = '';
+      beginAdventureHitVisual(slot);
+
+      // 網路請求與戰鬥演出並行，避免把「伺服器等待」直接暴露給玩家。
       try {
         const response = await fetch(GAS_URL, { method:'POST', body:JSON.stringify({ action:'attackAdventure', username:currentUser, password:currentPwd, date:currentAdventure.date, slot, input, requestId }) });
         const result = await response.json();
+
+        const elapsed = performance.now() - startedAt;
+        if (elapsed < MIN_ATTACK_PRESENTATION_MS) {
+          await new Promise(resolve => setTimeout(resolve, MIN_ATTACK_PRESENTATION_MS - elapsed));
+        }
+
         if (result.status === 'success' && result.adventure) {
+          const oldBattle = currentAdventure.battle || {};
+          const newBattle = result.adventure.battle || {};
+          const monsterChanged = Number(oldBattle.stage) !== Number(newBattle.stage) || Number(oldBattle.monsterIndex) !== Number(newBattle.monsterIndex);
+
+          if (!result.duplicate && result.battle) {
+            showAdventureDamage(result.battle.actualDamage);
+          }
+
+          // 讓命中與傷害數字先完成，再同步後端狀態；否則 renderAdventure() 會立即重建怪物 DOM，吃掉動畫。
+          await new Promise(resolve => setTimeout(resolve, result.battle && result.battle.defeated ? 250 : 360));
+          finishAdventureAttackVisual(result);
+
+          if (result.battle && result.battle.defeated) {
+            await new Promise(resolve => setTimeout(resolve, 600));
+          }
+
+          const nextBattle = result.adventure.battle || {};
+          const willEnterNextMonster = result.battle && result.battle.defeated && monsterChanged;
           setAdventureState(result.adventure);
-          if (result.duplicate) resultEl.innerText = '本次攻擊已處理，已同步目前戰況。';
-          else resultEl.innerText = `造成 ${result.battle.actualDamage} 傷害${result.battle.defeated ? ' · 怪物已擊敗' : ''}`;
-        } else { resultEl.innerText = ''; showSystemModal('攻擊失敗：' + (result.message || '未知錯誤'), 'error'); }
-      } catch (e) { 
-        resultEl.innerText = ''; 
+
+          if (willEnterNextMonster) {
+            await new Promise(resolve => setTimeout(resolve, 30));
+            renderAdventureEntryVisual();
+          }
+
+          if (resultEl) {
+            resultEl.innerText = result.duplicate
+              ? '本次攻擊已同步'
+              : `造成 ${Number(result.battle.actualDamage || 0).toLocaleString()} 傷害${result.battle.defeated ? ' · 怪物已擊敗' : ''}`;
+            resultEl.classList.add('battle-result-show');
+          }
+        } else {
+          clearAdventureBattleVisuals();
+          const buttons = document.querySelectorAll('.skill-attack');
+          buttons.forEach(btn => btn.disabled = false);
+          showSystemModal('攻擊失敗：' + (result.message || '未知錯誤'), 'error');
+        }
+      } catch (e) {
+        clearAdventureBattleVisuals();
+        const buttons = document.querySelectorAll('.skill-attack');
         buttons.forEach(btn => btn.disabled = false);
-        showSystemModal('攻擊連線失敗，請稍後重試。', 'error'); 
+        showSystemModal('攻擊連線失敗，請稍後重試。', 'error');
       }
     }
 
