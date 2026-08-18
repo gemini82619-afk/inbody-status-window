@@ -2370,6 +2370,15 @@
         document.getElementById('status-view').style.display = (tab === 'status') ? 'block' : 'none';
         document.getElementById('quest-view').style.display = (tab === 'quest') ? 'block' : 'none';
         document.getElementById('adventure-view').style.display = (tab === 'adventure') ? 'block' : 'none';
+
+        // 分頁切換後一律回到頂端。
+        // 此頁真正的滾動容器是 .scroll-content，不是 window；
+        // 因此必須重設 scrollTop，避免從狀態頁底部切到冒險/任務後仍停在相同位置。
+        const scroller = document.querySelector('.scroll-content');
+        if (scroller) {
+          scroller.scrollTo({ top: 0, behavior: 'auto' });
+        }
+
         renderBottomNav(tab);
         if (tab === 'adventure') fetchAdventure();
       };
