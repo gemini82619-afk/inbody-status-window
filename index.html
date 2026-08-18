@@ -451,19 +451,18 @@
       letter-spacing: 0.5px;
     }
 
-    /* 冒險：與系統主視覺一致的 Cyan HUD */
+    /* 冒險：獨立的橙金色戰鬥系 HUD，與狀態/任務的 Cyan 系統色區隔 */
     .btn-adventure {
-      background: rgba(0, 210, 255, 0.10);
-      border: 1px solid #00d2ff;
-      color: #c3f0ff;
-      box-shadow: inset 0 0 12px rgba(0, 210, 255, 0.08), 0 0 8px rgba(0, 210, 255, 0.15);
+      background: rgba(255, 166, 0, 0.10);
+      border: 1px solid #ffb000;
+      color: #ffe7ad;
+      box-shadow: inset 0 0 12px rgba(255, 166, 0, 0.10), 0 0 8px rgba(255, 166, 0, 0.18);
     }
     .btn-adventure:hover,
     .btn-adventure:focus-visible {
-      background: rgba(0, 210, 255, 0.20);
-      box-shadow: inset 0 0 16px rgba(0, 210, 255, 0.12), 0 0 14px rgba(0, 210, 255, 0.30);
-      text-shadow: 0 0 6px #00d2ff;
-      outline: none;
+      background: rgba(255, 166, 0, 0.22);
+      box-shadow: inset 0 0 18px rgba(255, 166, 0, 0.16), 0 0 14px rgba(255, 166, 0, 0.32);
+      color: #fff4d6;
     }
     .btn-adventure:active {
       background: rgba(0, 210, 255, 0.28);
@@ -2357,7 +2356,7 @@
       if (!nav) return;
       const buttons = {
         status: [['adventure','ADVENTURE','btn-adventure'],['quest','QUESTS','btn-quest']],
-        quest: [['adventure','ADVENTURE','btn-adventure'],['status','STATUS','btn-status']],
+        quest: [['status','STATUS','btn-status'],['adventure','ADVENTURE','btn-adventure']],
         adventure: [['status','STATUS','btn-status'],['quest','QUESTS','btn-quest']]
       }[tab] || [];
       nav.innerHTML = buttons.map(([target,label,cls]) => `<button class="nav-btn ${cls}" onclick="switchTab('${target}')">${label}</button>`).join('');
