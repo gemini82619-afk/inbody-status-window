@@ -1906,39 +1906,52 @@
 
     async function focusAdventureMonsterView() {
       const art = getAdventureMonsterArt();
-      if (!art) return;
+      const scroller = document.querySelector('.scroll-content');
+      if (!art || !scroller) return;
 
-      const rect = art.getBoundingClientRect();
-      const vh = window.innerHeight || document.documentElement.clientHeight || 800;
+      // 重要：此頁真正可滾動的是 .scroll-content，不是 window。
+      // .status-window 本身 overflow:hidden，因此 window.scrollTo() 不會移動冒險內容。
+      const scrollerRect = scroller.getBoundingClientRect();
+      const artRect = art.getBoundingClientRect();
 
-      // 攻擊開始時，無論玩家目前位於哪個技能位置，
-      // 都把「怪物圖片區」完整拉到畫面中央，作為接下來 DANGER / HIT 的主視覺焦點。
-      const artCenter = rect.top + rect.height / 2;
-      const viewportCenter = vh / 2;
-      const targetTop = Math.max(
+      // 以「冒險內容視窗」的中心為基準，而不是瀏覽器整個 viewport。
+      // 這樣怪物圖片會真正位於遊戲主視窗中央。
+      const scrollerCenter = scroller.clientHeight / 2;
+      const artCenterRelative =
+        (artRect.top - scrollerRect.top) + artRect.height / 2;
+
+      const targetScrollTop =
+        scroller.scrollTop + artCenterRelative - scrollerCenter;
+
+      const maxScrollTop = Math.max(
         0,
-        Math.min(
-          document.documentElement.scrollHeight - vh,
-          window.scrollY + artCenter - viewportCenter
-        )
+        scroller.scrollHeight - scroller.clientHeight
       );
 
-      const distance = Math.abs(targetTop - window.scrollY);
+      const target = Math.max(
+        0,
+        Math.min(maxScrollTop, targetScrollTop)
+      );
+
+      const distance = Math.abs(target - scroller.scrollTop);
       if (distance < 8) return;
 
-      window.scrollTo({
-        top: targetTop,
+      scroller.scrollTo({
+        top: target,
         behavior: 'smooth'
       });
 
-      // 等待 smooth scroll 接近目標位置，最長約 700ms。
-      // 若瀏覽器未提供 scrollend，也不會卡住攻擊流程。
-      const deadline = performance.now() + Math.min(700, Math.max(320, distance * 0.9));
+      // 等待真正的 .scroll-content 滾動到目標位置。
+      const deadline = performance.now() + Math.min(
+        700,
+        Math.max(320, distance * 0.9)
+      );
+
       await new Promise(resolve => {
         const check = () => {
           if (
             performance.now() >= deadline ||
-            Math.abs(window.scrollY - targetTop) < 8
+            Math.abs(scroller.scrollTop - target) < 8
           ) {
             resolve();
             return;
