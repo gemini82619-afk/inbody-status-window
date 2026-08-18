@@ -173,7 +173,7 @@
     .monster-art.attack-prep::before { animation:monsterImpactGlow .18s ease-out forwards; }
     .monster-art.attack-hit::before { animation:monsterImpactGlow .26s ease-out forwards; }
     .monster-art.attack-hit::after { animation:monsterImpactFlash .22s ease-out forwards; }
-    .monster-art.attack-hit img { animation:monsterHitShake .28s ease-out; filter:brightness(1.75) drop-shadow(0 0 22px rgba(255,255,255,.72)); }
+    .monster-art.attack-hit img { animation:monsterHitShake .28s ease-out; }
     .monster-art.attack-dead img { animation:monsterDeath .58s ease-in forwards; }
     .monster-art.entering img { animation:monsterEnter .48s cubic-bezier(.2,.8,.2,1) both; }
     .battle-damage-float { position:absolute; left:50%; top:27%; z-index:5; transform:translate(-50%,0); pointer-events:none; font-family:'Orbitron','Noto Sans TC'; font-size:1.55rem; font-weight:900; color:#fff; text-shadow:0 0 6px #ff3366,0 0 16px rgba(255,51,102,.75); opacity:0; white-space:nowrap; }
@@ -182,7 +182,14 @@
     .skill-attack.is-attacking { border-color:#facc15; background:rgba(250,204,21,.12); color:#fff; }
     @keyframes monsterImpactGlow { 0%{opacity:0;transform:scale(.7)} 35%{opacity:1;transform:scale(1.08)} 100%{opacity:0;transform:scale(1.28)} }
     @keyframes monsterImpactFlash { 0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-8deg)} 35%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(4deg)} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.55) rotate(12deg)} }
-    @keyframes monsterHitShake { 0%{transform:translateX(0) scale(1)} 18%{transform:translateX(-7px) scale(1.025)} 36%{transform:translateX(7px) scale(1.02)} 54%{transform:translateX(-4px) scale(1.01)} 72%{transform:translateX(3px) scale(1)} 100%{transform:translateX(0) scale(1)} }
+    @keyframes monsterHitShake {
+      0%{transform:translateX(0) scale(1);filter:brightness(1) drop-shadow(0 0 14px rgba(0,210,255,.28))}
+      12%{transform:translateX(-7px) scale(1.025);filter:brightness(2.0) drop-shadow(0 0 24px rgba(255,255,255,.9))}
+      30%{transform:translateX(7px) scale(1.02);filter:brightness(1.75) drop-shadow(0 0 22px rgba(255,255,255,.72))}
+      48%{transform:translateX(-4px) scale(1.01);filter:brightness(1.35) drop-shadow(0 0 18px rgba(255,255,255,.5))}
+      68%{transform:translateX(3px) scale(1);filter:brightness(1.08) drop-shadow(0 0 15px rgba(255,255,255,.32))}
+      100%{transform:translateX(0) scale(1);filter:brightness(1) drop-shadow(0 0 14px rgba(0,210,255,.28))}
+    }
     @keyframes monsterDeath { 0%{opacity:1;transform:scale(1);filter:brightness(1.7) drop-shadow(0 0 24px rgba(255,255,255,.7))} 45%{opacity:1;transform:scale(1.04)} 100%{opacity:0;transform:scale(.72) translateY(12px);filter:brightness(.2) drop-shadow(0 0 0 transparent)} }
     @keyframes monsterEnter { 0%{opacity:0;transform:scale(.72) translateY(16px)} 65%{opacity:1;transform:scale(1.035) translateY(0)} 100%{opacity:1;transform:scale(1)} }
     @keyframes damageFloat { 0%{opacity:0;transform:translate(-50%,8px) scale(.78)} 16%{opacity:1;transform:translate(-50%,0) scale(1.08)} 62%{opacity:1;transform:translate(-50%,-28px) scale(1)} 100%{opacity:0;transform:translate(-50%,-46px) scale(.98)} }
