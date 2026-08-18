@@ -1833,8 +1833,13 @@
     }
 
     function showAdventureDamage(actualDamage) {
-      const damageEl = document.getElementById('adventure-damage-float');
-      if (!damageEl) return;
+      const art = getAdventureMonsterArt();
+      if (!art) return;
+      const damageEls = art.querySelectorAll('#adventure-damage-float');
+      if (!damageEls.length) return;
+      // 強制維持單一傷害浮字節點，避免重複演出。
+      const damageEl = damageEls[0];
+      for (let i = 1; i < damageEls.length; i++) damageEls[i].remove();
       damageEl.textContent = `-${Number(actualDamage || 0).toLocaleString()}`;
       damageEl.classList.remove('show');
       void damageEl.offsetWidth;
@@ -1915,6 +1920,7 @@
     }
 
     let pendingAdventureAttackSlot = null;
+    let adventureAttackInFlight = false;
 
     function openAdventureInputModal(slot) {
       if (!currentAdventure) return;
@@ -1951,6 +1957,7 @@
     }
 
     async function attackAdventureSkill(slot) {
+      if (adventureAttackInFlight) return;
       if (!currentAdventure || !currentUser) return;
       const skill = (currentAdventure.skills || [])[slot-1];
       if (!skill || skill.completed) return;
@@ -1962,9 +1969,11 @@
     }
 
     async function submitAdventureAttack(slot, input) {
+      if (adventureAttackInFlight) return;
       if (!currentAdventure || !currentUser) return;
       const skill = (currentAdventure.skills || [])[slot-1];
       if (!skill || skill.completed) return;
+      adventureAttackInFlight = true;
 
       const requestId = `${Date.now()}-${crypto && crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2)}`;
       const resultEl = document.getElementById('adventure-result');
@@ -2017,16 +2026,19 @@
               : `造成 ${Number(result.battle.actualDamage || 0).toLocaleString()} 傷害${result.battle.defeated ? ' · 怪物已擊敗' : ''}`;
             resultEl.classList.add('battle-result-show');
           }
+          adventureAttackInFlight = false;
         } else {
           clearAdventureBattleVisuals();
           const buttons = document.querySelectorAll('.skill-attack');
           buttons.forEach(btn => btn.disabled = false);
+          adventureAttackInFlight = false;
           showSystemModal('攻擊失敗：' + (result.message || '未知錯誤'), 'error');
         }
       } catch (e) {
         clearAdventureBattleVisuals();
         const buttons = document.querySelectorAll('.skill-attack');
         buttons.forEach(btn => btn.disabled = false);
+        adventureAttackInFlight = false;
         showSystemModal('攻擊連線失敗，請稍後重試。', 'error');
       }
     }
