@@ -1800,6 +1800,14 @@
       const tierClass = monsterIndex === 4 ? 'monster-tier-boss' : monsterIndex === 3 ? 'monster-tier-elite' : monsterIndex === 2 ? 'monster-tier-mid' : 'monster-tier-general';
 
       const damageFloat = art.querySelector('#adventure-damage-float');
+      // renderAdventure() 會重新建立怪物 DOM。若保留帶有 .show 的傷害浮字，
+      // 重新插入 DOM 會讓 CSS animation 從頭播放一次，造成「-50」看起來出現兩次。
+      // 因此在重新 render 前先解除動畫狀態；真正的傷害演出只由 showAdventureDamage() 觸發一次。
+      if (damageFloat) {
+        damageFloat.classList.remove('show');
+        damageFloat.textContent = '';
+      }
+
       if (!imageUrl) {
         art.innerHTML = '';
         if (damageFloat) art.appendChild(damageFloat);
@@ -1832,18 +1840,27 @@
       if (resultEl) resultEl.classList.remove('battle-result-show');
     }
 
+    let adventureDamageAnimationToken = 0;
+
     function showAdventureDamage(actualDamage) {
       const art = getAdventureMonsterArt();
       if (!art) return;
       const damageEls = art.querySelectorAll('#adventure-damage-float');
       if (!damageEls.length) return;
-      // 強制維持單一傷害浮字節點，避免重複演出。
+
+      // 每次實際攻擊只建立一個新的動畫 token；同一次流程若意外再次呼叫，
+      // 仍只會重播同一個浮字，不會建立第二個浮字。
+      const token = ++adventureDamageAnimationToken;
       const damageEl = damageEls[0];
       for (let i = 1; i < damageEls.length; i++) damageEls[i].remove();
+
       damageEl.textContent = `-${Number(actualDamage || 0).toLocaleString()}`;
       damageEl.classList.remove('show');
       void damageEl.offsetWidth;
-      damageEl.classList.add('show');
+
+      if (token === adventureDamageAnimationToken) {
+        damageEl.classList.add('show');
+      }
     }
 
     function beginAdventureHitVisual(slot) {
