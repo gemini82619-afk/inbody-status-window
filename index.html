@@ -170,6 +170,28 @@
     .monster-art::before { content:''; position:absolute; inset:18% 22% 4%; border-radius:50%; background:radial-gradient(circle,rgba(255,255,255,.22) 0%,rgba(0,210,255,.12) 32%,transparent 68%); opacity:0; transform:scale(.7); pointer-events:none; z-index:0; }
     .monster-art::after { content:'✦'; position:absolute; left:50%; top:38%; transform:translate(-50%,-50%) scale(.25); font-size:5rem; line-height:1; color:#fff; text-shadow:0 0 12px #fff,0 0 30px #00d2ff,0 0 55px #00d2ff; opacity:0; pointer-events:none; z-index:3; }
     .monster-art img { position:relative; z-index:1; display:block; width:auto; height:140px; max-width:88%; object-fit:contain; object-position:center bottom; flex:0 0 auto; filter:drop-shadow(0 0 14px rgba(0,210,255,.28)); transform-origin:center bottom; }
+    .monster-art.attack-danger::before {
+      animation:monsterDangerPulse 1.05s ease-in-out infinite;
+      opacity:1;
+      transform:scale(1);
+    }
+    .monster-art.attack-danger::after {
+      content:'⚠  DANGER  ⚠';
+      left:50%; top:15%;
+      transform:translate(-50%,-50%) scale(.92);
+      font-family:'Orbitron','Noto Sans TC',sans-serif;
+      font-size:1.05rem;
+      font-weight:900;
+      letter-spacing:2px;
+      color:#ff4d6d;
+      text-shadow:0 0 7px rgba(255,77,109,.95),0 0 18px rgba(255,77,109,.7);
+      opacity:1;
+      animation:monsterDangerText 1.05s ease-in-out infinite;
+      z-index:4;
+    }
+    .monster-art.attack-danger img {
+      animation:monsterDangerMonster 1.05s ease-in-out infinite;
+    }
     .monster-art.attack-prep::before { animation:monsterImpactGlow .18s ease-out forwards; }
     .monster-art.attack-hit::before { animation:monsterImpactGlow .26s ease-out forwards; }
     .monster-art.attack-hit::after { animation:monsterImpactFlash .22s ease-out forwards; }
@@ -180,6 +202,18 @@
     .battle-damage-float.show { animation:damageFloat .54s cubic-bezier(.2,.75,.25,1) forwards; }
     .battle-result.battle-result-show { min-height:1.1em; animation:battleResultIn .25s ease-out both; }
     .skill-attack.is-attacking { border-color:#facc15; background:rgba(250,204,21,.12); color:#fff; }
+    @keyframes monsterDangerPulse {
+      0%,100% { opacity:.28; transform:scale(.82); }
+      50% { opacity:.78; transform:scale(1.12); }
+    }
+    @keyframes monsterDangerText {
+      0%,100% { opacity:.55; transform:translate(-50%,-50%) scale(.94); }
+      50% { opacity:1; transform:translate(-50%,-50%) scale(1.04); }
+    }
+    @keyframes monsterDangerMonster {
+      0%,100% { transform:translateX(0) scale(1); filter:brightness(1) drop-shadow(0 0 14px rgba(0,210,255,.28)); }
+      50% { transform:translateX(0) scale(1.018); filter:brightness(1.12) drop-shadow(0 0 22px rgba(255,77,109,.52)); }
+    }
     @keyframes monsterImpactGlow { 0%{opacity:0;transform:scale(.7)} 35%{opacity:1;transform:scale(1.08)} 100%{opacity:0;transform:scale(1.28)} }
     @keyframes monsterImpactFlash { 0%{opacity:0;transform:translate(-50%,-50%) scale(.25) rotate(-8deg)} 35%{opacity:1;transform:translate(-50%,-50%) scale(1.15) rotate(4deg)} 100%{opacity:0;transform:translate(-50%,-50%) scale(1.55) rotate(12deg)} }
     @keyframes monsterHitShake {
@@ -1842,7 +1876,7 @@
       const art = getAdventureMonsterArt();
       const resultEl = document.getElementById('adventure-result');
       const damageEl = document.getElementById('adventure-damage-float');
-      if (art) art.classList.remove('attack-prep','attack-hit','attack-dead','entering');
+      if (art) art.classList.remove('attack-prep','attack-danger','attack-hit','attack-dead','entering');
       if (damageEl) { damageEl.classList.remove('show'); damageEl.textContent = ''; }
       if (resultEl) resultEl.classList.remove('battle-result-show');
     }
@@ -1877,19 +1911,17 @@
       const active = document.querySelector(`.skill-card:nth-child(${slot}) .skill-attack`);
       if (active) active.classList.add('is-attacking');
       if (!art) return;
-      art.classList.remove('attack-prep','attack-hit','attack-dead','entering');
+      art.classList.remove('attack-prep','attack-danger','attack-hit','attack-dead','entering');
       void art.offsetWidth;
-      art.classList.add('attack-prep');
-      window.setTimeout(() => {
-        art.classList.remove('attack-prep');
-        art.classList.add('attack-hit');
-      }, 180);
+      // DANGER 是可延展的等待狀態：先把玩家視線拉回怪物，再持續警戒，
+      // 直到後端 actualDamage 回來才轉入真正 HIT。
+      art.classList.add('attack-danger');
     }
 
     function finishAdventureAttackVisual(result) {
       const art = getAdventureMonsterArt();
       if (!art) return;
-      art.classList.remove('attack-prep','attack-hit');
+      art.classList.remove('attack-prep','attack-danger','attack-hit');
       if (result && result.battle && result.battle.defeated) {
         art.classList.add('attack-dead');
       }
@@ -1898,7 +1930,7 @@
     function renderAdventureEntryVisual() {
       const art = getAdventureMonsterArt();
       if (!art) return;
-      art.classList.remove('attack-prep','attack-hit','attack-dead','entering');
+      art.classList.remove('attack-prep','attack-danger','attack-hit','attack-dead','entering');
       void art.offsetWidth;
       art.classList.add('entering');
     }
@@ -2003,17 +2035,18 @@
       const resultEl = document.getElementById('adventure-result');
       const startedAt = performance.now();
       const MIN_ATTACK_PRESENTATION_MS = 720;
-      const HIT_POINT_MS = 180;
+      const MIN_DANGER_MS = 520;
 
       clearAdventureBattleVisuals();
       if (resultEl) resultEl.innerText = '';
       beginAdventureHitVisual(slot);
 
-      // 以固定 180ms 作為「命中瞬間」：閃白、震動、命中特效從這裡開始。
-      // 傷害數字仍以後端 actualDamage 為準；若後端尚未回來，收到結果後立即補上。
-      const hitPointAt = startedAt + HIT_POINT_MS;
+      // DANGER 立即開始，持續至少 MIN_DANGER_MS；真正 HIT 必須等後端
+      // 回傳 actualDamage，避免前端先猜傷害。若後端較慢，DANGER 會自然延展，
+      // 不會出現「DANGER 結束後空白等待」。
+      const dangerReadyAt = startedAt + MIN_DANGER_MS;
 
-      // 網路請求與戰鬥演出並行，避免把「伺服器等待」直接暴露給玩家。
+      // 網路請求與 DANGER 演出並行，避免把「伺服器等待」直接暴露給玩家。
       try {
         const response = await fetch(GAS_URL, { method:'POST', body:JSON.stringify({ action:'attackAdventure', username:currentUser, password:currentPwd, date:currentAdventure.date, slot, input, requestId }) });
         const result = await response.json();
@@ -2029,15 +2062,22 @@
           const monsterChanged = Number(oldBattle.stage) !== Number(newBattle.stage) || Number(oldBattle.monsterIndex) !== Number(newBattle.monsterIndex);
 
           if (!result.duplicate && result.battle) {
-            const remainingToHit = Math.max(0, hitPointAt - performance.now());
-            if (remainingToHit > 0) {
-              await new Promise(resolve => setTimeout(resolve, remainingToHit));
+            // 後端已確認 actualDamage：先確保 DANGER 至少完整演出，再無縫切入 HIT。
+            const remainingDanger = Math.max(0, dangerReadyAt - performance.now());
+            if (remainingDanger > 0) {
+              await new Promise(resolve => setTimeout(resolve, remainingDanger));
             }
-            // 命中點：怪物閃白/震動/命中特效已同步開始，此刻顯示真正的 actualDamage。
+
+            const art = getAdventureMonsterArt();
+            if (art) {
+              art.classList.remove('attack-danger');
+              void art.offsetWidth;
+              art.classList.add('attack-hit');
+            }
             showAdventureDamage(result.battle.actualDamage);
           }
 
-          // 讓命中、傷害浮字與短暫受擊反應先完成，再同步後端狀態。
+          // 讓 HIT、傷害浮字與短暫受擊反應先完成，再同步後端狀態。
           await new Promise(resolve => setTimeout(resolve, result.battle && result.battle.defeated ? 280 : 420));
           finishAdventureAttackVisual(result);
 
