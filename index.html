@@ -159,9 +159,9 @@
     .adventure-tools { display:flex; gap:6px; }
     .adventure-tool { border:1px solid rgba(0,210,255,.35); background:rgba(0,210,255,.06); color:#9bdcf0; padding:6px 9px; font-size:.68rem; cursor:pointer; }
     .monster-panel { background:transparent; border:none; padding:16px 24px; margin:0 -24px 16px; width:calc(100% + 48px); text-align:center; box-shadow:none; }
-    .monster-name-row { display:flex; align-items:center; gap:8px; width:100%; margin-top:2px; }
-    .monster-name { flex:1 1 auto; min-width:0; text-align:center; font-family:'Orbitron','Noto Sans TC'; font-size:1.02rem; font-weight:800; color:#f8fafc; line-height:1.2; }
-    .monster-tag { flex:0 0 auto; padding:3px 8px; border:1px solid rgba(255,255,255,.2); color:#94a3b8; font-size:.62rem; line-height:1.15; white-space:nowrap; text-align:center; }
+    .monster-name-row { display:grid; grid-template-columns:minmax(0,1fr) auto minmax(0,1fr); align-items:center; width:100%; margin-top:2px; column-gap:8px; }
+    .monster-name { grid-column:2; min-width:0; text-align:center; justify-self:center; font-family:'Orbitron','Noto Sans TC'; font-size:1.02rem; font-weight:800; color:#f8fafc; line-height:1.2; white-space:nowrap; }
+    .monster-tag { grid-column:1; justify-self:start; padding:3px 8px; border:1px solid rgba(255,255,255,.2); color:#94a3b8; font-size:.62rem; line-height:1.15; white-space:nowrap; text-align:center; }
     .monster-tag.tag-mid { color:#67e8f9; border-color:rgba(0,210,255,.35); }
     .monster-tag.tag-elite { color:#facc15; border-color:rgba(250,204,21,.4); }
     .monster-tag.tag-boss { color:#fb7185; border-color:rgba(251,113,133,.45); }
@@ -169,7 +169,7 @@
     .monster-art img { display:block; width:auto; height:140px; max-width:88%; object-fit:contain; object-position:center; filter:drop-shadow(0 0 14px rgba(0,210,255,.28)); }
     .monster-art img.monster-art-boss { height:150px; }
     .monster-hp-label { color:#94a3b8; font-size:.72rem; margin-bottom:4px; }
-    .monster-hp-value { flex:0 0 auto; font-family:'Orbitron'; font-size:.84rem; font-weight:800; color:#e2e8f0; white-space:nowrap; text-align:right; }
+    .monster-hp-value { grid-column:3; justify-self:end; font-family:'Orbitron'; font-size:.80rem; font-weight:800; color:#e2e8f0; white-space:nowrap; text-align:right; }
     .hp-track { height:11px; background:rgba(255,255,255,.08); border:1px solid rgba(255,80,120,.35); margin:8px 0 4px; }
     .hp-fill { height:100%; background:linear-gradient(90deg,#ff3366,#f87171); transition:width .35s ease; }
     .monster-hp-percent { color:#fb7185; font-family:'Orbitron'; font-size:.68rem; }
@@ -752,7 +752,7 @@
           <div class="monster-name-row">
             <div class="monster-tag" id="adventure-monster-tag">一般</div>
             <div class="monster-name" id="adventure-monster-name">怪物</div>
-            <div class="monster-hp-value" id="adventure-hp">0 / 0 HP</div>
+            <div class="monster-hp-value" id="adventure-hp">0 / 0</div>
           </div>
           <div class="hp-track"><div class="hp-fill" id="adventure-hp-fill" style="width:0%"></div></div>
         </div>
@@ -1668,7 +1668,7 @@
       document.getElementById('adventure-monster-name').innerText = monsterName;
       monsterTag.innerText = tagInfo.label;
       monsterTag.className = `monster-tag ${tagInfo.className}`;
-      document.getElementById('adventure-hp').innerText = `${hp.toLocaleString()} / ${maxHp.toLocaleString()} HP`;
+      document.getElementById('adventure-hp').innerText = `${hp.toLocaleString()} / ${maxHp.toLocaleString()}`;
       document.getElementById('adventure-hp-fill').style.width = `${pct}%`;
       const list = document.getElementById('adventure-skills');
       list.innerHTML = skills.map((s,i) => {
