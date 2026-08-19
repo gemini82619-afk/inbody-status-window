@@ -1133,14 +1133,23 @@
           document.getElementById('loginModal').style.display = 'none';
 
           if (result.isNewUser) {
-            openClassModal();
-          } else {
-            if (result.latest) updateUIWithData(result.latest, result.history, result.quest);
-            if (result.adventure) setAdventureState(result.adventure);
-            if (!result.birthdate) { openForceBirthdateModal(); }
-            else if (!isAuto) showSystemModal(`歡迎回來，玩家 ${user}！已成功載入資料。`, 'info');
-          }
-        } else {
+  openClassModal();
+} else {
+  if (result.latest) {
+    updateUIWithData(result.latest, result.history, result.quest);
+  } else if (result.currentTitle) {
+    document.getElementById('userClassDisplay').innerText = result.currentTitle;
+    currentPlayerCardClass = resolveCardClassCodeFromTitle(result.currentTitle);
+  }
+
+  if (result.adventure) setAdventureState(result.adventure);
+
+  if (!result.birthdate) { 
+    openForceBirthdateModal(); 
+  } else if (!isAuto) {
+    showSystemModal(`歡迎回來，玩家 ${user}！已成功載入資料。`, 'info');
+  }
+} else {
           if (isAuto && result.isDeleted) {
             localStorage.removeItem('inbody_user');
             localStorage.removeItem('inbody_pwd');
