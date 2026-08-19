@@ -565,6 +565,9 @@
     .class-card-viewer-arrow.left { left: 2px; }
     .class-card-viewer-arrow.right { right: 2px; }
     .class-card-viewer-arrow:hover, .class-card-viewer-close:hover { background: transparent; border-color: transparent; color: #4de4ff; box-shadow: none; text-shadow: 0 0 14px rgba(0,210,255,0.65); }
+    .class-card-viewer-gender-switch { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); display: none; gap: 6px; padding: 3px; border: 1px solid rgba(0,210,255,0.45); border-radius: 999px; background: rgba(2, 8, 16, 0.78); z-index: 3; }
+    .class-card-viewer-gender-btn { min-width: 58px; height: 32px; border: 1px solid rgba(0,210,255,0.35); border-radius: 999px; background: transparent; color: #8ca6b8; font-family: inherit; font-size: 0.82rem; cursor: pointer; }
+    .class-card-viewer-gender-btn.active { background: rgba(0,210,255,0.18); border-color: #00d2ff; color: #e7fbff; box-shadow: 0 0 10px rgba(0,210,255,0.25); }
     .class-name-clickable { cursor: pointer; }
     .class-name-clickable:hover { text-shadow: 0 0 8px #00d2ff, 0 0 18px rgba(0,210,255,0.5); }
     @media (max-width: 480px) {
@@ -703,6 +706,10 @@
       </button>
       <div class="class-card-viewer-image-wrap" id="classCardImageWrap">
         <img class="class-card-viewer-image" id="classCardViewerImage" src="" alt="職業卡牌">
+      </div>
+      <div class="class-card-viewer-gender-switch" id="classCardViewerGenderSwitch" role="group" aria-label="職業卡牌性別切換">
+        <button class="class-card-viewer-gender-btn active" id="classCardGenderMaleBtn" type="button" onclick="setPlayerCardGender('male')">男</button>
+        <button class="class-card-viewer-gender-btn" id="classCardGenderFemaleBtn" type="button" onclick="setPlayerCardGender('female')">女</button>
       </div>
       <button class="class-card-viewer-arrow right" type="button" onclick="changeClassCard(1)" aria-label="下一轉">
         <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
@@ -1053,6 +1060,7 @@
     let currentChartType = 'muscle';
     let currentUser = '', currentPwd = '';
     let currentPlayerGender = '';
+    let currentPlayerGenderHasData = false;
     let currentPlayerCardClass = '';
     let currentPlayerCardTier = 1;
     let classCardViewerTouchStartX = 0;
@@ -1140,6 +1148,8 @@
             } else if (result.currentTitle) {
               document.getElementById('userClassDisplay').innerText = result.currentTitle;
               currentPlayerCardClass = resolveCardClassCodeFromTitle(result.currentTitle);
+              currentPlayerGenderHasData = false;
+              currentPlayerGender = 'male';
               if (result.currentTier) {
                 const tierMatch = String(result.currentTier).match(/(\d+)/);
                 if (tierMatch) currentPlayerCardTier = Number(tierMatch[1]);
@@ -1496,12 +1506,41 @@
       }
     }
 
+    function updatePlayerCardGenderSwitch() {
+      const switchEl = document.getElementById('classCardViewerGenderSwitch');
+      const maleBtn = document.getElementById('classCardGenderMaleBtn');
+      const femaleBtn = document.getElementById('classCardGenderFemaleBtn');
+      if (!switchEl || !maleBtn || !femaleBtn) return;
+
+      // 有 InBody 性別資料：只顯示對應卡牌，不提供切換。
+      // 沒有 InBody 性別資料：提供男／女切換。
+      switchEl.style.display = currentPlayerGenderHasData ? 'none' : 'flex';
+      maleBtn.classList.toggle('active', currentPlayerGender === 'male');
+      femaleBtn.classList.toggle('active', currentPlayerGender === 'female');
+    }
+
+    function setPlayerCardGender(genderCode) {
+      if (currentPlayerGenderHasData) return;
+      if (genderCode !== 'male' && genderCode !== 'female') return;
+      currentPlayerGender = genderCode;
+      updatePlayerCardGenderSwitch();
+      preloadPlayerClassCards();
+      renderClassCardViewer();
+    }
+
     function openClassCardViewer() {
-      if (!currentPlayerCardClass || !currentPlayerGender) {
-        return;
+      if (!currentPlayerCardClass) return;
+
+      // 沒有 InBody 性別資料時，不阻擋開啟；預設先看男性卡牌。
+      if (!currentPlayerGenderHasData && !currentPlayerGender) {
+        currentPlayerGender = 'male';
       }
+
+      if (!currentPlayerGender) return;
+
       preloadPlayerClassCards();
       document.getElementById('classCardViewer').style.display = 'flex';
+      updatePlayerCardGenderSwitch();
       renderClassCardViewer();
       document.body.style.overflow = 'hidden';
     }
@@ -1521,6 +1560,7 @@
       if (!src) return;
       img.src = src;
       img.alt = `${currentPlayerCardClass} Tier ${currentPlayerCardTier} ${currentPlayerGender === 'female' ? '女性' : '男性'}卡牌`;
+      updatePlayerCardGenderSwitch();
     }
 
     function changeClassCard(direction) {
@@ -1567,7 +1607,14 @@
         currentPlayerCardClass = resolveCardClassCodeFromTitle(data.title);
       }
       if (data.gender) {
-        currentPlayerGender = resolveGenderCode(data.gender);
+        const resolvedGender = resolveGenderCode(data.gender);
+        if (resolvedGender) {
+          currentPlayerGender = resolvedGender;
+          currentPlayerGenderHasData = true;
+        }
+      } else {
+        currentPlayerGenderHasData = false;
+        if (!currentPlayerGender) currentPlayerGender = 'male';
       }
       if (data.tier) {
         currentPlayerCardTier = resolveTierNumber(data.tier);
@@ -1796,7 +1843,7 @@
       '4-1': 'stage4/stage4_orc_01.png',
       '4-2': 'stage4/stage4_orc_02.png',
       '4-3': 'stage4/stage4_orc_03.png',
-      '4-4': 'stage4/stage4_orc_boss.png'
+      '4-4': 'stage4/stage4_orc_04.png'
     };
 
     // 怪物名稱與圖片完全一一對應，顯示名稱不再使用「冒險怪物 #X」。
