@@ -1826,7 +1826,7 @@
     function getAdventureMonsterImage(stage, monsterIndex) {
       const key = `${Number(stage) || 1}-${Number(monsterIndex) || 1}`;
       const filename = ADVENTURE_MONSTER_IMAGES[key];
-      return filename ? ADVENTURE_MONSTER_IMAGE_BASE_URL + filename : '';
+      return filename ? ADVENTURE_MONSTER_IMAGE_BASE_URL + ADVENTURE_MONSTER_IMAGE_PATH + filename : '';
     }
 
     // 怪物階級標籤依怪物在每關的階段固定對應：
