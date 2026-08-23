@@ -642,6 +642,71 @@
       .evolution-box { gap: 3px; }
       .evo-label, .evo-path-title { font-size: 0.54rem; }
     }
+
+    /* ═══════════ 系統功能選單 ═══════════ */
+    .system-menu-button {
+      position:absolute; top:10px; left:10px; z-index:1080; width:38px; height:38px;
+      display:flex; align-items:center; justify-content:center; border:1px solid rgba(0,210,255,.55);
+      background:rgba(2,12,24,.88); color:#bff5ff; cursor:pointer; font-family:'Orbitron',sans-serif;
+      font-size:1.1rem; line-height:1; box-shadow:0 0 12px rgba(0,210,255,.18);
+      transition:.2s ease;
+    }
+    .system-menu-button:hover, .system-menu-button:focus-visible { background:rgba(0,150,255,.18); box-shadow:0 0 18px rgba(0,210,255,.35); outline:none; }
+    .system-menu-scrim { position:absolute; inset:0; z-index:1060; background:rgba(0,0,0,.42); opacity:0; pointer-events:none; transition:opacity .22s ease; }
+    .system-menu-scrim.is-open { opacity:1; pointer-events:auto; }
+    .system-menu-drawer {
+      position:absolute; top:0; left:0; bottom:0; z-index:1070; width:min(82%,330px);
+      background:linear-gradient(180deg,rgba(4,18,34,.99),rgba(2,9,18,.99));
+      border-right:1px solid rgba(0,210,255,.45); box-shadow:12px 0 32px rgba(0,0,0,.45);
+      transform:translateX(-102%); transition:transform .24s ease; padding:18px 14px;
+      display:flex; flex-direction:column;
+    }
+    .system-menu-drawer.is-open { transform:translateX(0); }
+    .system-menu-head { display:flex; align-items:center; justify-content:space-between; padding:6px 4px 14px; border-bottom:1px solid rgba(0,210,255,.25); margin-bottom:12px; }
+    .system-menu-title { color:#e7fbff; font-family:'Orbitron','Noto Sans TC',sans-serif; font-size:.78rem; letter-spacing:2px; }
+    .system-menu-close { width:32px; height:32px; border:1px solid rgba(148,163,184,.35); background:rgba(255,255,255,.03); color:#cbd5e1; cursor:pointer; font-size:1.1rem; }
+    .system-menu-item { width:100%; border:1px solid rgba(0,210,255,.28); background:rgba(0,150,255,.055); color:#dff8ff; padding:14px 12px; text-align:left; cursor:pointer; font-family:'Noto Sans TC',sans-serif; font-size:.82rem; transition:.2s ease; }
+    .system-menu-item:hover, .system-menu-item:focus-visible { background:rgba(0,210,255,.14); border-color:rgba(0,210,255,.62); box-shadow:0 0 14px rgba(0,210,255,.16); outline:none; }
+
+    /* ═══════════ 怪物卡牌圖鑑 ═══════════ */
+    .monster-codex-overlay { position:absolute; inset:0; z-index:1050; display:none; background:linear-gradient(180deg,rgba(3,10,20,.98),rgba(2,8,16,.99)); }
+    .monster-codex-overlay.is-open { display:block; }
+    .monster-codex { position:absolute; inset:0; display:flex; flex-direction:column; min-height:0; }
+    .monster-codex-header { height:58px; flex:0 0 58px; display:flex; align-items:center; justify-content:center; position:relative; border-bottom:1px solid rgba(0,210,255,.28); background:rgba(4,16,29,.82); }
+    .monster-codex-title { font-family:'Orbitron','Noto Sans TC',sans-serif; font-size:.82rem; letter-spacing:2px; color:#fff; text-shadow:0 0 10px #00d2ff; text-align:center; }
+    .monster-codex-subtitle { display:block; margin-top:2px; font-family:'Noto Sans TC',sans-serif; font-size:.68rem; letter-spacing:1px; color:#8ec8d8; }
+    .monster-codex-close { position:absolute; right:9px; top:10px; width:38px; height:38px; border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.035); color:#e2e8f0; cursor:pointer; font-size:1.25rem; }
+    .monster-codex-close:hover, .monster-codex-close:focus-visible { border-color:#00d2ff; color:#fff; box-shadow:0 0 14px rgba(0,210,255,.2); outline:none; }
+    .monster-codex-body { flex:1; min-height:0; overflow:auto; padding:18px 16px 24px; }
+    .monster-series-grid { display:grid; grid-template-columns:1fr; gap:14px; max-width:390px; margin:0 auto; }
+    .monster-series-card { position:relative; min-height:154px; overflow:hidden; border:1px solid rgba(0,210,255,.36); background:linear-gradient(145deg,rgba(7,25,43,.92),rgba(2,10,19,.98)); color:#e8fbff; cursor:pointer; text-align:left; padding:16px; transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease; }
+    .monster-series-card:hover, .monster-series-card:focus-visible { transform:translateY(-2px); border-color:rgba(0,210,255,.8); box-shadow:0 0 22px rgba(0,210,255,.18); outline:none; }
+    .monster-series-label { position:relative; z-index:2; font-family:'Orbitron','Noto Sans TC',sans-serif; font-size:1rem; letter-spacing:2px; }
+    .monster-series-count { position:relative; z-index:2; margin-top:6px; font-family:'Orbitron',sans-serif; font-size:.64rem; letter-spacing:1.5px; color:#76cfe3; }
+    .monster-series-art { position:absolute; right:-18px; bottom:-28px; width:62%; height:100%; display:flex; align-items:flex-end; justify-content:flex-end; pointer-events:none; opacity:.9; }
+    .monster-series-art img { width:100%; height:100%; object-fit:contain; object-position:right bottom; filter:drop-shadow(0 0 14px rgba(0,210,255,.14)); }
+    .monster-series-art::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(2,10,19,1) 0%,rgba(2,10,19,.18) 55%,transparent 100%); }
+
+    .monster-carousel-view { display:none; flex:1; min-height:0; flex-direction:column; overflow:hidden; }
+    .monster-carousel-view.is-open { display:flex; }
+    .monster-carousel-top { flex:0 0 auto; padding:12px 12px 4px; text-align:center; }
+    .monster-carousel-series { font-family:'Orbitron','Noto Sans TC',sans-serif; color:#eafcff; font-size:.86rem; letter-spacing:2px; }
+    .monster-carousel-name { margin-top:4px; color:#7fd9eb; font-size:.7rem; letter-spacing:1px; }
+    .monster-carousel-stage { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; touch-action:pan-y; user-select:none; }
+    .monster-carousel-track { position:relative; width:100%; height:100%; min-height:0; display:flex; align-items:center; justify-content:center; }
+    .monster-codex-card { position:absolute; top:50%; left:50%; width:min(68vw,310px); max-height:calc(100% - 18px); aspect-ratio:5/7; transform:translate(-50%,-50%); border:1px solid rgba(0,210,255,.28); background:rgba(2,8,16,.9); box-shadow:0 0 18px rgba(0,0,0,.32); cursor:pointer; overflow:hidden; transition:transform .25s ease,opacity .25s ease,filter .25s ease,z-index .25s ease; }
+    .monster-codex-card img { width:100%; height:100%; display:block; object-fit:contain; }
+    .monster-codex-card.is-center { transform:translate(-50%,-50%) scale(1); opacity:1; filter:none; z-index:3; border-color:rgba(0,210,255,.55); box-shadow:0 0 24px rgba(0,210,255,.12),0 12px 28px rgba(0,0,0,.45); }
+    .monster-codex-card.is-left { transform:translate(calc(-50% - 43vw),-50%) scale(.72); opacity:.58; filter:brightness(.55); z-index:2; }
+    .monster-codex-card.is-right { transform:translate(calc(-50% + 43vw),-50%) scale(.72); opacity:.58; filter:brightness(.55); z-index:2; }
+    .monster-codex-card.is-far { transform:translate(-50%,-50%) scale(.58); opacity:0; pointer-events:none; z-index:1; }
+    .monster-carousel-hint { flex:0 0 auto; text-align:center; padding:8px 10px 12px; color:#64748b; font-size:.62rem; letter-spacing:.7px; }
+    .monster-carousel-gender { flex:0 0 auto; display:flex; justify-content:center; gap:6px; padding:0 10px 6px; }
+    .monster-carousel-gender button { border:1px solid rgba(148,163,184,.32); background:rgba(255,255,255,.035); color:#94a3b8; padding:5px 12px; font-size:.65rem; cursor:pointer; }
+    .monster-carousel-gender button.active { border-color:#00d2ff; color:#dff8ff; background:rgba(0,210,255,.1); }
+    .monster-codex-empty { padding:40px 20px; text-align:center; color:#94a3b8; font-size:.75rem; }
+    @media (min-width:520px) { .monster-series-grid { grid-template-columns:1fr 1fr; max-width:640px; } .monster-codex-card { width:min(62vw,310px); } .monster-codex-card.is-left { transform:translate(calc(-50% - 31vw),-50%) scale(.72); } .monster-codex-card.is-right { transform:translate(calc(-50% + 31vw),-50%) scale(.72); } }
+    @media (prefers-reduced-motion: reduce) { .system-menu-drawer,.system-menu-scrim,.monster-series-card,.monster-codex-card { transition:none; } }
   </style>
 </head>
 <body>
@@ -843,6 +908,44 @@
   <div class="status-window">
     <div class="glitch-overlay" id="glitchOverlay"><div class="glitch-scanline"></div></div>
     <div class="scanlines"></div>
+
+    <button class="system-menu-button" id="systemMenuButton" type="button" aria-label="開啟功能選單" aria-expanded="false">☰</button>
+    <div class="system-menu-scrim" id="systemMenuScrim"></div>
+    <aside class="system-menu-drawer" id="systemMenuDrawer" aria-label="功能選單" aria-hidden="true">
+      <div class="system-menu-head">
+        <div class="system-menu-title">SYSTEM MENU</div>
+        <button class="system-menu-close" id="systemMenuClose" type="button" aria-label="關閉功能選單">×</button>
+      </div>
+      <button class="system-menu-item" id="openMonsterCodexBtn" type="button">◈ 怪物卡牌圖鑑</button>
+    </aside>
+
+    <div class="monster-codex-overlay" id="monsterCodexOverlay" aria-hidden="true">
+      <div class="monster-codex" role="dialog" aria-modal="true" aria-label="怪物卡牌圖鑑">
+        <div class="monster-codex-header">
+          <div class="monster-codex-title">MONSTER CODEX<span class="monster-codex-subtitle">怪物卡牌圖鑑</span></div>
+          <button class="monster-codex-close" id="monsterCodexClose" type="button" aria-label="關閉怪物卡牌圖鑑">×</button>
+        </div>
+        <div class="monster-codex-body" id="monsterCodexBody">
+          <div id="monsterSeriesView">
+            <div class="monster-series-grid" id="monsterSeriesGrid"></div>
+          </div>
+          <div class="monster-carousel-view" id="monsterCarouselView">
+            <div class="monster-carousel-top">
+              <div class="monster-carousel-series" id="monsterCarouselSeries">史萊姆系</div>
+              <div class="monster-carousel-name" id="monsterCarouselName">綠色史萊姆</div>
+            </div>
+            <div class="monster-carousel-stage" id="monsterCarouselStage">
+              <div class="monster-carousel-track" id="monsterCarouselTrack"></div>
+            </div>
+            <div class="monster-carousel-gender" id="monsterCarouselGender" style="display:none;">
+              <button type="button" id="monsterGenderMaleBtn">男卡</button>
+              <button type="button" id="monsterGenderFemaleBtn">女卡</button>
+            </div>
+            <div class="monster-carousel-hint">左右滑動／點擊左右卡牌／鍵盤 ← → 切換</div>
+          </div>
+        </div>
+      </div>
+    </div>
     
     <div class="scroll-content">
       
@@ -1058,6 +1161,166 @@
 
     let radarChart, chartWeight, chartSMM, chartPBF;
     let currentChartType = 'muscle';
+    // ═══════════ 怪物卡牌圖鑑 / MONSTER CODEX ═══════════
+    const MONSTER_BOOK_BASE_URL = 'https://raw.githubusercontent.com/gemini82619-afk/inbody-status-window/main/assets/monster-book/';
+    const MONSTER_BOOK_SERIES = [
+      { id:'001-slime', name:'史萊姆系', slug:'slime', start:1, names:['綠色史萊姆','紅色史萊姆','巨型史萊姆','史萊姆王'], files:[1,2,3,4] },
+      { id:'002-skeleton', name:'骷髏系', slug:'skeleton', start:5, names:['骷髏兵','骷髏弓箭手','骷髏騎士','骷髏王'], files:[5,6,7,8] },
+      { id:'003-werewolf', name:'狼人系', slug:'werewolf', start:9, names:['小狼人','狼人戰士','狂暴狼人','狼人王'], files:[9,10,11,12] },
+      { id:'004-orc', name:'獸人系', slug:'orc', start:13, names:['獸人','獸人戰士','獸人薩滿','獸人酋長'], files:[13,14,15,16] }
+    ];
+    let monsterCodexOpen = false;
+    let monsterCodexSeries = null;
+    let monsterCodexIndex = 0;
+    let monsterCodexGenderOverride = '';
+    let monsterCodexTouchStartX = 0;
+    let monsterCodexTouchStartY = 0;
+
+    function getMonsterBookGender() {
+      if (currentPlayerGenderHasData && (currentPlayerGender === 'male' || currentPlayerGender === 'female')) {
+        return currentPlayerGender === 'male' ? 'female' : 'male';
+      }
+      return monsterCodexGenderOverride || currentPlayerGender || 'male';
+    }
+
+    function getMonsterBookFileUrl(series, fileNumber, genderCode) {
+      const gender = genderCode === 'female' ? 'f' : 'm';
+      return `${MONSTER_BOOK_BASE_URL}${series.id}/${String(fileNumber).padStart(3,'0')}_${series.slug}_${gender}.png`;
+    }
+
+    function renderMonsterSeriesGrid() {
+      const grid = document.getElementById('monsterSeriesGrid');
+      if (!grid) return;
+      grid.innerHTML = MONSTER_BOOK_SERIES.map(series => {
+        const representative = getMonsterBookFileUrl(series, series.files[0], getMonsterBookGender());
+        return `<button class="monster-series-card" type="button" data-series-id="${series.id}">
+          <span class="monster-series-label">${escapeHtml(series.name)}</span>
+          <span class="monster-series-count">4 MONSTERS</span>
+          <span class="monster-series-art"><img src="${representative}" alt="${escapeHtml(series.names[0])}" loading="eager"></span>
+        </button>`;
+      }).join('');
+      grid.querySelectorAll('.monster-series-card').forEach(btn => btn.addEventListener('click', () => openMonsterSeries(btn.dataset.seriesId)));
+    }
+
+    function renderMonsterCarousel() {
+      const track = document.getElementById('monsterCarouselTrack');
+      if (!track || !monsterCodexSeries) return;
+      const gender = getMonsterBookGender();
+      const len = monsterCodexSeries.names.length;
+      const prev = (monsterCodexIndex - 1 + len) % len;
+      const next = (monsterCodexIndex + 1) % len;
+      const positions = [
+        { index:prev, cls:'is-left', side:'left' },
+        { index:monsterCodexIndex, cls:'is-center', side:'center' },
+        { index:next, cls:'is-right', side:'right' }
+      ];
+      track.innerHTML = positions.map(p => {
+        const fileNumber = monsterCodexSeries.files[p.index];
+        const name = monsterCodexSeries.names[p.index];
+        const src = getMonsterBookFileUrl(monsterCodexSeries, fileNumber, gender);
+        return `<button class="monster-codex-card ${p.cls}" type="button" data-index="${p.index}" data-side="${p.side}" aria-label="${escapeHtml(name)}">
+          <img src="${src}" alt="${escapeHtml(name)}" draggable="false">
+        </button>`;
+      }).join('');
+      track.querySelectorAll('.monster-codex-card').forEach(card => card.addEventListener('click', () => {
+        if (card.dataset.side === 'left') stepMonsterCodex(-1);
+        else if (card.dataset.side === 'right') stepMonsterCodex(1);
+      }));
+      document.getElementById('monsterCarouselSeries').innerText = monsterCodexSeries.name;
+      document.getElementById('monsterCarouselName').innerText = monsterCodexSeries.names[monsterCodexIndex];
+      const genderSwitch = document.getElementById('monsterCarouselGender');
+      const hasData = currentPlayerGenderHasData && (currentPlayerGender === 'male' || currentPlayerGender === 'female');
+      genderSwitch.style.display = hasData ? 'none' : 'flex';
+      document.getElementById('monsterGenderMaleBtn').classList.toggle('active', gender === 'male');
+      document.getElementById('monsterGenderFemaleBtn').classList.toggle('active', gender === 'female');
+    }
+
+    function openMonsterCodex() {
+      closeSystemMenu();
+      monsterCodexOpen = true;
+      monsterCodexSeries = null;
+      monsterCodexIndex = 0;
+      monsterCodexGenderOverride = '';
+      renderMonsterSeriesGrid();
+      document.getElementById('monsterSeriesView').style.display = 'block';
+      document.getElementById('monsterCarouselView').classList.remove('is-open');
+      const overlay = document.getElementById('monsterCodexOverlay');
+      overlay.classList.add('is-open');
+      overlay.setAttribute('aria-hidden','false');
+    }
+
+    function closeMonsterCodex() {
+      monsterCodexOpen = false;
+      monsterCodexSeries = null;
+      document.getElementById('monsterCodexOverlay').classList.remove('is-open');
+      document.getElementById('monsterCodexOverlay').setAttribute('aria-hidden','true');
+    }
+
+    function openMonsterSeries(seriesId) {
+      const series = MONSTER_BOOK_SERIES.find(s => s.id === seriesId);
+      if (!series) return;
+      monsterCodexSeries = series;
+      monsterCodexIndex = 0;
+      monsterCodexGenderOverride = '';
+      document.getElementById('monsterSeriesView').style.display = 'none';
+      document.getElementById('monsterCarouselView').classList.add('is-open');
+      renderMonsterCarousel();
+    }
+
+    function stepMonsterCodex(delta) {
+      if (!monsterCodexSeries) return;
+      const len = monsterCodexSeries.names.length;
+      monsterCodexIndex = (monsterCodexIndex + delta + len) % len;
+      renderMonsterCarousel();
+    }
+
+    function setMonsterCodexGender(gender) {
+      if (currentPlayerGenderHasData) return;
+      if (gender !== 'male' && gender !== 'female') return;
+      monsterCodexGenderOverride = gender;
+      renderMonsterCarousel();
+      renderMonsterSeriesGrid();
+    }
+
+    function closeSystemMenu() {
+      const drawer = document.getElementById('systemMenuDrawer');
+      const scrim = document.getElementById('systemMenuScrim');
+      const btn = document.getElementById('systemMenuButton');
+      drawer.classList.remove('is-open');
+      scrim.classList.remove('is-open');
+      drawer.setAttribute('aria-hidden','true');
+      btn.setAttribute('aria-expanded','false');
+    }
+
+    function toggleSystemMenu() {
+      const drawer = document.getElementById('systemMenuDrawer');
+      const scrim = document.getElementById('systemMenuScrim');
+      const btn = document.getElementById('systemMenuButton');
+      const open = drawer.classList.toggle('is-open');
+      scrim.classList.toggle('is-open', open);
+      drawer.setAttribute('aria-hidden', open ? 'false' : 'true');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    }
+
+    function initMonsterCodex() {
+      document.getElementById('systemMenuButton').addEventListener('click', toggleSystemMenu);
+      document.getElementById('systemMenuClose').addEventListener('click', closeSystemMenu);
+      document.getElementById('systemMenuScrim').addEventListener('click', closeSystemMenu);
+      document.getElementById('openMonsterCodexBtn').addEventListener('click', openMonsterCodex);
+      document.getElementById('monsterCodexClose').addEventListener('click', closeMonsterCodex);
+      document.getElementById('monsterGenderMaleBtn').addEventListener('click', () => setMonsterCodexGender('male'));
+      document.getElementById('monsterGenderFemaleBtn').addEventListener('click', () => setMonsterCodexGender('female'));
+      const stage = document.getElementById('monsterCarouselStage');
+      stage.addEventListener('touchstart', e => { const t=e.changedTouches[0]; monsterCodexTouchStartX=t.clientX; monsterCodexTouchStartY=t.clientY; }, {passive:true});
+      stage.addEventListener('touchend', e => { const t=e.changedTouches[0]; const dx=t.clientX-monsterCodexTouchStartX; const dy=t.clientY-monsterCodexTouchStartY; if (Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.2) stepMonsterCodex(dx<0?1:-1); }, {passive:true});
+      document.addEventListener('keydown', e => {
+        if (!monsterCodexOpen) return;
+        if (e.key === 'Escape') { closeMonsterCodex(); return; }
+        if (monsterCodexSeries && e.key === 'ArrowLeft') { e.preventDefault(); stepMonsterCodex(-1); }
+        if (monsterCodexSeries && e.key === 'ArrowRight') { e.preventDefault(); stepMonsterCodex(1); }
+      });
+    }
+
     let currentUser = '', currentPwd = '';
     let currentPlayerGender = '';
     let currentPlayerGenderHasData = false;
@@ -1102,6 +1365,7 @@
     window.onload = () => { 
       initRadarChart(); 
       initTrendChart();
+      initMonsterCodex();
       renderBottomNav('status');
       checkAutoLogin();
     };
