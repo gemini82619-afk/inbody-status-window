@@ -830,6 +830,29 @@
   }
 </style>
 
+
+<style id="monster-series-scroll-fix">
+  /* 電腦／小螢幕縮放時，怪物系列列表獨立滾動。
+     不改變 1×4 直列排列，也不影響卡牌 Carousel。 */
+  #monsterSeriesView {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 2px 18px;
+  }
+
+  #monsterSeriesView::-webkit-scrollbar {
+    display: none;
+  }
+
+  #monsterSeriesView .monster-series-grid {
+    padding-bottom: 18px;
+  }
+</style>
+
 </head>
 <body>
 
