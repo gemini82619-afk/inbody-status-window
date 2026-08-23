@@ -1329,11 +1329,19 @@
       return `${MONSTER_BOOK_BASE_URL}${series.id}/${String(fileNumber).padStart(3,'0')}_${series.slug}_${gender}.png`;
     }
 
+    // 系列列表代表圖：沿用怪物圖鑑的「相反性別」邏輯，
+    // 玩家男性 → preview_f；玩家女性 → preview_m。
+    function getMonsterBookPreviewUrl(series, genderCode) {
+      const gender = genderCode === 'female' ? 'f' : 'm';
+      const previewFileNumber = series.files[3];
+      return `${MONSTER_BOOK_BASE_URL}${series.id}/${String(previewFileNumber).padStart(3,'0')}_${series.slug}_preview_${gender}.png`;
+    }
+
     function renderMonsterSeriesGrid() {
       const grid = document.getElementById('monsterSeriesGrid');
       if (!grid) return;
       grid.innerHTML = MONSTER_BOOK_SERIES.map(series => {
-        const representative = getMonsterBookFileUrl(series, series.files[3], getMonsterBookGender());
+        const representative = getMonsterBookPreviewUrl(series, getMonsterBookGender());
         return `<button class="monster-series-card" type="button" data-series-id="${series.id}">
           <span class="monster-series-label">${escapeHtml(series.name)}</span>
           <span class="monster-series-count">4 MONSTERS</span>
