@@ -650,7 +650,7 @@
 
     /* ═══════════ 系統功能選單 ═══════════ */
     .system-menu-button {
-      position:absolute; top:10px; left:10px; z-index:1065; width:38px; height:38px; box-sizing:border-box;
+      position:absolute; top:24px; left:10px; z-index:1065; width:38px; height:38px; box-sizing:border-box;
       display:flex; align-items:center; justify-content:center; border:1px solid rgba(0,210,255,.55);
       background:rgba(2,12,24,.88); color:#bff5ff; cursor:pointer; font-family:'Orbitron',sans-serif;
       font-size:1.1rem; line-height:1; box-shadow:0 0 12px rgba(0,210,255,.18);
@@ -1402,12 +1402,24 @@
       const stage = document.getElementById('monsterCarouselStage');
       stage.addEventListener('touchstart', e => { const t=e.changedTouches[0]; monsterCodexTouchStartX=t.clientX; monsterCodexTouchStartY=t.clientY; }, {passive:true});
       stage.addEventListener('touchend', e => { const t=e.changedTouches[0]; const dx=t.clientX-monsterCodexTouchStartX; const dy=t.clientY-monsterCodexTouchStartY; if (Math.abs(dx)>45 && Math.abs(dx)>Math.abs(dy)*1.2) stepMonsterCodex(dx<0?1:-1); }, {passive:true});
-      document.addEventListener('keydown', e => {
-        if (!monsterCodexOpen) return;
-        if (e.key === 'Escape') { closeMonsterCodex(); return; }
-        if (monsterCodexSeries && e.key === 'ArrowLeft') { e.preventDefault(); stepMonsterCodex(-1); }
-        if (monsterCodexSeries && e.key === 'ArrowRight') { e.preventDefault(); stepMonsterCodex(1); }
-      });
+      // 鍵盤切換改為 capture，確保桌面版在任何焦點狀態下都能控制圖鑑。
+      // 只在怪物圖鑑開啟且已進入系列卡牌頁時攔截左右方向鍵。
+      if (!window.__monsterCodexKeyHandler) {
+        window.__monsterCodexKeyHandler = function(e) {
+          if (!monsterCodexOpen || !monsterCodexSeries) return;
+          if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            stepMonsterCodex(e.key === 'ArrowLeft' ? -1 : 1);
+          }
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            e.stopPropagation();
+            closeMonsterCodex();
+          }
+        };
+        document.addEventListener('keydown', window.__monsterCodexKeyHandler, true);
+      }
     }
 
     let currentUser = '', currentPwd = '';
