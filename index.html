@@ -141,6 +141,10 @@
 }
     
     .logout-tag { 
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
   height: 38px;
   box-sizing: border-box;
   width:auto;
@@ -717,7 +721,7 @@
     .system-menu-head { display:flex; align-items:center; justify-content:space-between; padding:6px 4px 14px; border-bottom:1px solid rgba(0,210,255,.25); margin-bottom:12px; }
     .system-menu-title { color:#e7fbff; font-family:'Orbitron','Noto Sans TC',sans-serif; font-size:.78rem; letter-spacing:2px; }
     .system-menu-close { width:32px; height:32px; border:1px solid rgba(148,163,184,.35); background:rgba(255,255,255,.03); color:#cbd5e1; cursor:pointer; font-size:1.1rem; }
-    .system-menu-item { width:100%; border:1px solid rgba(0,210,255,.28); background:rgba(0,150,255,.055); color:#dff8ff; padding:14px 12px; text-align:left; cursor:pointer; font-family:'Noto Sans TC',sans-serif; font-size:.82rem; transition:.2s ease; }
+    .system-menu-item { width:100%; border:none; background:rgba(0,150,255,.055); color:#dff8ff; padding:14px 12px; text-align:left; cursor:pointer; font-family:'Noto Sans TC',sans-serif; font-size:.82rem; transition:.2s ease; }
     .system-menu-item:hover, .system-menu-item:focus-visible { background:rgba(0,210,255,.14); border-color:rgba(0,210,255,.62); box-shadow:0 0 14px rgba(0,210,255,.16); outline:none; }
 
     /* ═══════════ 怪物卡牌圖鑑 ═══════════ */
@@ -772,7 +776,7 @@
     .monster-codex-card.is-center {
       transform:translate(-50%,-50%) scale(1);
       opacity:1; filter:none; z-index:3;
-      border-color:rgba(0,210,255,.55);
+      border-color:transparent;
       box-shadow:0 0 24px rgba(0,210,255,.12),0 12px 28px rgba(0,0,0,.45);
     }
     .monster-codex-card.is-left {
