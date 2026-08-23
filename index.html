@@ -744,8 +744,27 @@
     .monster-series-art::after { content:''; position:absolute; inset:0; background:linear-gradient(90deg,rgba(2,10,19,1) 0%,rgba(2,10,19,.55) 38%,rgba(2,10,19,.08) 100%); }
     .monster-series-card::after { content:''; position:absolute; inset:0; pointer-events:none; background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.24) 100%); }
     .monster-series-card > * { position:relative; z-index:2; }
-    .monster-series-card > .monster-series-art { position:absolute; right:-8px; bottom:-18px; width:58%; height:118%; overflow:hidden; pointer-events:none; opacity:.42; filter:blur(2px); z-index:1; }
-    .monster-series-card > .monster-series-art img { position:absolute; z-index:0; }
+    .monster-series-card > .monster-series-art {
+      position:absolute;
+      right:0;
+      bottom:-4px;
+      width:50%;
+      height:108%;
+      overflow:hidden;
+      pointer-events:none;
+      opacity:.42;
+      filter:blur(2px);
+      z-index:1;
+    }
+    .monster-series-card > .monster-series-art img {
+      position:absolute;
+      z-index:0;
+      width:125%;
+      height:125%;
+      object-fit:cover;
+      object-position:center 34%;
+      transform:translate(-12%, -7%);
+    }
 
     .monster-carousel-view { display:none; flex:1; min-height:0; flex-direction:column; overflow:hidden; }
     .monster-carousel-view.is-open { display:flex; }
