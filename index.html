@@ -747,23 +747,24 @@
     .monster-series-card > .monster-series-art {
       position:absolute;
       right:0;
-      bottom:-4px;
+      top:0;
+      bottom:0;
       width:50%;
-      height:108%;
       overflow:hidden;
       pointer-events:none;
-      opacity:.42;
-      filter:blur(2px);
+      opacity:.62;
+      filter:none;
       z-index:1;
     }
     .monster-series-card > .monster-series-art img {
       position:absolute;
       z-index:0;
-      width:125%;
-      height:125%;
-      object-fit:cover;
-      object-position:center 34%;
-      transform:translate(-12%, -7%);
+      width:100%;
+      height:100%;
+      object-fit:contain;
+      object-position:center center;
+      transform:none;
+      filter:brightness(.78) saturate(.88);
     }
 
     .monster-carousel-view { display:none; flex:1; min-height:0; flex-direction:column; overflow:hidden; }
