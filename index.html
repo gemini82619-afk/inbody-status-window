@@ -697,14 +697,49 @@
 
     .monster-carousel-view { display:none; flex:1; min-height:0; flex-direction:column; overflow:hidden; }
     .monster-carousel-view.is-open { display:flex; }
-            .monster-carousel-stage { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; overflow:hidden; position:relative; touch-action:pan-y; user-select:none; }
-    .monster-carousel-track { position:relative; width:100%; height:100%; min-height:0; display:flex; align-items:center; justify-content:center; }
-    .monster-codex-card { position:absolute; top:50%; left:50%; width:min(84vw,420px); max-height:calc(100% - 8px); aspect-ratio:5/7; transform:translate(-50%,-50%); border:1px solid rgba(0,210,255,.28); background:rgba(2,8,16,.9); box-shadow:0 0 18px rgba(0,0,0,.32); cursor:pointer; overflow:hidden; transition:transform .25s ease,opacity .25s ease,filter .25s ease,z-index .25s ease; }
+    .monster-carousel-stage {
+      flex:1; min-height:0; display:flex; align-items:center; justify-content:center;
+      overflow:hidden; position:relative; touch-action:pan-y; user-select:none;
+      perspective:1100px; perspective-origin:50% 50%;
+    }
+    .monster-carousel-track {
+      position:relative; width:100%; height:100%; min-height:0;
+      display:block; transform-style:preserve-3d;
+    }
+    .monster-codex-card {
+      position:absolute; top:50%; left:50%;
+      width:min(88vw,520px); max-width:calc(100% - 10px);
+      max-height:calc(100% - 6px); aspect-ratio:5/7;
+      transform-style:preserve-3d; transform-origin:50% 50%;
+      border:1px solid rgba(0,210,255,.28);
+      background:rgba(2,8,16,.9);
+      box-shadow:0 0 18px rgba(0,0,0,.32);
+      cursor:pointer; overflow:hidden;
+      transition:transform .42s cubic-bezier(.22,.7,.2,1), opacity .32s ease,
+                 filter .32s ease, box-shadow .32s ease;
+      will-change:transform,opacity,filter;
+      backface-visibility:hidden;
+    }
     .monster-codex-card img { width:100%; height:100%; display:block; object-fit:contain; }
-    .monster-codex-card.is-center { transform:translate(-50%,-50%) scale(1); opacity:1; filter:none; z-index:3; border-color:rgba(0,210,255,.55); box-shadow:0 0 24px rgba(0,210,255,.12),0 12px 28px rgba(0,0,0,.45); }
-    .monster-codex-card.is-left { transform:translate(calc(-50% - 46vw),-50%) scale(.72); opacity:.58; filter:brightness(.55); z-index:2; }
-    .monster-codex-card.is-right { transform:translate(calc(-50% + 46vw),-50%) scale(.72); opacity:.58; filter:brightness(.55); z-index:2; }
-    .monster-codex-card.is-far { transform:translate(-50%,-50%) scale(.58); opacity:0; pointer-events:none; z-index:1; }
+    /* 3D 環形 Carousel：中央為主卡，左右卡牌向後旋轉，第四張位於後方。 */
+    .monster-codex-card.is-center {
+      transform:translate(-50%,-50%) translate3d(0,0,120px) rotateY(0deg) scale(1);
+      opacity:1; filter:none; z-index:4;
+      border-color:rgba(0,210,255,.55);
+      box-shadow:0 0 24px rgba(0,210,255,.12),0 16px 36px rgba(0,0,0,.5);
+    }
+    .monster-codex-card.is-left {
+      transform:translate(-50%,-50%) translate3d(-37vw,0,-40px) rotateY(52deg) scale(.78);
+      opacity:.68; filter:brightness(.58); z-index:3;
+    }
+    .monster-codex-card.is-right {
+      transform:translate(-50%,-50%) translate3d(37vw,0,-40px) rotateY(-52deg) scale(.78);
+      opacity:.68; filter:brightness(.58); z-index:3;
+    }
+    .monster-codex-card.is-back {
+      transform:translate(-50%,-50%) translate3d(0,0,-230px) rotateY(180deg) scale(.58);
+      opacity:.22; filter:brightness(.35); z-index:1; pointer-events:none;
+    }
     .monster-carousel-hint { flex:0 0 auto; text-align:center; padding:8px 10px 12px; color:#64748b; font-size:.62rem; letter-spacing:.7px; }
     .monster-carousel-gender { flex:0 0 auto; display:flex; justify-content:center; gap:6px; padding:0 10px 6px; }
     .monster-carousel-gender button { border:1px solid rgba(148,163,184,.32); background:rgba(255,255,255,.035); color:#94a3b8; padding:5px 12px; font-size:.65rem; cursor:pointer; }
@@ -1207,13 +1242,20 @@
       if (!track || !monsterCodexSeries) return;
       const gender = getMonsterBookGender();
       const len = monsterCodexSeries.names.length;
-      const prev = (monsterCodexIndex - 1 + len) % len;
-      const next = (monsterCodexIndex + 1) % len;
-      const positions = [
-        { index:prev, cls:'is-left', side:'left' },
-        { index:monsterCodexIndex, cls:'is-center', side:'center' },
-        { index:next, cls:'is-right', side:'right' }
-      ];
+
+      // 四張卡牌完整存在於同一個 3D 環形軌道：
+      // 0 = 中央、-1 = 左側、+1 = 右側、2/-2 = 後方。
+      const positions = [];
+      for (let offset = -1; offset <= 2; offset++) {
+        let index = (monsterCodexIndex + offset + len) % len;
+        let cls = 'is-back';
+        let side = 'back';
+        if (offset === 0) { cls = 'is-center'; side = 'center'; }
+        else if (offset === -1) { cls = 'is-left'; side = 'left'; }
+        else if (offset === 1) { cls = 'is-right'; side = 'right'; }
+        positions.push({ index, cls, side });
+      }
+
       track.innerHTML = positions.map(p => {
         const fileNumber = monsterCodexSeries.files[p.index];
         const name = monsterCodexSeries.names[p.index];
@@ -1222,6 +1264,7 @@
           <img src="${src}" alt="${escapeHtml(name)}" draggable="false">
         </button>`;
       }).join('');
+
       track.querySelectorAll('.monster-codex-card').forEach(card => card.addEventListener('click', () => {
         if (card.dataset.side === 'left') stepMonsterCodex(-1);
         else if (card.dataset.side === 'right') stepMonsterCodex(1);
