@@ -75,18 +75,20 @@
   position: relative; 
 }
 .header-spacer { 
-  width: 115px; /* 與 STATUS / LOGOUT 方框同寬，保持 Header 對稱 */
+  width: auto; /* 不固定標題兩側寬度，讓方框依文字自然縮放 */
   flex-shrink: 0;
 }
     .title-box { 
   display: inline-flex; 
   align-items: center; 
   justify-content: center;
-  width: 115px;
-  height: 38px;
+  width: auto;
+  min-width: 0;
+  height: auto;
+  min-height: 38px;
   box-sizing: border-box;
   border: 1px solid rgba(195, 240, 255, 0.6); 
-  padding: 0; 
+  padding: 5px 14px; 
   background: rgba(0, 150, 255, 0.1); 
   box-shadow: 0 0 15px rgba(0, 150, 255, 0.3); 
   white-space: nowrap;
@@ -102,7 +104,7 @@
     .logout-tag { 
   height: 38px;
   box-sizing: border-box;
-  width: 115px;
+  width:auto;
   display: flex;
   align-items: center;
   justify-content: center;
