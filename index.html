@@ -18,6 +18,41 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    .page-header + *,
+    .monster-header + *,
+    .codex-header + * {
+      box-sizing: border-box;
+    }
+
+    .page-header,
+    .monster-header,
+    .codex-header {
+      position: relative;
+      min-height: 58px;
+      box-sizing: border-box;
+    }
+
+    /* Header 修正：標題真正置中，但保留原本 Header 的內容高度 */
+    .header,
+    .top-bar {
+      position: relative;
+      min-height: 58px;
+      box-sizing: border-box;
+    }
+
+    .title-box {
+      z-index: 2;
+      white-space: nowrap;
+    }
+
+    /* 標題使用絕對定位時，讓 Header 仍保留完整的上下空間 */
+    .header + .content,
+    .top-bar + .content,
+    .header + main,
+    .top-bar + main {
+      padding-top: 0;
+    }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background-color: #030712; background-image: linear-gradient(rgba(0, 150, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 150, 255, 0.05) 1px, transparent 1px); background-size: 30px 30px; color: #e2e8f0; font-family: 'Noto Sans TC', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 10px; }
 
