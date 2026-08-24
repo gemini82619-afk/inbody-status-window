@@ -1386,9 +1386,9 @@
     // ═══════════ 怪物卡牌圖鑑 / MONSTER CODEX ═══════════
     const MONSTER_BOOK_BASE_URL = 'https://raw.githubusercontent.com/gemini82619-afk/inbody-status-window/main/assets/monster-book/';
     const MONSTER_BOOK_SERIES = [
-      { id:'001-slime', name:'史萊姆系', slug:'slime', start:1, names:['綠色史萊姆','紅色史萊姆','巨型史萊姆','史萊姆王'], files:[1,2,3,4], backFile:'001_slime_back.png' },
-      { id:'002-skeleton', name:'骷髏系', slug:'skeleton', start:5, names:['骷髏兵','骷髏弓箭手','骷髏騎士','骷髏王'], files:[5,6,7,8], backFile:'005_skeleton_back.png' },
-      { id:'003-werewolf', name:'狼人系', slug:'werewolf', start:9, names:['小狼人','狼人戰士','狂暴狼人','狼人王'], files:[9,10,11,12], backFile:'009_werewolf_back.png' },
+      { id:'001-slime', name:'史萊姆系', slug:'slime', start:1, names:['綠色史萊姆','紅色史萊姆','巨型史萊姆','史萊姆王'], files:[1,2,3,4] },
+      { id:'002-skeleton', name:'骷髏系', slug:'skeleton', start:5, names:['骷髏兵','骷髏弓箭手','骷髏騎士','骷髏王'], files:[5,6,7,8] },
+      { id:'003-werewolf', name:'狼人系', slug:'werewolf', start:9, names:['小狼人','狼人戰士','狂暴狼人','狼人王'], files:[9,10,11,12] },
       { id:'004-orc', name:'獸人系', slug:'orc', start:13, names:['獸人','獸人戰士','獸人薩滿','獸人酋長'], files:[13,14,15,16] }
     ];
     let monsterCodexOpen = false;
@@ -1422,10 +1422,22 @@
     }
 
     // 原始怪物型態不分男女：同一系列男女卡牌共用同一張 _back 圖。
-    function getMonsterBookBackUrl(series) {
-      return series && series.backFile
-        ? `${MONSTER_BOOK_BASE_URL}${series.id}/${series.backFile}`
-        : '';
+    function getMonsterBookBackUrl(series, index) {
+      if (!series || !Array.isArray(series.files) || !Number.isInteger(index)) return '';
+      const fileNumber = series.files[index];
+      if (!Number.isFinite(fileNumber)) return '';
+      return `${MONSTER_BOOK_BASE_URL}${series.id}/${String(fileNumber).padStart(3,'0')}_${series.slug}_back.png`;
+    }
+
+    function handleMonsterBackImageError(img) {
+      const card = img.closest('.monster-codex-card');
+      if (!card) return;
+      card.dataset.hasBack = 'false';
+      card.classList.remove('is-flipped');
+      monsterCodexFlipped = false;
+      img.remove();
+      card.setAttribute('aria-label', (card.getAttribute('aria-label') || '')
+        .replace(/，點擊查看原始怪物型態|，點擊翻回角色型態/g, ''));
     }
 
     function renderMonsterSeriesGrid() {
@@ -1461,8 +1473,10 @@
         const fileNumber = monsterCodexSeries.files[p.index];
         const name = monsterCodexSeries.names[p.index];
         const src = getMonsterBookFileUrl(monsterCodexSeries, fileNumber, gender);
-        const hasBack = p.side === 'center' && Boolean(monsterCodexSeries.backFile);
-        const backSrc = hasBack ? getMonsterBookBackUrl(monsterCodexSeries) : '';
+        const backSrc = p.side === 'center'
+          ? getMonsterBookBackUrl(monsterCodexSeries, p.index)
+          : '';
+        const hasBack = p.side === 'center' && Boolean(backSrc);
         const flippedClass = hasBack && monsterCodexFlipped ? ' is-flipped' : '';
         const flipLabel = hasBack
           ? (monsterCodexFlipped ? `${name} 原始怪物型態，點擊翻回角色型態` : `${name} 角色型態，點擊查看原始怪物型態`)
@@ -1474,7 +1488,7 @@
               <img src="${src}" alt="${escapeHtml(name)}" draggable="false">
             </span>
             ${hasBack ? `<span class="monster-card-face monster-card-back" aria-hidden="true">
-              <img src="${backSrc}" alt="原始怪物型態" draggable="false">
+              <img src="${backSrc}" onerror="handleMonsterBackImageError(this)" alt="原始怪物型態" draggable="false">
             </span>` : ''}
           </span>
         </button>`;
