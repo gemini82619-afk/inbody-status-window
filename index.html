@@ -873,6 +873,39 @@
   }
 </style>
 
+
+<style id="modal-title-box-fix">
+  /* Modal 內的 NOTIFICATION 標題不可使用 Header 的 absolute 定位，
+     避免與訊息及 ACKNOWLEDGE 按鈕重疊。 */
+  .modal-box .title-box {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    min-width: 0;
+    height: auto;
+    min-height: 38px;
+    box-sizing: border-box;
+    margin: 0 auto 15px !important;
+    padding: 4px 14px;
+    border: 1px solid rgba(195, 240, 255, 0.6);
+    background: rgba(0, 150, 255, 0.1);
+    box-shadow: 0 0 15px rgba(0, 150, 255, 0.3);
+    white-space: nowrap;
+  }
+
+  .modal-box .title-text {
+    position: static;
+    display: inline;
+    transform: none;
+    white-space: nowrap;
+  }
+</style>
+
 </head>
 <body>
 
