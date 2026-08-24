@@ -789,9 +789,35 @@
       transition:transform .32s cubic-bezier(.22,.7,.2,1), opacity .26s ease,
                  filter .26s ease, box-shadow .26s ease;
       will-change:transform,opacity,filter;
-      backface-visibility:hidden;
+      perspective:1200px;
+      -webkit-tap-highlight-color:transparent;
     }
-    .monster-codex-card img { width:100%; height:100%; display:block; object-fit:contain; }
+    .monster-card-flip-inner {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      transform-style:preserve-3d;
+      transition:transform .52s cubic-bezier(.22,.72,.18,1);
+    }
+    .monster-codex-card.is-flipped .monster-card-flip-inner {
+      transform:rotateY(180deg);
+    }
+    .monster-card-face {
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      display:block;
+      overflow:hidden;
+      backface-visibility:hidden;
+      -webkit-backface-visibility:hidden;
+    }
+    .monster-card-face img {
+      width:100%; height:100%; display:block; object-fit:contain;
+      user-select:none; -webkit-user-drag:none;
+    }
+    .monster-card-back {
+      transform:rotateY(180deg);
+      background:rgba(2,8,16,.96);
+    }
+    .monster-codex-card.is-center[data-has-back="true"] { cursor:pointer; }
     /* 平面 Carousel：中央主卡＋左右部分露出的前後卡牌。 */
     .monster-codex-card.is-center {
       transform:translate(-50%,-50%) scale(1);
@@ -817,7 +843,10 @@
     .monster-carousel-gender button.active { border-color:#00d2ff; color:#dff8ff; background:rgba(0,210,255,.1); }
     .monster-codex-empty { padding:40px 20px; text-align:center; color:#94a3b8; font-size:.75rem; }
     @media (min-width:520px) { .monster-series-grid { grid-template-columns:1fr; max-width:640px; } } }
-    @media (prefers-reduced-motion: reduce) { .system-menu-drawer,.system-menu-scrim,.monster-series-card,.monster-codex-card { transition:none; } }
+    @media (prefers-reduced-motion: reduce) {
+      .system-menu-drawer,.system-menu-scrim,.monster-series-card,.monster-codex-card { transition:none; }
+      .monster-card-flip-inner { transition:none; }
+    }
   </style>
 
 <style id="login-title-box-fix">
@@ -1357,15 +1386,17 @@
     // ═══════════ 怪物卡牌圖鑑 / MONSTER CODEX ═══════════
     const MONSTER_BOOK_BASE_URL = 'https://raw.githubusercontent.com/gemini82619-afk/inbody-status-window/main/assets/monster-book/';
     const MONSTER_BOOK_SERIES = [
-      { id:'001-slime', name:'史萊姆系', slug:'slime', start:1, names:['綠色史萊姆','紅色史萊姆','巨型史萊姆','史萊姆王'], files:[1,2,3,4] },
-      { id:'002-skeleton', name:'骷髏系', slug:'skeleton', start:5, names:['骷髏兵','骷髏弓箭手','骷髏騎士','骷髏王'], files:[5,6,7,8] },
-      { id:'003-werewolf', name:'狼人系', slug:'werewolf', start:9, names:['小狼人','狼人戰士','狂暴狼人','狼人王'], files:[9,10,11,12] },
+      { id:'001-slime', name:'史萊姆系', slug:'slime', start:1, names:['綠色史萊姆','紅色史萊姆','巨型史萊姆','史萊姆王'], files:[1,2,3,4], backFile:'001_slime_back.png' },
+      { id:'002-skeleton', name:'骷髏系', slug:'skeleton', start:5, names:['骷髏兵','骷髏弓箭手','骷髏騎士','骷髏王'], files:[5,6,7,8], backFile:'005_skeleton_back.png' },
+      { id:'003-werewolf', name:'狼人系', slug:'werewolf', start:9, names:['小狼人','狼人戰士','狂暴狼人','狼人王'], files:[9,10,11,12], backFile:'009_werewolf_back.png' },
       { id:'004-orc', name:'獸人系', slug:'orc', start:13, names:['獸人','獸人戰士','獸人薩滿','獸人酋長'], files:[13,14,15,16] }
     ];
     let monsterCodexOpen = false;
     let monsterCodexSeries = null;
     let monsterCodexIndex = 0;
     let monsterCodexAnimating = false;
+    // 原始怪物型態翻面狀態：只屬於目前中央卡牌，不參與左右切換序列。
+    let monsterCodexFlipped = false;
     let monsterCodexGenderOverride = '';
     let monsterCodexTouchStartX = 0;
     let monsterCodexTouchStartY = 0;
@@ -1390,6 +1421,13 @@
       return `${MONSTER_BOOK_BASE_URL}${series.id}/${String(previewFileNumber).padStart(3,'0')}_${series.slug}_preview_${gender}.png`;
     }
 
+    // 原始怪物型態不分男女：同一系列男女卡牌共用同一張 _back 圖。
+    function getMonsterBookBackUrl(series) {
+      return series && series.backFile
+        ? `${MONSTER_BOOK_BASE_URL}${series.id}/${series.backFile}`
+        : '';
+    }
+
     function renderMonsterSeriesGrid() {
       const grid = document.getElementById('monsterSeriesGrid');
       if (!grid) return;
@@ -1411,6 +1449,7 @@
       const len = monsterCodexSeries.names.length;
 
       // 平面 Carousel：中央主卡、左右相鄰卡牌部分露出。
+      // 左右切換維持滑動效果；只有中央卡牌點擊才會翻面。
       const positions = [
         { index:(monsterCodexIndex - 1 + len) % len, cls:'is-left', side:'left' },
         { index:monsterCodexIndex, cls:'is-center', side:'center' },
@@ -1422,20 +1461,55 @@
         const fileNumber = monsterCodexSeries.files[p.index];
         const name = monsterCodexSeries.names[p.index];
         const src = getMonsterBookFileUrl(monsterCodexSeries, fileNumber, gender);
-        return `<button class="monster-codex-card ${p.cls}" type="button" data-index="${p.index}" data-side="${p.side}" aria-label="${escapeHtml(name)}">
-          <img src="${src}" alt="${escapeHtml(name)}" draggable="false">
+        const hasBack = p.side === 'center' && Boolean(monsterCodexSeries.backFile);
+        const backSrc = hasBack ? getMonsterBookBackUrl(monsterCodexSeries) : '';
+        const flippedClass = hasBack && monsterCodexFlipped ? ' is-flipped' : '';
+        const flipLabel = hasBack
+          ? (monsterCodexFlipped ? `${name} 原始怪物型態，點擊翻回角色型態` : `${name} 角色型態，點擊查看原始怪物型態`)
+          : name;
+
+        return `<button class="monster-codex-card ${p.cls}${flippedClass}" type="button" data-index="${p.index}" data-side="${p.side}" data-has-back="${hasBack ? 'true' : 'false'}" aria-label="${escapeHtml(flipLabel)}">
+          <span class="monster-card-flip-inner">
+            <span class="monster-card-face monster-card-front">
+              <img src="${src}" alt="${escapeHtml(name)}" draggable="false">
+            </span>
+            ${hasBack ? `<span class="monster-card-face monster-card-back" aria-hidden="true">
+              <img src="${backSrc}" alt="原始怪物型態" draggable="false">
+            </span>` : ''}
+          </span>
         </button>`;
       }).join('');
 
       track.querySelectorAll('.monster-codex-card').forEach(card => card.addEventListener('click', () => {
-        if (card.dataset.side === 'left') stepMonsterCodex(-1);
-        else if (card.dataset.side === 'right') stepMonsterCodex(1);
+        if (card.dataset.side === 'left') {
+          stepMonsterCodex(-1);
+        } else if (card.dataset.side === 'right') {
+          stepMonsterCodex(1);
+        } else if (card.dataset.side === 'center' && card.dataset.hasBack === 'true') {
+          toggleMonsterCodexFlip();
+        }
       }));
+
       const genderSwitch = document.getElementById('monsterCarouselGender');
       const hasData = currentPlayerGenderHasData && (currentPlayerGender === 'male' || currentPlayerGender === 'female');
       genderSwitch.style.display = hasData ? 'none' : 'flex';
       document.getElementById('monsterGenderMaleBtn').classList.toggle('active', gender === 'male');
       document.getElementById('monsterGenderFemaleBtn').classList.toggle('active', gender === 'female');
+    }
+
+    function toggleMonsterCodexFlip() {
+      if (!monsterCodexSeries || !monsterCodexSeries.backFile || monsterCodexAnimating) return;
+      monsterCodexFlipped = !monsterCodexFlipped;
+      const center = document.querySelector('#monsterCarouselTrack .monster-codex-card.is-center');
+      if (!center) return;
+
+      center.classList.toggle('is-flipped', monsterCodexFlipped);
+      center.setAttribute(
+        'aria-label',
+        monsterCodexFlipped
+          ? `${monsterCodexSeries.names[monsterCodexIndex]} 原始怪物型態，點擊翻回角色型態`
+          : `${monsterCodexSeries.names[monsterCodexIndex]} 角色型態，點擊查看原始怪物型態`
+      );
     }
 
     function setSystemMenuButtonMode(mode) {
@@ -1464,6 +1538,7 @@
         if (mode === 'back-list' && monsterCodexSeries) {
           monsterCodexSeries = null;
           monsterCodexIndex = 0;
+          monsterCodexFlipped = false;
           monsterCodexGenderOverride = '';
           document.getElementById('monsterCarouselView').classList.remove('is-open');
           document.getElementById('monsterSeriesView').style.display = 'block';
@@ -1482,6 +1557,7 @@
       monsterCodexOpen = true;
       monsterCodexSeries = null;
       monsterCodexIndex = 0;
+      monsterCodexFlipped = false;
       monsterCodexGenderOverride = '';
       renderMonsterSeriesGrid();
       document.getElementById('monsterSeriesView').style.display = 'block';
@@ -1495,6 +1571,7 @@
     function closeMonsterCodex() {
       monsterCodexOpen = false;
       monsterCodexSeries = null;
+      monsterCodexFlipped = false;
       document.getElementById('monsterCodexOverlay').classList.remove('is-open');
       document.getElementById('monsterCodexOverlay').setAttribute('aria-hidden','true');
       setSystemMenuButtonMode('menu');
@@ -1505,6 +1582,7 @@
       if (!series) return;
       monsterCodexSeries = series;
       monsterCodexIndex = 0;
+      monsterCodexFlipped = false;
       monsterCodexGenderOverride = '';
       document.getElementById('monsterSeriesView').style.display = 'none';
       document.getElementById('monsterCarouselView').classList.add('is-open');
@@ -1531,6 +1609,8 @@
 
       window.setTimeout(() => {
         monsterCodexIndex = (monsterCodexIndex + delta + len) % len;
+        // 切換到下一張/上一張時，一律回到角色正面。翻面不是卡牌序列的一部分。
+        monsterCodexFlipped = false;
         renderMonsterCarousel();
 
         const newCenter = track && track.querySelector('.monster-codex-card.is-center');
