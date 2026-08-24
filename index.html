@@ -1512,11 +1512,16 @@
     }
 
     function toggleMonsterCodexFlip() {
-      if (!monsterCodexSeries || !monsterCodexSeries.backFile || monsterCodexAnimating) return;
-      monsterCodexFlipped = !monsterCodexFlipped;
-      const center = document.querySelector('#monsterCarouselTrack .monster-codex-card.is-center');
-      if (!center) return;
+      if (!monsterCodexSeries || monsterCodexAnimating) return;
 
+      const center = document.querySelector('#monsterCarouselTrack .monster-codex-card.is-center');
+      if (!center || center.dataset.hasBack !== 'true') return;
+
+      // Back 圖依目前中央怪物的編號產生；男女共用同一張。
+      const backSrc = getMonsterBookBackUrl(monsterCodexSeries, monsterCodexIndex);
+      if (!backSrc) return;
+
+      monsterCodexFlipped = !monsterCodexFlipped;
       center.classList.toggle('is-flipped', monsterCodexFlipped);
       center.setAttribute(
         'aria-label',
